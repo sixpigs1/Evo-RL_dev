@@ -1,0 +1,22 @@
+[
+  {
+    "profile": "pi05",
+    "supervisor_pid": 3531945,
+    "devices": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "plan": "/workspace/storage/runs/foldtowel40-20261120/pi05/plan.json"
+  },
+  {
+    "profile": "value",
+    "supervisor_pid": 3531946,
+    "devices": [
+      6,
+      7
+    ],
+    "plan": "/workspace/storage/runs/foldtowel40-20261120/value/plan.json"
+  }
+]

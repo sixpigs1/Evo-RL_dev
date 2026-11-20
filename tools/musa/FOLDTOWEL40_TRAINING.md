@@ -50,3 +50,12 @@ tail -n 10 /workspace/storage/runs/foldtowel40-20261120/value/train.log
 原生训练器每 epoch 和最终步保存完整 checkpoint，包含模型、优化器、调度器及各 rank RNG；旧检查点保留。SwanLab 同步训练配置、loss、梯度、学习率和吞吐相关计时等标量，模型 checkpoint 保存在服务器。
 
 恢复训练时使用完整 checkpoint 的 `train_config.json` 或 `value_train_config.json`，设置 `--config_path=... --resume=true` 并保留同一卡数和原 SwanLab run ID。先核实 checkpoint 和 GPU 状态，再启动恢复进程；不重复执行 fresh-start 启动器。
+
+## 已启动的实验
+
+2026-11-20 北京时间约20:22发起正式训练。数据58/58文件SHA-256一致，40条真实成功轨迹、47,398帧。首次在线反查确认两个实验均为RUNNING，并有loss、steps、梯度和学习率标量；本地快照时已确认Pi0.5到第70步、ValueFunction到第170步。此为启动验证，长训练仍在进行。
+
+- Pi0.5：https://swanlab.cn/@sixpigs/RWorld-RL/runs/xb24nabv
+- ValueFunction：https://swanlab.cn/@sixpigs/RWorld-RL/runs/fg1q1j0f
+
+数据与启动、依赖、原生CLI解析、云端指标及凭据落盘检查快照见 [`results/formal-foldtowel40-20261120/`](results/formal-foldtowel40-20261120/)。日志归档仅保留启动/末尾窗口；服务器保留完整日志。启动代码版本为 `e508eee`，后续证据提交不改变已运行的模型代码。

@@ -1,0 +1,26 @@
+{
+  "repo_id": "sixpigs/FoldTowel_1119",
+  "root": "/workspace/storage/data/FoldTowel_1119",
+  "episodes": 40,
+  "frames": 47398,
+  "valid_outcome_labels": true,
+  "label_counts": {
+    "success": 40
+  },
+  "features": [
+    "action",
+    "observation.state",
+    "observation.images.left_wrist",
+    "observation.images.right_wrist",
+    "observation.images.right_top",
+    "complementary_info.policy_action",
+    "complementary_info.is_intervention",
+    "complementary_info.state",
+    "complementary_info.collector_policy_id",
+    "timestamp",
+    "frame_index",
+    "episode_index",
+    "index",
+    "task_index"
+  ]
+}

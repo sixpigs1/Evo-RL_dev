@@ -1,0 +1,11 @@
+{
+  "status": "running",
+  "pid": 3532262,
+  "supervisor_pid": 3531946,
+  "started_at": 1795177366.87545,
+  "plan": "/workspace/storage/runs/foldtowel40-20261120/value/plan.json",
+  "log": "/workspace/storage/runs/foldtowel40-20261120/value/train.log",
+  "updated_at": 1795178004.882032,
+  "last_training_line": "INFO 2026-11-20 12:33:24 ue_train.py:281 step:170 smpl:5K ep:5 epch:0.11 loss:4.734 grdn:12.188 lr:1.7e-05 updt_s:1.217 data_s:2.353",
+  "swanlab_url": "https://swanlab.cn/@sixpigs/RWorld-RL/runs/fg1q1j0f"
+}

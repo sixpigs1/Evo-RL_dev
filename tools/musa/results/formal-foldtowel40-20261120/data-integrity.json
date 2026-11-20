@@ -1,0 +1,13 @@
+{
+  "verified": true,
+  "files": 58,
+  "bytes": 2789352450,
+  "episodes": 40,
+  "frames": 47398,
+  "outcome_counts": {
+    "success": 40
+  },
+  "manifest_sha256": "507bf94a41ab835ef33fd1ce3b5cd87caa26076b46879a9dd9ae0f1f9b7fd019",
+  "checked_at": 1795177290.3088484,
+  "source": "4090:FoldTowel_1119/meta,data,videos"
+}

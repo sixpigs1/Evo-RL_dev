@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "training_state": "RUNNING",
+  "source_files_verified": 58,
+  "episodes": 40,
+  "frames": 47398,
+  "real_labels_verified": true,
+  "cloud_metrics_verified": true,
+  "credential_artifacts_clean": true,
+  "source_commit": "e508eee567810c3692b6ff86827365896850897a"
+}
