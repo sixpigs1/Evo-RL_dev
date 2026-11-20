@@ -1,0 +1,105 @@
+{
+  "config_hash": "d5064c160057800018f2ba9279047397e5ffd92810ddf852cb3a7a747230ce9f",
+  "stages": {
+    "prepare": {
+      "status": "passed",
+      "replayed_data": true
+    },
+    "check-data": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "value",
+        "python",
+        "/workspace/Evo-RL/tools/musa/check_dataset.py",
+        "--root",
+        "/workspace/storage/outputs/accept-round1-pi05/dataset",
+        "--repo-id",
+        "local/towel-replayed-round1",
+        "--require-labels",
+        "--output",
+        "/workspace/storage/outputs/accept-round1-pi05/data-report.json",
+        "--require-acp"
+      ],
+      "started": 1795158522.7370214,
+      "returncode": 0,
+      "finished": 1795158528.751171
+    },
+    "acp-train": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "pi05",
+        "accelerate",
+        "launch",
+        "--config_file",
+        "/workspace/Evo-RL/tools/musa/configs/1gpu.yaml",
+        "-m",
+        "lerobot.scripts.lerobot_train",
+        "--dataset.repo_id=local/towel-replayed-round1",
+        "--dataset.root=/workspace/storage/outputs/accept-round1-pi05/dataset",
+        "--dataset.video_backend=pyav",
+        "--dataset.image_transforms.enable=false",
+        "--batch_size=1",
+        "--num_workers=0",
+        "--steps=5",
+        "--save_freq=5",
+        "--log_freq=1",
+        "--wandb.enable=false",
+        "--save_checkpoint=true",
+        "--policy.device=musa",
+        "--policy.push_to_hub=false",
+        "--eval_freq=0",
+        "--rename_map={\"observation.images.left_wrist\": \"observation.images.left_wrist_0_rgb\", \"observation.images.right_wrist\": \"observation.images.right_wrist_0_rgb\", \"observation.images.right_front\": \"observation.images.base_0_rgb\"}",
+        "--policy.path=/workspace/storage/outputs/accept-round0-pi05/acp/checkpoints/000020/pretrained_model",
+        "--policy.dtype=bfloat16",
+        "--policy.gradient_checkpointing=true",
+        "--policy.compile_model=false",
+        "--policy.use_amp=true",
+        "--policy.tokenizer_name=/workspace/storage/models/paligemma-tokenizer",
+        "--resume_pretrain=true",
+        "--acp.enable=true",
+        "--acp.indicator_field=complementary_info.acp_indicator_musa",
+        "--acp.indicator_dropout_prob=0.3",
+        "--output_dir=/workspace/storage/outputs/accept-round1-pi05/acp"
+      ],
+      "started": 1795158528.7518632,
+      "returncode": 0,
+      "finished": 1795158645.379767
+    },
+    "action-inference": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "pi05",
+        "python",
+        "/workspace/Evo-RL/tools/musa/infer_policy.py",
+        "--checkpoint",
+        "/workspace/storage/outputs/accept-round1-pi05/acp/checkpoints/last/pretrained_model",
+        "--dataset-root",
+        "/workspace/storage/outputs/accept-round1-pi05/dataset",
+        "--repo-id",
+        "local/towel-replayed-round1",
+        "--device",
+        "musa:0",
+        "--output",
+        "/workspace/storage/outputs/accept-round1-pi05/actions.json"
+      ],
+      "started": 1795158645.3804405,
+      "returncode": 0,
+      "finished": 1795158722.9655135
+    }
+  },
+  "sources": [
+    {
+      "repo_id": "local/towel-replayed-round1",
+      "root": "/workspace/storage/data/towel-replayed-annotated-round1",
+      "metadata_sha256": "b8563bed95f35072b57fb309461829d93d32bbf3c6bcd0eeb2ad06230730e3ab"
+    }
+  ],
+  "git_commit": "source archive",
+  "reused_inputs": {
+    "value_checkpoint": "/workspace/storage/outputs/accept-value-1gpu/checkpoints/000100/pretrained_model",
+    "sft_checkpoint": "/workspace/storage/outputs/accept-round0-pi05/acp/checkpoints/000020/pretrained_model"
+  }
+}

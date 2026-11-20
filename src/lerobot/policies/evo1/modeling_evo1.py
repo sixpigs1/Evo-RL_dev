@@ -78,6 +78,7 @@ class EVO1Policy(PreTrainedPolicy):
             "device": config.device,
             "return_cls_only": config.return_cls_only,
             "vlm_name": config.vlm_model_name,
+            "vlm_revision": config.vlm_revision,
             "vlm_num_layers": config.vlm_num_layers,
             "vlm_dtype": config.vlm_dtype,
             "use_flash_attn": config.use_flash_attn,
@@ -117,13 +118,13 @@ class EVO1Policy(PreTrainedPolicy):
 
     @property
     def _training_compute_dtype(self) -> torch.dtype:
-        if str(self.config.device).startswith("cuda"):
+        if str(self.config.device).split(":")[0] in ("cuda", "musa"):
             return torch.bfloat16
         return self._compute_dtype
 
     @property
     def _inference_compute_dtype(self) -> torch.dtype:
-        if str(self.config.device).startswith("cuda") and self.config.use_amp:
+        if str(self.config.device).split(":")[0] in ("cuda", "musa") and self.config.use_amp:
             return torch.bfloat16
         return self._compute_dtype
 
@@ -396,8 +397,8 @@ class EVO1Policy(PreTrainedPolicy):
         action_mask = self._prepare_inference_action_mask(states.shape[0])
 
         with (
-            torch.autocast(device_type="cuda", dtype=torch.bfloat16)
-            if self.config.use_amp and str(self.config.device).startswith("cuda")
+            torch.autocast(device_type=torch.device(self.config.device).type, dtype=torch.bfloat16)
+            if self.config.use_amp and str(self.config.device).split(":")[0] in ("cuda", "musa")
             else nullcontext()
         ):
             actions = self.model(

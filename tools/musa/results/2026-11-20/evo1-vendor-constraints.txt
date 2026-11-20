@@ -1,0 +1,3 @@
+torch==2.9.0
+torch_musa==2.9.0
+torchvision==0.22.1+6b25dcc

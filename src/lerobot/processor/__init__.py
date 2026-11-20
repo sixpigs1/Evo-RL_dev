@@ -129,3 +129,7 @@ __all__ = [
     "UnnormalizerProcessorStep",
     "VanillaObservationProcessorStep",
 ]
+from .compatibility_processor import (
+    DisabledAbsoluteActionsProcessorStep,
+    DisabledRelativeActionsProcessorStep,
+)

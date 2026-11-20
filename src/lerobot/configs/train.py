@@ -54,6 +54,8 @@ class TrainPipelineConfig(HubMixin):
     # Note that when resuming a run, the default behavior is to use the configuration from the checkpoint,
     # regardless of what's provided with the training command at the time of resumption.
     resume: bool = False
+    # Load policy weights into a fresh optimizer/scheduler for a new stage.
+    resume_pretrain: bool = False
     # `seed` is used for training (eg: model initialization, dataset shuffling)
     # AND for the evaluation environments.
     seed: int | None = 1000
@@ -87,6 +89,8 @@ class TrainPipelineConfig(HubMixin):
     checkpoint_path: Path | None = field(init=False, default=None)
 
     def validate(self) -> None:
+        if self.resume and self.resume_pretrain:
+            raise ValueError("resume and resume_pretrain are mutually exclusive")
         # HACK: We parse again the cli args here to get the pretrained paths if there was some.
         policy_path = parser.get_path_arg("policy")
         if policy_path:

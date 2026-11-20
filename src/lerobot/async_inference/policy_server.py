@@ -38,6 +38,7 @@ import draccus
 import grpc
 import torch
 
+from lerobot.configs.policies import PreTrainedConfig
 from lerobot.policies.factory import get_policy_class, make_pre_post_processors
 from lerobot.processor import (
     PolicyAction,
@@ -48,6 +49,7 @@ from lerobot.transport import (
     services_pb2_grpc,  # type: ignore
 )
 from lerobot.transport.utils import receive_bytes_in_chunks
+from lerobot.utils.devices import require_musa, synchronize
 
 from .configs import PolicyServerConfig
 from .constants import SUPPORTED_POLICIES
@@ -151,7 +153,11 @@ class PolicyServer(services_pb2_grpc.AsyncInferenceServicer):
         policy_class = get_policy_class(self.policy_type)
 
         start = time.perf_counter()
-        self.policy = policy_class.from_pretrained(policy_specs.pretrained_name_or_path)
+        require_musa(self.device)
+        policy_config = PreTrainedConfig.from_pretrained(policy_specs.pretrained_name_or_path)
+        policy_config.device = self.device
+        self.policy = policy_class.from_pretrained(policy_specs.pretrained_name_or_path, config=policy_config)
+        self.policy.eval()
         self.policy.to(self.device)
 
         # Load preprocessor and postprocessor, overriding device to match requested device
@@ -163,7 +169,7 @@ class PolicyServer(services_pb2_grpc.AsyncInferenceServicer):
                 "device_processor": device_override,
                 "rename_observations_processor": {"rename_map": policy_specs.rename_map},
             },
-            postprocessor_overrides={"device_processor": device_override},
+            postprocessor_overrides={"device_processor": {"device": "cpu"}},
         )
 
         end = time.perf_counter()
@@ -323,7 +329,12 @@ class PolicyServer(services_pb2_grpc.AsyncInferenceServicer):
 
     def _get_action_chunk(self, observation: dict[str, torch.Tensor]) -> torch.Tensor:
         """Get an action chunk from the policy. The chunk contains only"""
-        chunk = self.policy.predict_action_chunk(observation)
+        with torch.inference_mode(), torch.autocast(
+            device_type=torch.device(self.device).type, dtype=torch.bfloat16,
+            enabled=self.policy.config.use_amp and torch.device(self.device).type in ("cuda", "musa"),
+        ):
+            chunk = self.policy.predict_action_chunk(observation)
+        synchronize(self.device)
         if chunk.ndim != 3:
             chunk = chunk.unsqueeze(0)  # adding batch dimension, now shape is (B, chunk_size, action_dim)
 

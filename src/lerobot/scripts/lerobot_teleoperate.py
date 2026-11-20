@@ -57,7 +57,10 @@ import time
 from dataclasses import asdict, dataclass
 from pprint import pformat
 
-import rerun as rr
+try:
+    import rerun as rr
+except ImportError:
+    rr = None
 
 from lerobot.cameras.opencv.configuration_opencv import OpenCVCameraConfig  # noqa: F401
 from lerobot.cameras.realsense.configuration_realsense import RealSenseCameraConfig  # noqa: F401
@@ -109,7 +112,6 @@ from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.robot_utils import precise_sleep
 from lerobot.utils.utils import init_logging, move_cursor_up
 from lerobot.utils.visualization_utils import init_rerun, log_rerun_data
-
 
 LOOP_STATUS_INTERVAL_S = 0.5
 

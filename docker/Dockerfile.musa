@@ -1,0 +1,11 @@
+# Native vendor runtime. Python environments/data are persisted in /workspace/storage.
+FROM registry.mthreads.com/devtech/glm5.2@sha256:8b50b9e2020f68488e380e7ee3484af6cc1ab28e695ce306240ff7cb719eff3e
+ENV VIRTUAL_ENV="" \
+    HF_HOME=/workspace/storage/cache/huggingface \
+    TORCH_HOME=/workspace/storage/cache/torch \
+    TOKENIZERS_PARALLELISM=false
+WORKDIR /workspace/Evo-RL
+COPY src ./src
+COPY tools/musa ./tools/musa
+COPY pyproject.toml setup.py README.md MANIFEST.in LICENSE ./
+CMD ["sleep", "infinity"]

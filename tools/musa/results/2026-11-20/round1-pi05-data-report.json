@@ -1,0 +1,26 @@
+{
+  "repo_id": "local/towel-replayed-round1",
+  "root": "/workspace/storage/outputs/accept-round1-pi05/dataset",
+  "episodes": 4,
+  "frames": 6864,
+  "valid_outcome_labels": true,
+  "label_counts": {
+    "success": 4
+  },
+  "features": [
+    "action",
+    "observation.state",
+    "observation.images.left_wrist",
+    "observation.images.right_wrist",
+    "observation.images.right_front",
+    "complementary_info.collector_policy_id",
+    "timestamp",
+    "frame_index",
+    "episode_index",
+    "index",
+    "task_index",
+    "complementary_info.value_musa",
+    "complementary_info.advantage_musa",
+    "complementary_info.acp_indicator_musa"
+  ]
+}

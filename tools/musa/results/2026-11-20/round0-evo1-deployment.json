@@ -1,0 +1,8 @@
+{
+  "policy_checkpoint": "/workspace/storage/outputs/accept-round0-evo1/acp/checkpoints/last/pretrained_model",
+  "policy": "evo1",
+  "source_round": "/workspace/storage/outputs/accept-round0-evo1",
+  "next_dataset_repo_id": "local/next-round",
+  "robot_execution": "manual; use lerobot-human-inloop-record with the actual robot configuration",
+  "replayed_data": false
+}

@@ -1,0 +1,10 @@
+{
+  "vendor": {
+    "torch": "2.9.0",
+    "torch_musa": "2.9.0",
+    "torchvision": "0.22.1+6b25dcc"
+  },
+  "profile": "pi05",
+  "pip_check_returncode": 1,
+  "pi_transformers_revision": "dcddb970176382c0fcf4521b0c0e6fc15894dfe0"
+}

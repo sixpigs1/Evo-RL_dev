@@ -1,0 +1,103 @@
+{
+  "config_hash": "03e9fbcb5c9e424a4ce2635355ccea93db7d098c9850c12d87c2e59bd41b5694",
+  "stages": {
+    "prepare": {
+      "status": "passed",
+      "replayed_data": false
+    },
+    "check-data": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "value",
+        "python",
+        "/workspace/Evo-RL/tools/musa/check_dataset.py",
+        "--root",
+        "/workspace/storage/outputs/accept-round0-evo1/dataset",
+        "--repo-id",
+        "Elvinky/bi_so101_fold_towel_d0_acceptance",
+        "--require-labels",
+        "--output",
+        "/workspace/storage/outputs/accept-round0-evo1/data-report.json",
+        "--require-acp"
+      ],
+      "started": 1795158202.7220914,
+      "returncode": 0,
+      "finished": 1795158208.6298149
+    },
+    "acp-train": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "evo1",
+        "accelerate",
+        "launch",
+        "--config_file",
+        "/workspace/Evo-RL/tools/musa/configs/1gpu.yaml",
+        "-m",
+        "lerobot.scripts.lerobot_train",
+        "--dataset.repo_id=Elvinky/bi_so101_fold_towel_d0_acceptance",
+        "--dataset.root=/workspace/storage/outputs/accept-round0-evo1/dataset",
+        "--dataset.video_backend=pyav",
+        "--dataset.image_transforms.enable=false",
+        "--batch_size=1",
+        "--num_workers=0",
+        "--steps=20",
+        "--save_freq=20",
+        "--log_freq=1",
+        "--wandb.enable=false",
+        "--save_checkpoint=true",
+        "--policy.device=musa",
+        "--policy.push_to_hub=false",
+        "--eval_freq=0",
+        "--policy.vlm_model_name=/workspace/storage/models/internvl3",
+        "--policy.use_flash_attn=false",
+        "--policy.training_stage=stage2",
+        "--policy.enable_vlm_gradient_checkpointing=true",
+        "--policy.path=/workspace/storage/outputs/accept-evo1-stage1-1gpu/checkpoints/000100/pretrained_model",
+        "--resume_pretrain=true",
+        "--acp.enable=true",
+        "--acp.indicator_field=complementary_info.acp_indicator_musa",
+        "--acp.indicator_dropout_prob=0.3",
+        "--output_dir=/workspace/storage/outputs/accept-round0-evo1/acp"
+      ],
+      "started": 1795158208.6304984,
+      "returncode": 0,
+      "finished": 1795158258.1543083
+    },
+    "action-inference": {
+      "status": "passed",
+      "command": [
+        "/workspace/Evo-RL/tools/musa/run.sh",
+        "evo1",
+        "python",
+        "/workspace/Evo-RL/tools/musa/infer_policy.py",
+        "--checkpoint",
+        "/workspace/storage/outputs/accept-round0-evo1/acp/checkpoints/last/pretrained_model",
+        "--dataset-root",
+        "/workspace/storage/outputs/accept-round0-evo1/dataset",
+        "--repo-id",
+        "Elvinky/bi_so101_fold_towel_d0_acceptance",
+        "--device",
+        "musa:0",
+        "--output",
+        "/workspace/storage/outputs/accept-round0-evo1/actions.json"
+      ],
+      "started": 1795158258.1548955,
+      "returncode": 0,
+      "finished": 1795158281.4814684
+    }
+  },
+  "sources": [
+    {
+      "repo_id": "Elvinky/bi_so101_fold_towel_d0_acceptance",
+      "root": "/workspace/storage/outputs/annotation-acceptance/data-1",
+      "metadata_sha256": "56d9b18ce341d69e8000635ad07abd0c3fe92c8600a03b9fe53f72524363d8fb"
+    }
+  ],
+  "git_commit": "source archive",
+  "reused_inputs": {
+    "value_checkpoint": "/workspace/storage/outputs/accept-value-1gpu/checkpoints/000100/pretrained_model",
+    "sft_checkpoint": "/workspace/storage/outputs/accept-evo1-stage1-1gpu/checkpoints/000100/pretrained_model"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "pi_transformers_revision": "dcddb970176382c0fcf4521b0c0e6fc15894dfe0",
+  "internvl3": {
+    "repo_id": "OpenGVLab/InternVL3-1B",
+    "revision": "4415a3b810e636d11dfa86b0e9ba40bb00535aa8"
+  },
+  "dataset": {
+    "repo_id": "Elvinky/bi_so101_fold_towel_d0",
+    "revision": "71edae2283713bbf380cab4a6a2f7fe8bba7d13d"
+  },
+  "pi05": {
+    "repo_id": "lerobot/pi05_base",
+    "revision": "22c30e5b34f9e7ab738b1b34fc2fc5ecfe2d28f0"
+  },
+  "value_vision": {
+    "repo_id": "google/siglip-so400m-patch14-384",
+    "revision": "9fdffc58afc957d1a03a25b10dba0329ab15c2a3"
+  },
+  "value_language": {
+    "repo_id": "Qwen/Qwen2.5-0.5B",
+    "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987"
+  }
+}

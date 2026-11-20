@@ -31,6 +31,7 @@ DEFAULT_IMAGE_SIZE = 224
 class PI05Config(PreTrainedConfig):
     paligemma_variant: str = "gemma_2b"
     action_expert_variant: str = "gemma_300m"
+    tokenizer_name: str = "google/paligemma-3b-pt-224"
     dtype: str = "float32"  # Options: "bfloat16", "float32"
 
     n_obs_steps: int = 1

@@ -30,6 +30,8 @@ import torch
 from accelerate import Accelerator
 from datasets.utils.logging import disable_progress_bar, enable_progress_bar
 
+from lerobot.utils.devices import musa_available, require_musa
+
 
 def inside_slurm():
     """Check whether the python process was launched through slurm"""
@@ -39,6 +41,8 @@ def inside_slurm():
 
 def auto_select_torch_device() -> torch.device:
     """Tries to select automatically a torch device."""
+    if musa_available():
+        return torch.device("musa")
     if torch.cuda.is_available():
         logging.info("Cuda backend detected, using cuda.")
         return torch.device("cuda")
@@ -57,6 +61,9 @@ def auto_select_torch_device() -> torch.device:
 def get_safe_torch_device(try_device: str, log: bool = False) -> torch.device:
     """Given a string, return a torch.device with checks on whether the device is available."""
     try_device = str(try_device)
+    if try_device.startswith("musa"):
+        require_musa(try_device)
+        return torch.device(try_device)
     if try_device.startswith("cuda"):
         assert torch.cuda.is_available()
         device = torch.device(try_device)
@@ -106,6 +113,9 @@ def get_safe_dtype(dtype: torch.dtype, device: str | torch.device):
 
 def is_torch_device_available(try_device: str) -> bool:
     try_device = str(try_device)  # Ensure try_device is a string
+    if try_device.startswith("musa"):
+        require_musa(try_device)
+        return True
     if try_device.startswith("cuda"):
         return torch.cuda.is_available()
     elif try_device == "mps":
@@ -119,7 +129,7 @@ def is_torch_device_available(try_device: str) -> bool:
 
 
 def is_amp_available(device: str):
-    if device in ["cuda", "xpu", "cpu"]:
+    if str(device).split(":")[0] in ["cuda", "musa", "xpu", "cpu"]:
         return True
     elif device == "mps":
         return False

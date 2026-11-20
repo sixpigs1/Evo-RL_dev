@@ -68,8 +68,8 @@ class DeviceProcessorStep(ProcessorStep):
         """
         self.tensor_device: torch.device = get_safe_torch_device(self.device)
         # Update device string in case a specific GPU was selected (e.g., "cuda" -> "cuda:0")
-        self.device = self.tensor_device.type
-        self.non_blocking = "cuda" in str(self.device)
+        self.device = str(self.tensor_device)
+        self.non_blocking = self.tensor_device.type == "cuda"
 
         # Validate and convert float_dtype string to torch dtype
         if self.float_dtype is not None:
@@ -95,7 +95,11 @@ class DeviceProcessorStep(ProcessorStep):
             The processed tensor on the correct device and with the correct dtype.
         """
         # Determine target device
-        if tensor.is_cuda and self.tensor_device.type == "cuda":
+        if (
+            tensor.device.type == self.tensor_device.type
+            and self.tensor_device.type in ("cuda", "musa")
+            and self.tensor_device.index is None
+        ):
             # Both tensor and target are on GPU - preserve tensor's GPU placement.
             # This handles multi-GPU scenarios where Accelerate has already placed
             # tensors on the correct GPU for each process.

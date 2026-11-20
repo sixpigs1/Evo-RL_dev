@@ -140,7 +140,9 @@ class PreTrainedPolicy(nn.Module, HubMixin, abc.ABC):
 
         # Add device parameter for newer versions that support it
         if packaging.version.parse(safetensors.__version__) >= packaging.version.parse("0.4.3"):
-            kwargs["device"] = map_location
+            # Upstream safetensors does not recognize PrivateUse1/MUSA device names.
+            # Deserialize on CPU; load_state_dict copies into the model's device.
+            kwargs["device"] = "cpu" if str(map_location).split(":")[0] == "musa" else map_location
 
         # Load the model with appropriate kwargs
         missing_keys, unexpected_keys = load_model_as_safetensor(model, model_file, **kwargs)

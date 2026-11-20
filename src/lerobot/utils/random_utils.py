@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import random
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
@@ -25,6 +26,7 @@ from safetensors.torch import load_file, save_file
 
 from lerobot.datasets.utils import flatten_dict, unflatten_dict
 from lerobot.utils.constants import RNG_STATE
+from lerobot.utils.devices import musa_available
 
 
 def serialize_python_rng_state() -> dict[str, torch.Tensor]:
@@ -85,6 +87,8 @@ def serialize_torch_rng_state() -> dict[str, torch.Tensor]:
     torch_rng_state_dict = {"torch_rng_state": torch.get_rng_state()}
     if torch.cuda.is_available():
         torch_rng_state_dict["torch_cuda_rng_state"] = torch.cuda.get_rng_state()
+    if musa_available():
+        torch_rng_state_dict["torch_musa_rng_state"] = torch.musa.get_rng_state()
     return torch_rng_state_dict
 
 
@@ -95,6 +99,8 @@ def deserialize_torch_rng_state(rng_state_dict: dict[str, torch.Tensor]) -> None
     torch.set_rng_state(rng_state_dict["torch_rng_state"])
     if torch.cuda.is_available() and "torch_cuda_rng_state" in rng_state_dict:
         torch.cuda.set_rng_state(rng_state_dict["torch_cuda_rng_state"])
+    if musa_available() and "torch_musa_rng_state" in rng_state_dict:
+        torch.musa.set_rng_state(rng_state_dict["torch_musa_rng_state"])
 
 
 def serialize_rng_state() -> dict[str, torch.Tensor]:
@@ -134,6 +140,9 @@ def save_rng_state(save_dir: Path) -> None:
 
 
 def load_rng_state(save_dir: Path) -> None:
+    rank_dir = save_dir / f"rank-{os.environ.get('RANK', '0')}"
+    if musa_available() and (rank_dir / RNG_STATE).exists():
+        save_dir = rank_dir
     flat_rng_state_dict = load_file(save_dir / RNG_STATE)
     rng_state_dict = unflatten_dict(flat_rng_state_dict)
     deserialize_rng_state(rng_state_dict)
@@ -148,6 +157,8 @@ def get_rng_state() -> dict[str, Any]:
     }
     if torch.cuda.is_available():
         random_state_dict["torch_cuda_random_state"] = torch.cuda.random.get_rng_state()
+    if musa_available():
+        random_state_dict["torch_musa_random_state"] = torch.musa.get_rng_state_all()
     return random_state_dict
 
 
@@ -162,6 +173,8 @@ def set_rng_state(random_state_dict: dict[str, Any]):
     torch.random.set_rng_state(random_state_dict["torch_random_state"])
     if torch.cuda.is_available():
         torch.cuda.random.set_rng_state(random_state_dict["torch_cuda_random_state"])
+    if musa_available() and "torch_musa_random_state" in random_state_dict:
+        torch.musa.set_rng_state_all(random_state_dict["torch_musa_random_state"])
 
 
 def set_seed(seed, accelerator: Callable | None = None) -> None:
@@ -172,6 +185,8 @@ def set_seed(seed, accelerator: Callable | None = None) -> None:
 
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+    if musa_available():
+        torch.musa.manual_seed_all(seed)
 
     if accelerator:
         from accelerate.utils import set_seed as _accelerate_set_seed
@@ -194,5 +209,18 @@ def seeded_context(seed: int) -> Generator[None, None, None]:
     """
     random_state_dict = get_rng_state()
     set_seed(seed)
-    yield None
-    set_rng_state(random_state_dict)
+    try:
+        yield None
+    finally:
+        set_rng_state(random_state_dict)
+
+
+def save_distributed_rng_state(checkpoint_dir: Path, accelerator) -> None:
+    """Save each MUSA rank after the shared checkpoint has been written."""
+    if accelerator.device.type != "musa":
+        return
+    from lerobot.utils.constants import TRAINING_STATE_DIR
+
+    save_dir = checkpoint_dir / TRAINING_STATE_DIR / f"rank-{accelerator.process_index}"
+    save_dir.mkdir(parents=True, exist_ok=True)
+    save_rng_state(save_dir)

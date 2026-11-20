@@ -44,6 +44,7 @@ from lerobot.utils.constants import (
     LAST_CHECKPOINT_LINK,
     PRETRAINED_MODEL_DIR,
 )
+from lerobot.utils.devices import validate_runtime_device
 from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.random_utils import set_seed
 from lerobot.utils.recording_annotations import EPISODE_SUCCESS, resolve_episode_success_label
@@ -170,6 +171,7 @@ def _init_runtime(
         set_seed(cfg.seed, accelerator=accelerator)
 
     device = accelerator.device
+    validate_runtime_device(cfg.runtime.device, device)
     if device.type == "cuda":
         torch.backends.cudnn.benchmark = True
         torch.backends.cuda.matmul.allow_tf32 = True
@@ -422,7 +424,7 @@ def _load_value_policy_and_processors(
     preprocessor, _ = make_pre_post_processors(
         policy_cfg=value_cfg,
         pretrained_path=pretrained_dir,
-        preprocessor_overrides={"device_processor": {"device": device.type}},
+        preprocessor_overrides={"device_processor": {"device": str(device)}},
     )
     return value_policy, value_cfg, preprocessor
 

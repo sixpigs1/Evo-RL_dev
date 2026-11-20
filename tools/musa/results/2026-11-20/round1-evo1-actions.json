@@ -1,0 +1,25 @@
+{
+  "checkpoint": "/workspace/storage/outputs/accept-round1-evo1/acp/checkpoints/last/pretrained_model",
+  "device": "musa:0",
+  "shape": [
+    1,
+    12
+  ],
+  "finite": true,
+  "action": [
+    [
+      8.3125,
+      29.0,
+      5.0,
+      28.0,
+      -74.0,
+      1.2890625,
+      -37.0,
+      -6.0,
+      95.5,
+      40.25,
+      -73.0,
+      26.0
+    ]
+  ]
+}

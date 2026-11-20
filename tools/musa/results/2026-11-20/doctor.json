@@ -1,0 +1,18 @@
+{
+  "platform": "Linux-5.15.0-105-generic-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "packages": {
+    "torch": "2.9.0",
+    "torch_musa": "2.9.0",
+    "torchvision": "0.22.1+6b25dcc"
+  },
+  "device": "musa:4",
+  "count": 8,
+  "mccl": "(2, 11, 4)",
+  "mccl_paths": [
+    "/usr/local/musa-4.3.5/lib/libmccl.so.2.11.4"
+  ],
+  "bf16_max_abs_error": 0.08835411071777344,
+  "ld_library_path": "/usr/local/musa/lib:/usr/local/openmpi/lib:/usr/local/musa/mudnn/lib:",
+  "status": "passed"
+}

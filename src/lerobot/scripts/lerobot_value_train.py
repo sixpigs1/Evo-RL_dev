@@ -19,9 +19,10 @@ from lerobot.optim.factory import make_optimizer_and_scheduler
 from lerobot.policies.factory import make_policy, make_pre_post_processors
 from lerobot.policies.pretrained import PreTrainedPolicy
 from lerobot.rl.wandb_utils import make_logger
+from lerobot.utils.devices import report_musa_memory, report_musa_parameter_sync, validate_runtime_device
 from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.logging_utils import AverageMeter, MetricsTracker
-from lerobot.utils.random_utils import set_seed
+from lerobot.utils.random_utils import save_distributed_rng_state, set_seed
 from lerobot.utils.train_utils import (
     get_step_checkpoint_dir,
     load_training_state,
@@ -106,8 +107,11 @@ def value_train(
         set_seed(cfg.seed, accelerator=accelerator)
 
     device = accelerator.device
-    torch.backends.cudnn.benchmark = True
-    torch.backends.cuda.matmul.allow_tf32 = True
+    validate_runtime_device(cfg.value.device, device)
+    cfg.value.device = str(device)
+    if device.type == "cuda":
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cuda.matmul.allow_tf32 = True
 
     if is_main_process:
         logging.info("Creating dataset")
@@ -148,7 +152,7 @@ def value_train(
 
     if cfg.value.pretrained_path is not None:
         processor_kwargs["preprocessor_overrides"] = {
-            "device_processor": {"device": device.type},
+            "device_processor": {"device": str(device)},
             "normalizer_processor": {
                 "stats": dataset.meta.stats,
                 "features": {**(cfg.value.input_features or {}), **(cfg.value.output_features or {})},
@@ -158,16 +162,9 @@ def value_train(
         processor_kwargs["preprocessor_overrides"]["rename_observations_processor"] = {
             "rename_map": cfg.rename_map
         }
-        postprocessor_kwargs["postprocessor_overrides"] = {
-            "unnormalizer_processor": {
-                "stats": dataset.meta.stats,
-                "features": cfg.value.output_features or {},
-                "norm_map": cfg.value.normalization_mapping,
-            },
-        }
+        # A value postprocessor contains only device transfer, never an action unnormalizer.
         if cfg.value.mode == "vision_only":
             processor_kwargs["preprocessor_overrides"].pop("normalizer_processor", None)
-            postprocessor_kwargs["postprocessor_overrides"].pop("unnormalizer_processor", None)
 
     preprocessor, postprocessor = make_pre_post_processors(
         policy_cfg=cfg.value,
@@ -308,6 +305,10 @@ def value_train(
                     wandb_logger.log_policy(checkpoint_dir)
 
             accelerator.wait_for_everyone()
+            save_distributed_rng_state(
+                get_step_checkpoint_dir(cfg.output_dir, cfg.steps, step), accelerator
+            )
+            accelerator.wait_for_everyone()
 
     if is_main_process:
         logging.info("End of value training")
@@ -321,6 +322,8 @@ def value_train(
             preprocessor.push_to_hub(cfg.value.repo_id)
 
     accelerator.wait_for_everyone()
+    report_musa_parameter_sync(value_model, accelerator)
+    report_musa_memory(accelerator)
     accelerator.end_training()
 
 

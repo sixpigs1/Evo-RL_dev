@@ -22,6 +22,7 @@ from torch import Tensor, nn
 from lerobot.configs.value_reward import ValueRewardConfig
 from lerobot.policies.pretrained import ActionSelectKwargs, PreTrainedPolicy
 from lerobot.utils.constants import OBS_LANGUAGE_ATTENTION_MASK, OBS_LANGUAGE_TOKENS
+from lerobot.utils.devices import musa_available
 from lerobot.utils.import_utils import _transformers_available
 from lerobot.utils.recording_annotations import EPISODE_SUCCESS, resolve_episode_success_label
 from lerobot.values.pistar06.configuration_pistar06 import Pistar06Config
@@ -131,9 +132,13 @@ def compute_normalized_value_targets(
     return targets
 
 
-def _resolve_load_dtype(dtype_name: str) -> torch.dtype:
+def _resolve_load_dtype(dtype_name: str, device: str | None = None) -> torch.dtype:
     requested_dtype = torch.bfloat16 if dtype_name == "bfloat16" else torch.float32
-    if requested_dtype == torch.bfloat16 and not torch.cuda.is_available():
+    accelerator_available = (
+        torch.device(device).type in ("cuda", "musa", "xpu")
+        if device is not None else torch.cuda.is_available() or musa_available()
+    )
+    if requested_dtype == torch.bfloat16 and not accelerator_available:
         return torch.float32
     return requested_dtype
 
@@ -268,7 +273,7 @@ class Pistar06Model(nn.Module):
             raise ImportError("transformers is not installed. Install with `pip install 'lerobot[pi0]'`.")
 
         self.cfg = cfg
-        self.model_dtype = _resolve_load_dtype(cfg.dtype)
+        self.model_dtype = _resolve_load_dtype(cfg.dtype, cfg.device)
 
         # SiglipVisionModel loads only the visual weights; AutoModel on a full
         # SigLIP repository would also create an unused text encoder under DDP.
@@ -278,6 +283,16 @@ class Pistar06Model(nn.Module):
             revision=cfg.vision_revision,
             torch_dtype=self.model_dtype,
         )
+        # SigLIP's text tower is unused: language comes from the separate backbone.
+        # Keep its weights for checkpoint compatibility but exclude it from DDP gradients.
+        if hasattr(self.vision_encoder, "get_image_features"):
+            text_model = getattr(self.vision_encoder, "text_model", None)
+            if text_model is not None:
+                _freeze_module(text_model)
+            if getattr(getattr(self.vision_encoder, "config", None), "model_type", None) == "siglip":
+                for name, parameter in self.vision_encoder.named_parameters():
+                    if not name.startswith("vision_model."):
+                        parameter.requires_grad_(False)
         if cfg.mode == "vision_language":
             self.language_model = _load_language_model(
                 repo_id=cfg.language_repo_id,

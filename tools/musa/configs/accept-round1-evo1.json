@@ -1,0 +1,16 @@
+{
+  "policy": "evo1",
+  "gpus": 1,
+  "batch_size": 1,
+  "steps": 5,
+  "dataset_repo_id": "local/towel-replayed-round1",
+  "dataset_root": "/workspace/storage/data/towel-replayed-annotated-round1",
+  "value_vision": "/workspace/storage/models/value_vision",
+  "value_language": "/workspace/storage/models/value_language",
+  "policy_model": "/workspace/storage/models/internvl3",
+  "output": "/workspace/storage/outputs/accept-round1-evo1",
+  "value_checkpoint": "/workspace/storage/outputs/accept-value-1gpu/checkpoints/000100/pretrained_model",
+  "sft_checkpoint": "/workspace/storage/outputs/accept-round0-evo1/acp/checkpoints/000020/pretrained_model",
+  "reuse_annotations": true,
+  "replayed_data": true
+}

@@ -1,0 +1,9 @@
+{
+  "frames": 3432,
+  "max_abs_errors": {
+    "complementary_info.value_musa": 0.0,
+    "complementary_info.advantage_musa": 0.0
+  },
+  "indicator_equal_ratio": 1.0,
+  "status": "passed"
+}

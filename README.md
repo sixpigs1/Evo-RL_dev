@@ -588,6 +588,14 @@ The dataset is designed to support offline RL, value learning, advantage-conditi
 }
 ```
 
+## MUSA / 摩尔线程 S5000
+
+Native MUSA support, isolated Pi0.5/Evo1/ValueFunction environments, Docker deployment,
+and complete offline ACP iteration commands are documented in
+[`tools/musa/README.md`](tools/musa/README.md). See
+[`tools/musa/VALIDATION.md`](tools/musa/VALIDATION.md) for real S5000 single-/two-GPU
+training, checkpoint recovery, annotation and iteration validation results.
+
 ## License
 
 Apache-2.0. See [LICENSE](./LICENSE).

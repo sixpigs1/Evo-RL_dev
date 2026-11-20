@@ -77,13 +77,11 @@ dependencies = [
     "piper_sdk>=0.6.1,<0.7.0",
     "wandb>=0.24.0,<0.25.0",
 
-    "torch>=2.2.1,<2.8.0", # TODO: Bumb dependency
-    "torchcodec>=0.2.1,<0.6.0; sys_platform != 'win32' and (sys_platform != 'linux' or (platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'armv7l')) and (sys_platform != 'darwin' or platform_machine != 'x86_64')", # TODO: Bumb dependency
+    "torch>=2.2.1,<2.10.0", # TODO: Bumb dependency
     "torchvision>=0.21.0,<0.23.0", # TODO: Bumb dependency
 
     "draccus==0.10.0", # TODO: Remove ==
     "gymnasium>=1.1.1,<2.0.0",
-    "rerun-sdk>=0.24.0,<0.27.0",
 
     # Support dependencies
     "deepdiff>=7.0.1,<9.0.0",
@@ -152,6 +150,8 @@ xvla = ["lerobot[transformers-dep]"]
 hilserl = ["lerobot[transformers-dep]", "gym-hil>=0.1.13,<0.2.0", "lerobot[grpcio-dep]", "lerobot[placo-dep]"]
 
 # Features
+visualization = ["rerun-sdk>=0.24.0,<0.27.0"]
+video-torchcodec = ["torchcodec>=0.2.1,<0.6.0; sys_platform != 'win32' and (sys_platform != 'linux' or (platform_machine != 'aarch64' and platform_machine != 'arm64' and platform_machine != 'armv7l')) and (sys_platform != 'darwin' or platform_machine != 'x86_64')"]
 async = ["lerobot[grpcio-dep]", "matplotlib>=3.10.3,<4.0.0"]
 peft = ["lerobot[transformers-dep]", "peft>=0.18.0,<1.0.0"]
 
@@ -168,6 +168,8 @@ metaworld = ["metaworld==3.0.0"]
 
 # All
 all = [
+    "lerobot[visualization]",
+    "lerobot[video-torchcodec]",
     "lerobot[dynamixel]",
     "lerobot[gamepad]",
     "lerobot[hopejr]",

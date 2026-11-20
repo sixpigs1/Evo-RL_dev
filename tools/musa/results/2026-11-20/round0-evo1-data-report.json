@@ -1,0 +1,26 @@
+{
+  "repo_id": "Elvinky/bi_so101_fold_towel_d0_acceptance",
+  "root": "/workspace/storage/outputs/accept-round0-evo1/dataset",
+  "episodes": 2,
+  "frames": 3432,
+  "valid_outcome_labels": true,
+  "label_counts": {
+    "success": 2
+  },
+  "features": [
+    "action",
+    "observation.state",
+    "observation.images.left_wrist",
+    "observation.images.right_wrist",
+    "observation.images.right_front",
+    "complementary_info.collector_policy_id",
+    "timestamp",
+    "frame_index",
+    "episode_index",
+    "index",
+    "task_index",
+    "complementary_info.value_musa",
+    "complementary_info.advantage_musa",
+    "complementary_info.acp_indicator_musa"
+  ]
+}

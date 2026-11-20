@@ -39,9 +39,10 @@ from lerobot.rl.acp_dataset_stats import compute_acp_indicator_stats
 from lerobot.rl.acp_hook import build_acp_raw_batch_hook
 from lerobot.rl.wandb_utils import make_logger
 from lerobot.scripts.lerobot_eval import eval_policy_all
+from lerobot.utils.devices import report_musa_memory, report_musa_parameter_sync, validate_runtime_device
 from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.logging_utils import AverageMeter, MetricsTracker
-from lerobot.utils.random_utils import set_seed
+from lerobot.utils.random_utils import save_distributed_rng_state, set_seed
 from lerobot.utils.train_utils import (
     get_step_checkpoint_dir,
     get_step_identifier,
@@ -210,8 +211,11 @@ def train(
 
     # Use accelerator's device
     device = accelerator.device
-    torch.backends.cudnn.benchmark = True
-    torch.backends.cuda.matmul.allow_tf32 = True
+    validate_runtime_device(cfg.policy.device, device)
+    cfg.policy.device = str(device)
+    if device.type == "cuda":
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cuda.matmul.allow_tf32 = True
 
     # Dataset loading synchronization: main process downloads first to avoid race conditions
     if is_main_process:
@@ -292,7 +296,7 @@ def train(
 
     if cfg.policy.pretrained_path is not None:
         processor_kwargs["preprocessor_overrides"] = {
-            "device_processor": {"device": device.type},
+            "device_processor": {"device": str(device)},
             "normalizer_processor": {
                 "stats": dataset.meta.stats,
                 "features": {**policy.config.input_features, **policy.config.output_features},
@@ -308,6 +312,11 @@ def train(
                 "features": policy.config.output_features,
                 "norm_map": policy.config.normalization_mapping,
             },
+        }
+
+    if cfg.policy.type == "pi05" and cfg.policy.pretrained_path is not None:
+        processor_kwargs.setdefault("preprocessor_overrides", {})["tokenizer_processor"] = {
+            "tokenizer_name": cfg.policy.tokenizer_name
         }
 
     preprocessor, postprocessor = make_pre_post_processors(
@@ -518,6 +527,10 @@ def train(
                     wandb_logger.log_policy(checkpoint_dir)
 
             accelerator.wait_for_everyone()
+            save_distributed_rng_state(
+                get_step_checkpoint_dir(cfg.output_dir, cfg.steps, step), accelerator
+            )
+            accelerator.wait_for_everyone()
 
         if cfg.env and is_eval_step:
             if is_main_process:
@@ -585,6 +598,8 @@ def train(
 
     # Properly clean up the distributed process group
     accelerator.wait_for_everyone()
+    report_musa_parameter_sync(policy, accelerator)
+    report_musa_memory(accelerator)
     accelerator.end_training()
 
 

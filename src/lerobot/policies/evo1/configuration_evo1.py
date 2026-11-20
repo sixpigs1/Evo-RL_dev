@@ -53,6 +53,7 @@ class Evo1Config(PreTrainedConfig):
     )
 
     vlm_model_name: str = "OpenGVLab/InternVL3-1B"
+    vlm_revision: str | None = None
     vlm_num_layers: int | None = 14
     vlm_dtype: str = "bfloat16"
     use_flash_attn: bool = True

@@ -1,0 +1,306 @@
+{
+  "required_world_sizes": [
+    1,
+    2
+  ],
+  "rows": [
+    {
+      "task": "pi05",
+      "world_size": 1,
+      "last_step": 105,
+      "optimizer_step_samples": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "changed_weight_probes": 7,
+      "weight_probes": 8,
+      "finite_loss_records": 105,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            34496291840,
+            34942746624
+          ]
+        ],
+        [
+          [
+            0,
+            34490682368,
+            34961620992
+          ]
+        ]
+      ],
+      "parameter_sync_checked": false,
+      "status": "passed"
+    },
+    {
+      "task": "pi05",
+      "world_size": 2,
+      "last_step": 20,
+      "optimizer_step_samples": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "changed_weight_probes": 7,
+      "weight_probes": 8,
+      "finite_loss_records": 20,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            42006790144,
+            42431676416
+          ],
+          [
+            1,
+            41995252224,
+            42396024832
+          ]
+        ]
+      ],
+      "parameter_sync_checked": true,
+      "status": "passed"
+    },
+    {
+      "task": "evo1-stage1",
+      "world_size": 1,
+      "last_step": 105,
+      "optimizer_step_samples": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "changed_weight_probes": 8,
+      "weight_probes": 8,
+      "finite_loss_records": 105,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            3791363072,
+            3961520128
+          ]
+        ]
+      ],
+      "parameter_sync_checked": false,
+      "status": "passed"
+    },
+    {
+      "task": "evo1-stage1",
+      "world_size": 2,
+      "last_step": 25,
+      "optimizer_step_samples": [
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25
+      ],
+      "changed_weight_probes": 8,
+      "weight_probes": 8,
+      "finite_loss_records": 25,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            4275907072,
+            4620025856
+          ],
+          [
+            1,
+            4275907072,
+            4620025856
+          ]
+        ],
+        [
+          [
+            0,
+            4275874816,
+            5221908480
+          ],
+          [
+            1,
+            4275874816,
+            5221908480
+          ]
+        ]
+      ],
+      "parameter_sync_checked": true,
+      "status": "passed"
+    },
+    {
+      "task": "evo1-stage2",
+      "world_size": 1,
+      "last_step": 105,
+      "optimizer_step_samples": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "changed_weight_probes": 8,
+      "weight_probes": 8,
+      "finite_loss_records": 105,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            9060269568,
+            9458155520
+          ]
+        ],
+        [
+          [
+            0,
+            9075565056,
+            9183428608
+          ]
+        ]
+      ],
+      "parameter_sync_checked": false,
+      "status": "passed"
+    },
+    {
+      "task": "evo1-stage2",
+      "world_size": 2,
+      "last_step": 25,
+      "optimizer_step_samples": [
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25
+      ],
+      "changed_weight_probes": 8,
+      "weight_probes": 8,
+      "finite_loss_records": 25,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            10862487552,
+            11068768256
+          ],
+          [
+            1,
+            10862487552,
+            11068768256
+          ]
+        ],
+        [
+          [
+            0,
+            10862209024,
+            11049893888
+          ],
+          [
+            1,
+            10862209024,
+            11049893888
+          ]
+        ]
+      ],
+      "parameter_sync_checked": true,
+      "status": "passed"
+    },
+    {
+      "task": "value",
+      "world_size": 1,
+      "last_step": 105,
+      "optimizer_step_samples": [
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105,
+        105
+      ],
+      "changed_weight_probes": 6,
+      "weight_probes": 8,
+      "finite_loss_records": 105,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            10414698496,
+            10634657792
+          ]
+        ],
+        [
+          [
+            0,
+            10357447168,
+            10638852096
+          ]
+        ]
+      ],
+      "parameter_sync_checked": false,
+      "status": "passed"
+    },
+    {
+      "task": "value",
+      "world_size": 2,
+      "last_step": 20,
+      "optimizer_step_samples": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "changed_weight_probes": 6,
+      "weight_probes": 8,
+      "finite_loss_records": 20,
+      "peak_memory_samples": [
+        [
+          [
+            0,
+            12290998784,
+            12419334144
+          ],
+          [
+            1,
+            12290998784,
+            12419334144
+          ]
+        ]
+      ],
+      "parameter_sync_checked": true,
+      "status": "passed"
+    }
+  ],
+  "status": "passed"
+}

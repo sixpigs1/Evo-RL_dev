@@ -3,8 +3,8 @@ import logging
 
 import torch
 import torch.nn as nn
-import torchvision.transforms as T
-import torchvision.transforms.functional as TF
+import torchvision.transforms as T  # noqa: N812
+import torchvision.transforms.functional as TF  # noqa: N812
 from PIL import Image
 from torchvision.transforms.functional import InterpolationMode, to_pil_image
 from transformers import AutoModel, AutoTokenizer
@@ -91,6 +91,7 @@ class InternVL3Embedder(nn.Module):
         enable_gradient_checkpointing: bool = False,
         enable_tensor_fastpath: bool = True,
         gradient_checkpointing_use_reentrant: bool = False,
+        revision: str | None = None,
     ):
         super().__init__()
         self._requested_device = device
@@ -101,14 +102,17 @@ class InternVL3Embedder(nn.Module):
         self.enable_tensor_fastpath = bool(enable_tensor_fastpath)
         self.gradient_checkpointing_use_reentrant = bool(gradient_checkpointing_use_reentrant)
         self.transform = build_transform(image_size)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, use_fast=False)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision, trust_remote_code=True, use_fast=False)
         if isinstance(model_dtype, str):
             try:
                 model_dtype = getattr(torch, model_dtype)
             except AttributeError as exc:
                 raise ValueError(f"Unsupported EVO1 vlm_dtype '{model_dtype}'") from exc
+        if torch.device(device).type == "musa" and use_flash_attn:
+            raise ValueError("MUSA baseline requires use_flash_attn=false")
         self.model = AutoModel.from_pretrained(
             model_name,
+            revision=revision,
             torch_dtype=model_dtype,
             trust_remote_code=True,
             use_flash_attn=use_flash_attn,
@@ -152,6 +156,10 @@ class InternVL3Embedder(nn.Module):
 
         if hasattr(self.model, "vision_model") and hasattr(self.model.vision_model, "encoder"):
             self.model.vision_model.encoder.gradient_checkpointing = True
+            if torch.device(self._requested_device).type == "musa":
+                from lerobot.policies.evo1.checkpointing import install_non_reentrant_vision_checkpoint
+
+                install_non_reentrant_vision_checkpoint(self.model.vision_model.encoder)
             enabled_any = True
 
         if hasattr(self.model, "language_model"):
@@ -180,7 +188,7 @@ class InternVL3Embedder(nn.Module):
         self, image_t, min_num=1, max_num=1, use_thumbnail=False
     ):
         # image_t shape expected: [C, H, W]
-        C, orig_height, orig_width = image_t.shape
+        C, orig_height, orig_width = image_t.shape  # noqa: N806
 
         # get ratio by cache
         target_aspect_ratio = get_target_aspect_ratio(
@@ -391,10 +399,7 @@ class InternVL3Embedder(nn.Module):
         return_cls_only: bool = True,
     ):
         is_batched_input = bool(image_tensors) and isinstance(image_tensors[0], list)
-        if is_batched_input:
-            image_tensors_batch = image_tensors
-        else:
-            image_tensors_batch = [image_tensors]
+        image_tensors_batch = image_tensors if is_batched_input else [image_tensors]
 
         batch_size = len(image_tensors_batch)
         if batch_size == 0:
@@ -409,10 +414,7 @@ class InternVL3Embedder(nn.Module):
                     f"InternVL3 batch mismatch: num_text_prompts={len(text_prompts)} num_batches={batch_size}"
                 )
 
-        if image_mask.ndim == 1:
-            image_masks = image_mask.unsqueeze(0)
-        else:
-            image_masks = image_mask
+        image_masks = image_mask.unsqueeze(0) if image_mask.ndim == 1 else image_mask
 
         if image_masks.shape[0] != batch_size:
             raise ValueError(

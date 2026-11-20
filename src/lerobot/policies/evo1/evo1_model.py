@@ -17,6 +17,7 @@ class EVO1(nn.Module):
         vlm_name = config.get("vlm_name", "OpenGVLab/InternVL3-1B")
         self.embedder = InternVL3Embedder(
             model_name=vlm_name,
+            revision=config.get("vlm_revision"),
             image_size=config.get("image_size", 448),
             device=self._device,
             num_language_layers=config.get("vlm_num_layers", 14),
@@ -182,10 +183,10 @@ class EVO1(nn.Module):
             action_mask=action_mask,
             embodiment_ids=embodiment_ids,
         )
-        
+
         if isinstance(action, torch.Tensor) and action.dtype == torch.bfloat16:
             action = action.to(torch.float32)
-            
+
         return action
 
     def forward(
