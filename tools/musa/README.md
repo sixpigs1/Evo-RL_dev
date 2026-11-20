@@ -156,3 +156,11 @@ ValueFunction speed results for full SigLIP + Qwen2.5-0.5B training at per-card
 batch 16/32 are in [`BENCHMARK_VALUE_20261120.md`](BENCHMARK_VALUE_20261120.md).
 Select this sweep with `EVORL_BENCH_TASKS=value EVORL_BENCH_BATCHES="16 32"`;
 pass `--tasks value --batches 16 32` to the summarizer.
+
+## Formal FoldTowel training
+
+[`FOLDTOWEL40_TRAINING.md`](FOLDTOWEL40_TRAINING.md) documents the approved
+four-card Pi0.5 / two-card ValueFunction jobs, file-hash data verification,
+SwanLab dependency pins and secret-free launch plans. `training_job.py` receives
+the API key on stdin, keeps it in process memory, refuses duplicate starts, and
+runs detached supervisors with separate GPU groups and rendezvous ports.

@@ -220,26 +220,42 @@ class SwanLabLogger:
         self.job_name = cfg.job_name
         self.env_fps = cfg.env.fps if cfg.env else None
 
-        swanlab.login(api_key=os.environ["SWANLAB_API_KEY"])
-        self._run = swanlab.init(
+        swanlab.login(api_key=os.environ["SWANLAB_API_KEY"], save=False)
+        import inspect
+
+        init_options = dict(
             project=self.cfg.project,
             workspace=self.cfg.entity,
-            experiment_name=self.job_name,
             description=self.cfg.notes,
             tags=cfg_to_group(cfg, return_list=True, truncate_tags=True),
-            logdir=str(self.log_dir),
             config=cfg.to_dict(),
-            mode=self.cfg.mode if self.cfg.mode in ["offline", "disabled"] else "cloud",
             id=cfg.wandb.run_id,
             resume="must" if cfg.resume else None,
         )
+        # SwanLab 0.10 uses online/name/log_dir; retain compatibility with older SDKs.
+        if "on_online_error" in inspect.signature(swanlab.init).parameters:
+            init_options.update(
+                name=self.job_name,
+                log_dir=str(self.log_dir),
+                mode=self.cfg.mode if self.cfg.mode in ["offline", "disabled"] else "online",
+                on_online_error="raise",
+            )
+        else:
+            init_options.update(
+                experiment_name=self.job_name,
+                logdir=str(self.log_dir),
+                mode=self.cfg.mode if self.cfg.mode in ["offline", "disabled"] else "cloud",
+            )
+        self._run = swanlab.init(**init_options)
         run_id = getattr(self._run, "id", None)
         cfg.wandb.run_id = run_id
         logging.info(colored("Logs will be synced with swanlab.", "blue", attrs=["bold"]))
         try:
-            import swanlab.data as swanlab_data
+            run_url = getattr(self._run, "url", None)
+            if not run_url:
+                import swanlab.data as swanlab_data
 
-            run_url = swanlab_data.get_url()
+                run_url = swanlab_data.get_url()
             if run_url:
                 logging.info(f"Track this run --> {colored(run_url, 'yellow', attrs=['bold'])}")
         except Exception:
@@ -296,11 +312,5 @@ def make_logger(cfg: TrainPipelineConfig) -> WandBLogger | SwanLabLogger | None:
         return None
 
     if os.getenv("SWANLAB_API_KEY"):
-        try:
-            return SwanLabLogger(cfg)
-        except ImportError:
-            logging.warning(
-                "swanlab package is not installed but SWANLAB_API_KEY is set. "
-                "Falling back to WandB. Install swanlab with: pip install swanlab"
-            )
+        return SwanLabLogger(cfg)
     return WandBLogger(cfg)

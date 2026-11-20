@@ -30,6 +30,12 @@ queue, visited, errors = (
     set(),
     [],
 )
+try:
+    md.version("swanlab")
+except md.PackageNotFoundError:
+    pass
+else:
+    queue.append("swanlab")
 while queue:
     name = canonicalize_name(queue.pop())
     if name in visited:

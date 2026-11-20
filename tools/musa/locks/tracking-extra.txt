@@ -1,0 +1,11 @@
+# Install after the task environment. Keep vendor torch/torch_musa/torchvision unchanged.
+swanlab==0.10.6
+pyroaring==1.0.3
+pwinput==1.0.3
+pydantic-settings==2.15.0
+pyecharts==2.1.0
+python-dotenv==1.2.4
+nvidia-ml-py==13.615.71
+prettytable==3.18.0
+simplejson==4.3.0
+watchdog==6.0.0
