@@ -1,0 +1,13 @@
+{
+  "status": "failed",
+  "pid": 3532261,
+  "supervisor_pid": 3531945,
+  "started_at": 1795177366.8745263,
+  "plan": "/workspace/storage/runs/foldtowel40-20261120/pi05/plan.json",
+  "log": "/workspace/storage/runs/foldtowel40-20261120/pi05/train.log",
+  "updated_at": 1795183987.1610277,
+  "last_training_line": "INFO 2026-11-20 14:13:07 ot_train.py:493 step:900 smpl:115K ep:97 epch:2.43 loss:nan grdn:nan lr:2.4e-05 updt_s:4.320 data_s:2.735",
+  "swanlab_url": "https://swanlab.cn/@sixpigs/RWorld-RL/runs/xb24nabv",
+  "returncode": 1,
+  "finished_at": 1795184039.457608
+}

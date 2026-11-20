@@ -1,0 +1,320 @@
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+INFO 2026-11-20 14:28:45 ot_train.py:213 {'acp': {'enable': False,
+         'indicator_dropout_prob': 0.0,
+         'indicator_field': 'complementary_info.acp_indicator'},
+ 'batch_size': 32,
+ 'checkpoint_path': '/workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371',
+ 'dataset': {'episodes': None,
+             'image_transforms': {'enable': False,
+                                  'max_num_transforms': 3,
+                                  'random_order': False,
+                                  'tfs': {'affine': {'kwargs': {'degrees': [-5.0,
+                                                                            5.0],
+                                                                'translate': [0.05,
+                                                                              0.05]},
+                                                     'type': 'RandomAffine',
+                                                     'weight': 1.0},
+                                          'brightness': {'kwargs': {'brightness': [0.8,
+                                                                                   1.2]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'contrast': {'kwargs': {'contrast': [0.8,
+                                                                               1.2]},
+                                                       'type': 'ColorJitter',
+                                                       'weight': 1.0},
+                                          'hue': {'kwargs': {'hue': [-0.05,
+                                                                     0.05]},
+                                                  'type': 'ColorJitter',
+                                                  'weight': 1.0},
+                                          'saturation': {'kwargs': {'saturation': [0.5,
+                                                                                   1.5]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'sharpness': {'kwargs': {'sharpness': [0.5,
+                                                                                 1.5]},
+                                                        'type': 'SharpnessJitter',
+                                                        'weight': 1.0}}},
+             'repo_id': 'sixpigs/FoldTowel_1119',
+             'revision': None,
+             'root': '/workspace/storage/data/FoldTowel_1119',
+             'streaming': False,
+             'use_imagenet_stats': True,
+             'video_backend': 'pyav'},
+ 'env': None,
+ 'eval': {'batch_size': 50, 'n_episodes': 50, 'use_async_envs': False},
+ 'eval_freq': 0,
+ 'job_name': 'pi05-nan-diagnosis',
+ 'log_freq': 1,
+ 'num_workers': 0,
+ 'optimizer': {'betas': [0.9, 0.95],
+               'eps': 1e-08,
+               'grad_clip_norm': 1.0,
+               'lr': 2.5e-05,
+               'type': 'adamw',
+               'weight_decay': 0.01},
+ 'output_dir': '/workspace/storage/outputs/pi05-nan-diagnosis-v3-20261120',
+ 'peft': None,
+ 'policy': {'action_expert_variant': 'gemma_300m',
+            'chunk_size': 50,
+            'compile_mode': 'max-autotune',
+            'compile_model': False,
+            'device': 'musa:0',
+            'dtype': 'bfloat16',
+            'empty_cameras': 0,
+            'freeze_vision_encoder': False,
+            'gradient_checkpointing': True,
+            'image_resolution': [224, 224],
+            'input_features': {'observation.images.base_0_rgb': {'shape': [3,
+                                                                           224,
+                                                                           224],
+                                                                 'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.left_wrist_0_rgb': {'shape': [3,
+                                                                                 224,
+                                                                                 224],
+                                                                       'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.right_wrist_0_rgb': {'shape': [3,
+                                                                                  224,
+                                                                                  224],
+                                                                        'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.state': {'shape': [32],
+                                                     'type': <FeatureType.STATE: 'STATE'>}},
+            'license': None,
+            'mask_action_padding_loss': False,
+            'max_action_dim': 32,
+            'max_period': 4.0,
+            'max_state_dim': 32,
+            'min_period': 0.004,
+            'n_action_steps': 50,
+            'n_obs_steps': 1,
+            'normalization_mapping': {'ACTION': <NormalizationMode.QUANTILES: 'QUANTILES'>,
+                                      'STATE': <NormalizationMode.QUANTILES: 'QUANTILES'>,
+                                      'VISUAL': <NormalizationMode.IDENTITY: 'IDENTITY'>},
+            'num_inference_steps': 10,
+            'optimizer_betas': [0.9, 0.95],
+            'optimizer_eps': 1e-08,
+            'optimizer_grad_clip_norm': 1.0,
+            'optimizer_lr': 2.5e-05,
+            'optimizer_weight_decay': 0.01,
+            'output_features': {'action': {'shape': [12],
+                                           'type': <FeatureType.ACTION: 'ACTION'>}},
+            'paligemma_variant': 'gemma_2b',
+            'pretrained_path': '/workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model',
+            'private': None,
+            'push_to_hub': False,
+            'repo_id': None,
+            'rtc_config': None,
+            'scheduler_decay_lr': 2.5e-06,
+            'scheduler_decay_steps': 9275,
+            'scheduler_warmup_steps': 500,
+            'tags': None,
+            'time_sampling_beta_alpha': 1.5,
+            'time_sampling_beta_beta': 1.0,
+            'time_sampling_offset': 0.001,
+            'time_sampling_scale': 0.999,
+            'tokenizer_max_length': 200,
+            'tokenizer_name': '/workspace/storage/models/paligemma-tokenizer',
+            'train_expert_only': False,
+            'type': 'pi05',
+            'use_amp': True,
+            'use_peft': False},
+ 'rabc_epsilon': 1e-06,
+ 'rabc_head_mode': 'sparse',
+ 'rabc_kappa': 0.01,
+ 'rabc_progress_path': None,
+ 'rename_map': {'observation.images.left_wrist': 'observation.images.left_wrist_0_rgb',
+                'observation.images.right_top': 'observation.images.base_0_rgb',
+                'observation.images.right_wrist': 'observation.images.right_wrist_0_rgb'},
+ 'resume': True,
+ 'resume_pretrain': False,
+ 'save_checkpoint': False,
+ 'save_freq': 371,
+ 'scheduler': {'decay_lr': 2.5e-06,
+               'num_decay_steps': 9275,
+               'num_warmup_steps': 500,
+               'peak_lr': 2.5e-05,
+               'type': 'cosine_decay_with_warmup'},
+ 'seed': 1000,
+ 'steps': 9275,
+ 'tolerance_s': 0.0001,
+ 'use_policy_training_preset': True,
+ 'use_rabc': False,
+ 'wandb': {'disable_artifact': True,
+           'enable': False,
+           'entity': 'sixpigs',
+           'mode': 'online',
+           'notes': 'Full 40 real successful towel episodes / 47398 frames; '
+                    'native MUSA BF16; 25 epochs; independent outputs; data '
+                    'transfer SHA256 verified.',
+           'project': 'RWorld-RL',
+           'run_id': 'xb24nabv'}}
+INFO 2026-11-20 14:28:45 ot_train.py:218 Logs will be saved locally.
+INFO 2026-11-20 14:28:45 ot_train.py:233 Creating dataset
+INFO 2026-11-20 14:28:48 ot_train.py:281 Creating policy
+The PI05 model is a direct port of the OpenPI implementation. 
+This implementation follows the original OpenPI structure for compatibility. 
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation. 
+This implementation follows the original OpenPI structure for compatibility. 
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation. 
+This implementation follows the original OpenPI structure for compatibility. 
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation. 
+This implementation follows the original OpenPI structure for compatibility. 
+Original implementation: https://github.com/Physical-Intelligence/openpi
+INFO 2026-11-20 14:29:41 ing_pi05.py:592 Enabled gradient checkpointing for PI05Pytorch model
+Loading model from: /workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model
+✓ Loaded state dict from model.safetensors
+WARNING 2026-11-20 14:29:42 ng_pi05.py:1098 Vision embedding key might need handling: model.paligemma_with_expert.paligemma.model.vision_tower.vision_model.embeddings.patch_embedding.bias
+WARNING 2026-11-20 14:29:42 ng_pi05.py:1098 Vision embedding key might need handling: model.paligemma_with_expert.paligemma.model.vision_tower.vision_model.embeddings.patch_embedding.weight
+Loading model from: /workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model
+✓ Loaded state dict from model.safetensors
+Loading model from: /workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model
+✓ Loaded state dict from model.safetensors
+Loading model from: /workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model
+✓ Loaded state dict from model.safetensors
+All keys loaded successfully!
+All keys loaded successfully!
+All keys loaded successfully!
+All keys loaded successfully!
+INFO 2026-11-20 14:29:52 ot_train.py:341 Creating optimizer and scheduler
+INFO 2026-11-20 14:29:56 ot_train.py:376 Output dir: /workspace/storage/outputs/pi05-nan-diagnosis-v3-20261120
+INFO 2026-11-20 14:29:56 ot_train.py:383 cfg.steps=9275 (9K)
+INFO 2026-11-20 14:29:56 ot_train.py:384 dataset.num_frames=47398 (47K)
+INFO 2026-11-20 14:29:56 ot_train.py:385 dataset.num_episodes=40
+INFO 2026-11-20 14:29:56 ot_train.py:388 Effective batch size: 32 x 4 = 128
+INFO 2026-11-20 14:29:56 ot_train.py:389 num_learnable_params=3616757520 (4B)
+INFO 2026-11-20 14:29:56 ot_train.py:390 num_total_params=3616757520 (4B)
+INFO 2026-11-20 14:30:00 ot_train.py:446 Start offline training on a fixed dataset, with effective batch size: 128
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+INFO 2026-11-20 14:30:07 ot_train.py:479 First policy prompt (task):
+Task: Fold the towel to the small squares and place it at the right side., State: 64 -1 254 200 114 -1 140 0 255 157 87 1 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128;
+Action: 
+INFO 2026-11-20 14:30:19 ot_train.py:506 step:372 smpl:48K ep:40 epch:1.00 loss:0.074 grdn:0.393 lr:1.9e-05 updt_s:11.502 data_s:6.967
+[rank0]:[W1120 14:30:21.712687418 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank2]:[W1120 14:30:23.729230890 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank3]:[W1120 14:30:23.773865655 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank1]:[W1120 14:30:23.778278221 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+INFO 2026-11-20 14:30:28 ot_train.py:506 step:373 smpl:48K ep:40 epch:1.01 loss:0.097 grdn:0.460 lr:1.9e-05 updt_s:6.517 data_s:2.551
+INFO 2026-11-20 14:30:35 ot_train.py:506 step:374 smpl:48K ep:40 epch:1.01 loss:0.087 grdn:0.420 lr:1.9e-05 updt_s:4.506 data_s:2.633
+INFO 2026-11-20 14:30:44 ot_train.py:506 step:375 smpl:48K ep:41 epch:1.01 loss:0.099 grdn:0.366 lr:1.9e-05 updt_s:6.654 data_s:2.541
+INFO 2026-11-20 14:30:51 ot_train.py:506 step:376 smpl:48K ep:41 epch:1.02 loss:0.081 grdn:0.389 lr:1.9e-05 updt_s:4.457 data_s:2.677
+INFO 2026-11-20 14:31:00 ot_train.py:506 step:377 smpl:48K ep:41 epch:1.02 loss:0.084 grdn:0.385 lr:1.9e-05 updt_s:6.842 data_s:2.572
+INFO 2026-11-20 14:31:08 ot_train.py:506 step:378 smpl:48K ep:41 epch:1.02 loss:0.091 grdn:0.398 lr:1.9e-05 updt_s:4.734 data_s:2.684
+INFO 2026-11-20 14:31:17 ot_train.py:506 step:379 smpl:49K ep:41 epch:1.02 loss:0.102 grdn:0.381 lr:1.9e-05 updt_s:6.633 data_s:2.541
+INFO 2026-11-20 14:31:24 ot_train.py:506 step:380 smpl:49K ep:41 epch:1.03 loss:0.105 grdn:0.578 lr:1.9e-05 updt_s:4.499 data_s:2.660
+INFO 2026-11-20 14:31:33 ot_train.py:506 step:381 smpl:49K ep:41 epch:1.03 loss:0.077 grdn:0.341 lr:1.9e-05 updt_s:6.667 data_s:2.524
+INFO 2026-11-20 14:31:41 ot_train.py:506 step:382 smpl:49K ep:41 epch:1.03 loss:0.098 grdn:0.463 lr:1.9e-05 updt_s:4.533 data_s:2.694
+INFO 2026-11-20 14:31:50 ot_train.py:506 step:383 smpl:49K ep:41 epch:1.03 loss:0.092 grdn:0.338 lr:1.9e-05 updt_s:6.627 data_s:2.561
+INFO 2026-11-20 14:31:57 ot_train.py:506 step:384 smpl:49K ep:41 epch:1.04 loss:0.090 grdn:0.484 lr:1.9e-05 updt_s:4.467 data_s:2.651
+INFO 2026-11-20 14:32:07 ot_train.py:506 step:385 smpl:49K ep:42 epch:1.04 loss:0.096 grdn:0.439 lr:1.9e-05 updt_s:6.961 data_s:2.582
+INFO 2026-11-20 14:32:14 ot_train.py:506 step:386 smpl:49K ep:42 epch:1.04 loss:0.094 grdn:0.613 lr:1.9e-05 updt_s:4.487 data_s:2.675
+INFO 2026-11-20 14:32:23 ot_train.py:506 step:387 smpl:50K ep:42 epch:1.05 loss:0.083 grdn:0.428 lr:1.9e-05 updt_s:6.759 data_s:2.545
+INFO 2026-11-20 14:32:30 ot_train.py:506 step:388 smpl:50K ep:42 epch:1.05 loss:0.096 grdn:0.438 lr:1.9e-05 updt_s:4.595 data_s:2.662
+INFO 2026-11-20 14:32:40 ot_train.py:506 step:389 smpl:50K ep:42 epch:1.05 loss:0.087 grdn:0.422 lr:1.9e-05 updt_s:6.663 data_s:2.594
+INFO 2026-11-20 14:32:47 ot_train.py:506 step:390 smpl:50K ep:42 epch:1.05 loss:0.095 grdn:0.554 lr:2.0e-05 updt_s:4.486 data_s:2.655
+INFO 2026-11-20 14:32:56 ot_train.py:506 step:391 smpl:50K ep:42 epch:1.06 loss:0.103 grdn:0.467 lr:2.0e-05 updt_s:6.756 data_s:2.538
+INFO 2026-11-20 14:33:03 ot_train.py:506 step:392 smpl:50K ep:42 epch:1.06 loss:0.093 grdn:0.440 lr:2.0e-05 updt_s:4.665 data_s:2.697
+INFO 2026-11-20 14:33:13 ot_train.py:506 step:393 smpl:50K ep:42 epch:1.06 loss:0.085 grdn:0.487 lr:2.0e-05 updt_s:6.632 data_s:2.737
+INFO 2026-11-20 14:33:20 ot_train.py:506 step:394 smpl:50K ep:43 epch:1.06 loss:0.086 grdn:0.330 lr:2.0e-05 updt_s:4.450 data_s:2.789
+INFO 2026-11-20 14:33:29 ot_train.py:506 step:395 smpl:51K ep:43 epch:1.07 loss:0.085 grdn:0.512 lr:2.0e-05 updt_s:6.814 data_s:2.503
+INFO 2026-11-20 14:33:37 ot_train.py:506 step:396 smpl:51K ep:43 epch:1.07 loss:0.086 grdn:0.514 lr:2.0e-05 updt_s:4.547 data_s:2.724
+INFO 2026-11-20 14:33:46 ot_train.py:506 step:397 smpl:51K ep:43 epch:1.07 loss:0.101 grdn:0.417 lr:2.0e-05 updt_s:6.583 data_s:2.645
+INFO 2026-11-20 14:33:53 ot_train.py:506 step:398 smpl:51K ep:43 epch:1.07 loss:0.086 grdn:0.426 lr:2.0e-05 updt_s:4.599 data_s:2.692
+INFO 2026-11-20 14:34:05 ot_train.py:506 step:399 smpl:51K ep:43 epch:1.08 loss:0.080 grdn:0.388 lr:2.0e-05 updt_s:7.486 data_s:3.907
+INFO 2026-11-20 14:34:14 ot_train.py:506 step:400 smpl:51K ep:43 epch:1.08 loss:0.108 grdn:0.477 lr:2.0e-05 updt_s:5.727 data_s:3.780
+INFO 2026-11-20 14:34:26 ot_train.py:506 step:401 smpl:51K ep:43 epch:1.08 loss:0.086 grdn:0.467 lr:2.0e-05 updt_s:7.817 data_s:3.693
+INFO 2026-11-20 14:34:35 ot_train.py:506 step:402 smpl:51K ep:43 epch:1.09 loss:0.083 grdn:0.416 lr:2.0e-05 updt_s:5.266 data_s:4.029
+INFO 2026-11-20 14:34:46 ot_train.py:506 step:403 smpl:52K ep:44 epch:1.09 loss:0.124 grdn:0.386 lr:2.0e-05 updt_s:7.421 data_s:4.014
+INFO 2026-11-20 14:34:55 ot_train.py:506 step:404 smpl:52K ep:44 epch:1.09 loss:0.095 grdn:0.426 lr:2.0e-05 updt_s:5.213 data_s:3.861
+INFO 2026-11-20 14:35:07 ot_train.py:506 step:405 smpl:52K ep:44 epch:1.09 loss:0.079 grdn:0.548 lr:2.0e-05 updt_s:7.474 data_s:3.870
+INFO 2026-11-20 14:35:16 ot_train.py:506 step:406 smpl:52K ep:44 epch:1.10 loss:0.110 grdn:0.390 lr:2.0e-05 updt_s:5.251 data_s:3.971
+INFO 2026-11-20 14:35:28 ot_train.py:506 step:407 smpl:52K ep:44 epch:1.10 loss:0.097 grdn:0.424 lr:2.0e-05 updt_s:7.952 data_s:3.835
+INFO 2026-11-20 14:35:37 ot_train.py:506 step:408 smpl:52K ep:44 epch:1.10 loss:0.101 grdn:0.385 lr:2.0e-05 updt_s:5.238 data_s:3.969
+INFO 2026-11-20 14:35:48 ot_train.py:506 step:409 smpl:52K ep:44 epch:1.10 loss:0.085 grdn:0.308 lr:2.0e-05 updt_s:7.590 data_s:3.931
+INFO 2026-11-20 14:35:58 ot_train.py:506 step:410 smpl:52K ep:44 epch:1.11 loss:0.086 grdn:0.406 lr:2.1e-05 updt_s:5.225 data_s:3.983
+INFO 2026-11-20 14:36:09 ot_train.py:506 step:411 smpl:53K ep:44 epch:1.11 loss:0.090 grdn:0.401 lr:2.1e-05 updt_s:7.728 data_s:3.846
+INFO 2026-11-20 14:36:18 ot_train.py:506 step:412 smpl:53K ep:45 epch:1.11 loss:0.079 grdn:0.437 lr:2.1e-05 updt_s:5.213 data_s:3.945
+INFO 2026-11-20 14:36:30 ot_train.py:506 step:413 smpl:53K ep:45 epch:1.12 loss:0.082 grdn:0.409 lr:2.1e-05 updt_s:7.742 data_s:3.984
+INFO 2026-11-20 14:36:40 ot_train.py:506 step:414 smpl:53K ep:45 epch:1.12 loss:0.095 grdn:0.488 lr:2.1e-05 updt_s:5.804 data_s:3.750
+INFO 2026-11-20 14:36:51 ot_train.py:506 step:415 smpl:53K ep:45 epch:1.12 loss:0.102 grdn:0.491 lr:2.1e-05 updt_s:7.585 data_s:4.115
+INFO 2026-11-20 14:37:01 ot_train.py:506 step:416 smpl:53K ep:45 epch:1.12 loss:0.082 grdn:0.406 lr:2.1e-05 updt_s:5.367 data_s:4.002
+INFO 2026-11-20 14:37:12 ot_train.py:506 step:417 smpl:53K ep:45 epch:1.13 loss:0.082 grdn:0.452 lr:2.1e-05 updt_s:7.309 data_s:4.174
+INFO 2026-11-20 14:37:21 ot_train.py:506 step:418 smpl:54K ep:45 epch:1.13 loss:0.092 grdn:0.402 lr:2.1e-05 updt_s:5.268 data_s:3.896
+INFO 2026-11-20 14:37:33 ot_train.py:506 step:419 smpl:54K ep:45 epch:1.13 loss:0.088 grdn:0.373 lr:2.1e-05 updt_s:7.552 data_s:4.014
+INFO 2026-11-20 14:37:42 ot_train.py:506 step:420 smpl:54K ep:45 epch:1.13 loss:0.084 grdn:0.373 lr:2.1e-05 updt_s:5.117 data_s:4.017
+INFO 2026-11-20 14:37:53 ot_train.py:506 step:421 smpl:54K ep:45 epch:1.14 loss:0.079 grdn:0.369 lr:2.1e-05 updt_s:6.554 data_s:3.941
+INFO 2026-11-20 14:38:00 ot_train.py:506 step:422 smpl:54K ep:46 epch:1.14 loss:0.078 grdn:0.474 lr:2.1e-05 updt_s:4.754 data_s:2.676
+INFO 2026-11-20 14:38:10 ot_train.py:506 step:423 smpl:54K ep:46 epch:1.14 loss:0.089 grdn:0.506 lr:2.1e-05 updt_s:7.039 data_s:2.593
+INFO 2026-11-20 14:38:17 ot_train.py:506 step:424 smpl:54K ep:46 epch:1.15 loss:0.090 grdn:0.486 lr:2.1e-05 updt_s:4.521 data_s:2.662
+INFO 2026-11-20 14:38:26 ot_train.py:506 step:425 smpl:54K ep:46 epch:1.15 loss:0.093 grdn:0.461 lr:2.1e-05 updt_s:6.771 data_s:2.623
+INFO 2026-11-20 14:38:33 ot_train.py:506 step:426 smpl:55K ep:46 epch:1.15 loss:0.087 grdn:0.438 lr:2.1e-05 updt_s:4.470 data_s:2.691
+INFO 2026-11-20 14:38:43 ot_train.py:506 step:427 smpl:55K ep:46 epch:1.15 loss:0.084 grdn:0.427 lr:2.1e-05 updt_s:6.790 data_s:2.557
+INFO 2026-11-20 14:38:50 ot_train.py:506 step:428 smpl:55K ep:46 epch:1.16 loss:0.083 grdn:0.376 lr:2.1e-05 updt_s:4.467 data_s:2.715
+INFO 2026-11-20 14:39:00 ot_train.py:506 step:429 smpl:55K ep:46 epch:1.16 loss:0.085 grdn:0.371 lr:2.1e-05 updt_s:6.890 data_s:2.625
+INFO 2026-11-20 14:39:07 ot_train.py:506 step:430 smpl:55K ep:46 epch:1.16 loss:0.090 grdn:0.545 lr:2.2e-05 updt_s:4.709 data_s:2.740
+INFO 2026-11-20 14:39:16 ot_train.py:506 step:431 smpl:55K ep:47 epch:1.16 loss:0.073 grdn:0.413 lr:2.2e-05 updt_s:6.733 data_s:2.609
+INFO 2026-11-20 14:39:24 ot_train.py:506 step:432 smpl:55K ep:47 epch:1.17 loss:0.102 grdn:0.417 lr:2.2e-05 updt_s:4.469 data_s:2.728
+INFO 2026-11-20 14:39:33 ot_train.py:506 step:433 smpl:55K ep:47 epch:1.17 loss:0.086 grdn:0.326 lr:2.2e-05 updt_s:6.572 data_s:2.579
+INFO 2026-11-20 14:39:40 ot_train.py:506 step:434 smpl:56K ep:47 epch:1.17 loss:0.083 grdn:0.532 lr:2.2e-05 updt_s:4.455 data_s:2.706
+INFO 2026-11-20 14:39:49 ot_train.py:506 step:435 smpl:56K ep:47 epch:1.17 loss:0.088 grdn:0.608 lr:2.2e-05 updt_s:6.911 data_s:2.549
+INFO 2026-11-20 14:39:57 ot_train.py:506 step:436 smpl:56K ep:47 epch:1.18 loss:0.090 grdn:0.405 lr:2.2e-05 updt_s:4.613 data_s:2.706
+INFO 2026-11-20 14:40:06 ot_train.py:506 step:437 smpl:56K ep:47 epch:1.18 loss:0.085 grdn:0.374 lr:2.2e-05 updt_s:7.089 data_s:2.564
+INFO 2026-11-20 14:40:14 ot_train.py:506 step:438 smpl:56K ep:47 epch:1.18 loss:0.106 grdn:0.525 lr:2.2e-05 updt_s:4.714 data_s:2.693
+INFO 2026-11-20 14:40:23 ot_train.py:506 step:439 smpl:56K ep:47 epch:1.19 loss:0.086 grdn:0.446 lr:2.2e-05 updt_s:6.806 data_s:2.531
+INFO 2026-11-20 14:40:30 ot_train.py:506 step:440 smpl:56K ep:48 epch:1.19 loss:0.086 grdn:0.619 lr:2.2e-05 updt_s:4.472 data_s:2.767
+INFO 2026-11-20 14:40:40 ot_train.py:506 step:441 smpl:56K ep:48 epch:1.19 loss:0.099 grdn:0.488 lr:2.2e-05 updt_s:6.719 data_s:2.575
+INFO 2026-11-20 14:40:47 ot_train.py:506 step:442 smpl:57K ep:48 epch:1.19 loss:0.098 grdn:0.381 lr:2.2e-05 updt_s:4.450 data_s:2.636
+INFO 2026-11-20 14:40:56 ot_train.py:506 step:443 smpl:57K ep:48 epch:1.20 loss:0.086 grdn:0.610 lr:2.2e-05 updt_s:6.736 data_s:2.548
+INFO 2026-11-20 14:41:04 ot_train.py:506 step:444 smpl:57K ep:48 epch:1.20 loss:0.095 grdn:0.441 lr:2.2e-05 updt_s:4.914 data_s:2.697
+INFO 2026-11-20 14:41:13 ot_train.py:506 step:445 smpl:57K ep:48 epch:1.20 loss:0.062 grdn:0.620 lr:2.2e-05 updt_s:6.776 data_s:2.546
+INFO 2026-11-20 14:41:20 ot_train.py:506 step:446 smpl:57K ep:48 epch:1.20 loss:0.091 grdn:0.398 lr:2.2e-05 updt_s:4.543 data_s:2.697
+INFO 2026-11-20 14:41:30 ot_train.py:506 step:447 smpl:57K ep:48 epch:1.21 loss:0.109 grdn:0.464 lr:2.2e-05 updt_s:6.734 data_s:2.642
+INFO 2026-11-20 14:41:37 ot_train.py:506 step:448 smpl:57K ep:48 epch:1.21 loss:0.093 grdn:0.469 lr:2.2e-05 updt_s:4.544 data_s:2.739
+INFO 2026-11-20 14:41:46 ot_train.py:506 step:449 smpl:57K ep:49 epch:1.21 loss:0.078 grdn:0.450 lr:2.2e-05 updt_s:6.721 data_s:2.603
+INFO 2026-11-20 14:41:53 ot_train.py:506 step:450 smpl:58K ep:49 epch:1.22 loss:0.086 grdn:0.418 lr:2.3e-05 updt_s:4.453 data_s:2.815
+INFO 2026-11-20 14:42:03 ot_train.py:506 step:451 smpl:58K ep:49 epch:1.22 loss:0.093 grdn:0.494 lr:2.3e-05 updt_s:7.005 data_s:2.582
+INFO 2026-11-20 14:42:10 ot_train.py:506 step:452 smpl:58K ep:49 epch:1.22 loss:0.105 grdn:0.425 lr:2.3e-05 updt_s:4.627 data_s:2.685
+INFO 2026-11-20 14:42:20 ot_train.py:506 step:453 smpl:58K ep:49 epch:1.22 loss:0.089 grdn:0.535 lr:2.3e-05 updt_s:6.946 data_s:2.563
+INFO 2026-11-20 14:42:27 ot_train.py:506 step:454 smpl:58K ep:49 epch:1.23 loss:0.089 grdn:0.499 lr:2.3e-05 updt_s:4.452 data_s:2.693
+INFO 2026-11-20 14:42:36 ot_train.py:506 step:455 smpl:58K ep:49 epch:1.23 loss:0.083 grdn:0.523 lr:2.3e-05 updt_s:6.784 data_s:2.598
+INFO 2026-11-20 14:42:44 ot_train.py:506 step:456 smpl:58K ep:49 epch:1.23 loss:0.092 grdn:0.400 lr:2.3e-05 updt_s:4.469 data_s:2.701
+INFO 2026-11-20 14:42:53 ot_train.py:506 step:457 smpl:58K ep:49 epch:1.23 loss:0.094 grdn:0.356 lr:2.3e-05 updt_s:6.746 data_s:2.581
+INFO 2026-11-20 14:43:00 ot_train.py:506 step:458 smpl:59K ep:49 epch:1.24 loss:0.093 grdn:0.346 lr:2.3e-05 updt_s:4.494 data_s:2.728
+INFO 2026-11-20 14:43:10 ot_train.py:506 step:459 smpl:59K ep:50 epch:1.24 loss:0.080 grdn:0.409 lr:2.3e-05 updt_s:7.021 data_s:2.579
+INFO 2026-11-20 14:43:17 ot_train.py:506 step:460 smpl:59K ep:50 epch:1.24 loss:0.101 grdn:0.471 lr:2.3e-05 updt_s:4.838 data_s:2.657
+INFO 2026-11-20 14:43:27 ot_train.py:506 step:461 smpl:59K ep:50 epch:1.24 loss:0.082 grdn:0.391 lr:2.3e-05 updt_s:6.699 data_s:2.640
+INFO 2026-11-20 14:43:34 ot_train.py:506 step:462 smpl:59K ep:50 epch:1.25 loss:0.073 grdn:0.424 lr:2.3e-05 updt_s:4.464 data_s:2.681
+INFO 2026-11-20 14:43:43 ot_train.py:506 step:463 smpl:59K ep:50 epch:1.25 loss:0.094 grdn:0.369 lr:2.3e-05 updt_s:6.735 data_s:2.592
+INFO 2026-11-20 14:43:50 ot_train.py:506 step:464 smpl:59K ep:50 epch:1.25 loss:0.097 grdn:0.386 lr:2.3e-05 updt_s:4.466 data_s:2.786
+INFO 2026-11-20 14:44:00 ot_train.py:506 step:465 smpl:60K ep:50 epch:1.26 loss:0.065 grdn:0.361 lr:2.3e-05 updt_s:6.756 data_s:2.601
+INFO 2026-11-20 14:44:07 ot_train.py:506 step:466 smpl:60K ep:50 epch:1.26 loss:0.094 grdn:0.456 lr:2.3e-05 updt_s:4.526 data_s:2.685
+INFO 2026-11-20 14:44:16 ot_train.py:506 step:467 smpl:60K ep:50 epch:1.26 loss:0.091 grdn:0.451 lr:2.3e-05 updt_s:6.746 data_s:2.527
+INFO 2026-11-20 14:44:24 ot_train.py:506 step:468 smpl:60K ep:51 epch:1.26 loss:0.092 grdn:0.398 lr:2.3e-05 updt_s:4.692 data_s:2.711
+INFO 2026-11-20 14:44:33 ot_train.py:506 step:469 smpl:60K ep:51 epch:1.27 loss:0.078 grdn:0.498 lr:2.3e-05 updt_s:6.746 data_s:2.597
+INFO 2026-11-20 14:44:40 ot_train.py:506 step:470 smpl:60K ep:51 epch:1.27 loss:0.081 grdn:0.407 lr:2.4e-05 updt_s:4.480 data_s:2.672
+INFO 2026-11-20 14:44:49 ot_train.py:506 step:471 smpl:60K ep:51 epch:1.27 loss:0.090 grdn:0.465 lr:2.4e-05 updt_s:6.772 data_s:2.480
+INFO 2026-11-20 14:44:56 ot_train.py:506 step:472 smpl:60K ep:51 epch:1.27 loss:0.093 grdn:0.515 lr:2.4e-05 updt_s:4.471 data_s:2.649
+INFO 2026-11-20 14:45:06 ot_train.py:506 step:473 smpl:61K ep:51 epch:1.28 loss:0.097 grdn:0.498 lr:2.4e-05 updt_s:6.625 data_s:2.642
+INFO 2026-11-20 14:45:13 ot_train.py:506 step:474 smpl:61K ep:51 epch:1.28 loss:0.065 grdn:0.447 lr:2.4e-05 updt_s:4.644 data_s:2.768
+INFO 2026-11-20 14:45:23 ot_train.py:506 step:475 smpl:61K ep:51 epch:1.28 loss:0.103 grdn:0.641 lr:2.4e-05 updt_s:6.939 data_s:2.515
+INFO 2026-11-20 14:45:30 ot_train.py:506 step:476 smpl:61K ep:51 epch:1.29 loss:0.087 grdn:0.482 lr:2.4e-05 updt_s:4.454 data_s:2.723
+INFO 2026-11-20 14:45:39 ot_train.py:506 step:477 smpl:61K ep:52 epch:1.29 loss:0.076 grdn:21.382 lr:2.4e-05 updt_s:6.849 data_s:2.571
+INFO 2026-11-20 14:45:46 ot_train.py:506 step:478 smpl:61K ep:52 epch:1.29 loss:0.077 grdn:0.449 lr:2.4e-05 updt_s:4.473 data_s:2.657
+INFO 2026-11-20 14:45:56 ot_train.py:506 step:479 smpl:61K ep:52 epch:1.29 loss:0.085 grdn:0.456 lr:2.4e-05 updt_s:6.728 data_s:2.619
+INFO 2026-11-20 14:46:03 ot_train.py:506 step:480 smpl:61K ep:52 epch:1.30 loss:0.076 grdn:0.485 lr:2.4e-05 updt_s:4.458 data_s:2.675
+INFO 2026-11-20 14:46:12 ot_train.py:506 step:481 smpl:62K ep:52 epch:1.30 loss:0.094 grdn:0.419 lr:2.4e-05 updt_s:6.834 data_s:2.638
+INFO 2026-11-20 14:46:20 ot_train.py:506 step:482 smpl:62K ep:52 epch:1.30 loss:0.079 grdn:0.448 lr:2.4e-05 updt_s:4.904 data_s:2.701
+INFO 2026-11-20 14:46:29 ot_train.py:506 step:483 smpl:62K ep:52 epch:1.30 loss:0.102 grdn:0.484 lr:2.4e-05 updt_s:6.580 data_s:2.689
+INFO 2026-11-20 14:46:36 ot_train.py:506 step:484 smpl:62K ep:52 epch:1.31 loss:0.085 grdn:0.486 lr:2.4e-05 updt_s:4.456 data_s:2.743
+INFO 2026-11-20 14:46:46 ot_train.py:506 step:485 smpl:62K ep:52 epch:1.31 loss:0.085 grdn:0.476 lr:2.4e-05 updt_s:6.722 data_s:2.583

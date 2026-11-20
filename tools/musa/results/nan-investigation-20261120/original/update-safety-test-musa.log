@@ -1,0 +1,2 @@
+{"rank": 1, "device": "musa:1", "passed": true, "checked": "real update loss/gradient/finite"}
+{"rank": 0, "device": "musa:0", "passed": true, "checked": "real update loss/gradient/finite"}

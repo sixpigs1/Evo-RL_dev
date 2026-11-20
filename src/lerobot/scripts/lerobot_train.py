@@ -42,7 +42,8 @@ from lerobot.scripts.lerobot_eval import eval_policy_all
 from lerobot.utils.devices import report_musa_memory, report_musa_parameter_sync, validate_runtime_device
 from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.logging_utils import AverageMeter, MetricsTracker
-from lerobot.utils.random_utils import save_distributed_rng_state, set_seed
+from lerobot.utils.numerical_safety import require_finite
+from lerobot.utils.random_utils import save_distributed_rng_state, serialize_rng_state, set_seed
 from lerobot.utils.train_utils import (
     get_step_checkpoint_dir,
     get_step_identifier,
@@ -67,6 +68,8 @@ def update_policy(
     lr_scheduler=None,
     lock=None,
     rabc_weights_provider=None,
+    failure_dir=None,
+    update_step=None,
 ) -> tuple[MetricsTracker, dict]:
     """
     Performs a single training step to update the policy's weights.
@@ -84,6 +87,8 @@ def update_policy(
         lr_scheduler: An optional learning rate scheduler.
         lock: An optional lock for thread-safe optimizer updates.
         rabc_weights_provider: Optional RABCWeights instance for sample weighting.
+        failure_dir: Directory for per-rank diagnostic inputs and the pre-update state on failure.
+        update_step: One-based update number recorded in numerical failure diagnostics.
 
     Returns:
         A tuple containing:
@@ -98,6 +103,8 @@ def update_policy(
     rabc_batch_stats = None
     if rabc_weights_provider is not None:
         rabc_batch_weights, rabc_batch_stats = rabc_weights_provider.compute_batch_weights(batch)
+
+    rng_before_forward = serialize_rng_state() if failure_dir is not None else None
 
     # Let accelerator handle mixed precision
     with accelerator.autocast():
@@ -119,6 +126,17 @@ def update_policy(
 
         # TODO(rcadene): policy.unnormalize_outputs(out_dict)
 
+    safety = dict(
+        accelerator=accelerator,
+        policy=policy,
+        batch=batch,
+        step=update_step,
+        failure_dir=failure_dir,
+        rng=rng_before_forward,
+        optimizer=optimizer,
+    )
+    require_finite(loss, phase="loss", **safety)
+
     # Use accelerator's backward method
     accelerator.backward(loss)
 
@@ -129,6 +147,8 @@ def update_policy(
         grad_norm = torch.nn.utils.clip_grad_norm_(
             policy.parameters(), float("inf"), error_if_nonfinite=False
         )
+
+    require_finite(grad_norm, phase="gradient norm", **safety)
 
     # Optimizer step
     with lock if lock is not None else nullcontext():
@@ -479,6 +499,8 @@ def train(
             accelerator=accelerator,
             lr_scheduler=lr_scheduler,
             rabc_weights_provider=rabc_weights,
+            failure_dir=cfg.output_dir / "numerical_failures",
+            update_step=step + 1,
         )
 
         # Note: eval and checkpoint happens *after* the `step`th training update has completed, so we

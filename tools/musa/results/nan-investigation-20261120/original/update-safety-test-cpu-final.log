@@ -1,0 +1,4 @@
+[Gloo] Rank [Gloo] Rank 10 is connected to  is connected to 11 peer ranks.  peer ranks. Expected number of connected peer ranks is : Expected number of connected peer ranks is : 11
+
+{"rank": 0, "device": "cpu", "passed": true, "checked": "real update loss/gradient/finite"}
+{"rank": 1, "device": "cpu", "passed": true, "checked": "real update loss/gradient/finite"}

@@ -1,0 +1,17 @@
+{
+  "config": "/workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model/train_config.json",
+  "overrides": {
+    "config_path": "/workspace/storage/outputs/foldtowel40-pi05-4gpu-20261120/checkpoints/000371/pretrained_model/train_config.json",
+    "resume": true,
+    "output_dir": "/workspace/storage/outputs/pi05-nan-diagnosis-v3-20261120",
+    "steps": 9275,
+    "save_checkpoint": false,
+    "log_freq": 1,
+    "wandb.enable": false,
+    "job_name": "pi05-nan-diagnosis"
+  },
+  "started_at": 1795184908.8247511,
+  "status": "running",
+  "supervisor_pid": 688838,
+  "pid": 690539
+}
