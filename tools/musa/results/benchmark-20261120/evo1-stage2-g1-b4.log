@@ -1,0 +1,209 @@
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+INFO 2026-11-20 07:33:04 ot_train.py:202 {'acp': {'enable': False,
+         'indicator_dropout_prob': 0.0,
+         'indicator_field': 'complementary_info.acp_indicator'},
+ 'batch_size': 4,
+ 'checkpoint_path': None,
+ 'dataset': {'episodes': None,
+             'image_transforms': {'enable': False,
+                                  'max_num_transforms': 3,
+                                  'random_order': False,
+                                  'tfs': {'affine': {'kwargs': {'degrees': [-5.0,
+                                                                            5.0],
+                                                                'translate': [0.05,
+                                                                              0.05]},
+                                                     'type': 'RandomAffine',
+                                                     'weight': 1.0},
+                                          'brightness': {'kwargs': {'brightness': [0.8,
+                                                                                   1.2]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'contrast': {'kwargs': {'contrast': [0.8,
+                                                                               1.2]},
+                                                       'type': 'ColorJitter',
+                                                       'weight': 1.0},
+                                          'hue': {'kwargs': {'hue': [-0.05,
+                                                                     0.05]},
+                                                  'type': 'ColorJitter',
+                                                  'weight': 1.0},
+                                          'saturation': {'kwargs': {'saturation': [0.5,
+                                                                                   1.5]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'sharpness': {'kwargs': {'sharpness': [0.5,
+                                                                                 1.5]},
+                                                        'type': 'SharpnessJitter',
+                                                        'weight': 1.0}}},
+             'repo_id': 'Elvinky/bi_so101_fold_towel_d0_acceptance',
+             'revision': None,
+             'root': '/workspace/storage/data/towel-small/acceptance',
+             'streaming': False,
+             'use_imagenet_stats': True,
+             'video_backend': 'pyav'},
+ 'env': None,
+ 'eval': {'batch_size': 50, 'n_episodes': 50, 'use_async_envs': False},
+ 'eval_freq': 0,
+ 'job_name': 'evo1',
+ 'log_freq': 1,
+ 'num_workers': 0,
+ 'optimizer': {'betas': [0.9, 0.999],
+               'eps': 1e-08,
+               'grad_clip_norm': 1.0,
+               'lr': 1e-05,
+               'type': 'adamw',
+               'weight_decay': 1e-05},
+ 'output_dir': '/workspace/storage/benchmarks/20261120/evo1-stage2-g1-b4',
+ 'peft': None,
+ 'policy': {'action_head': 'flowmatching',
+            'chunk_size': 50,
+            'default_embodiment_id': 0,
+            'device': 'musa',
+            'drop_last': True,
+            'dropout': 0.0,
+            'embed_dim': 896,
+            'embedder_tensor_fastpath': True,
+            'embodiment_id_field': None,
+            'empty_cameras': 0,
+            'enable_vlm_gradient_checkpointing': True,
+            'finetune_action_head': True,
+            'finetune_vlm': True,
+            'gradient_checkpointing_use_reentrant': False,
+            'hidden_dim': 1024,
+            'image_resolution': [448, 448],
+            'input_features': {'observation.images.left_wrist': {'shape': [3,
+                                                                           480,
+                                                                           640],
+                                                                 'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.right_front': {'shape': [3,
+                                                                            480,
+                                                                            640],
+                                                                  'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.right_wrist': {'shape': [3,
+                                                                            480,
+                                                                            640],
+                                                                  'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.state': {'shape': [12],
+                                                     'type': <FeatureType.STATE: 'STATE'>}},
+            'license': None,
+            'max_action_dim': 24,
+            'max_state_dim': 24,
+            'max_views': 3,
+            'n_action_steps': 50,
+            'n_obs_steps': 1,
+            'normalization_mapping': {'ACTION': <NormalizationMode.MIN_MAX: 'MIN_MAX'>,
+                                      'STATE': <NormalizationMode.MIN_MAX: 'MIN_MAX'>,
+                                      'VISUAL': <NormalizationMode.IDENTITY: 'IDENTITY'>},
+            'num_categories': 1,
+            'num_heads': 8,
+            'num_inference_timesteps': 32,
+            'num_layers': 8,
+            'optimizer_betas': [0.9, 0.999],
+            'optimizer_eps': 1e-08,
+            'optimizer_grad_clip_norm': 1.0,
+            'optimizer_lr': 1e-05,
+            'optimizer_weight_decay': 1e-05,
+            'output_features': {'action': {'shape': [12],
+                                           'type': <FeatureType.ACTION: 'ACTION'>}},
+            'pretrained_path': '/workspace/storage/outputs/accept-evo1-stage1-1gpu/checkpoints/000100/pretrained_model',
+            'private': None,
+            'push_to_hub': False,
+            'repo_id': None,
+            'return_cls_only': False,
+            'scheduler_warmup_steps': 300,
+            'state_hidden_dim': 1024,
+            'tags': None,
+            'task_field': 'task',
+            'training_stage': 'stage2',
+            'type': 'evo1',
+            'use_amp': True,
+            'use_flash_attn': False,
+            'use_peft': False,
+            'vlm_dtype': 'bfloat16',
+            'vlm_model_name': '/workspace/storage/models/internvl3',
+            'vlm_num_layers': 14,
+            'vlm_revision': None},
+ 'rabc_epsilon': 1e-06,
+ 'rabc_head_mode': 'sparse',
+ 'rabc_kappa': 0.01,
+ 'rabc_progress_path': None,
+ 'rename_map': {},
+ 'resume': False,
+ 'resume_pretrain': True,
+ 'save_checkpoint': False,
+ 'save_freq': 17,
+ 'scheduler': {'num_warmup_steps': 300, 'type': 'evo1_exact'},
+ 'seed': 1000,
+ 'steps': 35,
+ 'tolerance_s': 0.0001,
+ 'use_policy_training_preset': True,
+ 'use_rabc': False,
+ 'wandb': {'disable_artifact': False,
+           'enable': False,
+           'entity': None,
+           'mode': None,
+           'notes': None,
+           'project': 'lerobot',
+           'run_id': None}}
+INFO 2026-11-20 07:33:04 ot_train.py:207 Logs will be saved locally.
+INFO 2026-11-20 07:33:04 ot_train.py:222 Creating dataset
+INFO 2026-11-20 07:33:05 ot_train.py:270 Creating policy
+INFO 2026-11-20 07:33:05 rnvl_chat.py:69 vision_select_layer: -1
+INFO 2026-11-20 07:33:05 rnvl_chat.py:70 ps_version: v2
+INFO 2026-11-20 07:33:05 rnvl_chat.py:71 min_dynamic_patch: 1
+INFO 2026-11-20 07:33:05 rnvl_chat.py:72 max_dynamic_patch: 12
+FlashAttention2 is not installed.
+INFO 2026-11-20 07:33:07 rnvl_chat.py:59 num_image_token: 256
+INFO 2026-11-20 07:33:07 rnvl_chat.py:60 ps_version: v2
+INFO 2026-11-20 07:33:08 embedder.py:180 Enabled InternVL3 gradient checkpointing (use_reentrant=False).
+INFO 2026-11-20 07:33:08 ling_evo1.py:35 Evo1 stage2 runtime settings: embedder_tensor_fastpath=True enable_vlm_gradient_checkpointing=True gradient_checkpointing_use_reentrant=False
+Loading weights from local directory
+INFO 2026-11-20 07:33:09 ot_train.py:330 Creating optimizer and scheduler
+INFO 2026-11-20 07:33:09 ot_train.py:365 Output dir: /workspace/storage/benchmarks/20261120/evo1-stage2-g1-b4
+INFO 2026-11-20 07:33:09 ot_train.py:372 cfg.steps=35 (35)
+INFO 2026-11-20 07:33:09 ot_train.py:373 dataset.num_frames=3432 (3K)
+INFO 2026-11-20 07:33:09 ot_train.py:374 dataset.num_episodes=2
+INFO 2026-11-20 07:33:09 ot_train.py:377 Effective batch size: 4 x 1 = 4
+INFO 2026-11-20 07:33:09 ot_train.py:378 num_learnable_params=775198640 (775M)
+INFO 2026-11-20 07:33:09 ot_train.py:379 num_total_params=775198640 (775M)
+INFO 2026-11-20 07:33:09 ot_train.py:435 Start offline training on a fixed dataset, with effective batch size: 4
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+INFO 2026-11-20 07:33:14 ot_train.py:468 First policy prompt (task):
+Fold the towels neatly and set them aside.
+INFO 2026-11-20 07:33:21 ot_train.py:493 step:1 smpl:4 ep:0 epch:0.00 loss:0.593 grdn:3.880 lr:3.3e-08 updt_s:6.535 data_s:5.306
+INFO 2026-11-20 07:33:22 ot_train.py:493 step:2 smpl:8 ep:0 epch:0.00 loss:0.610 grdn:4.161 lr:6.7e-08 updt_s:0.808 data_s:0.472
+INFO 2026-11-20 07:33:23 ot_train.py:493 step:3 smpl:12 ep:0 epch:0.00 loss:0.755 grdn:4.378 lr:1.0e-07 updt_s:0.804 data_s:0.442
+INFO 2026-11-20 07:33:25 ot_train.py:493 step:4 smpl:16 ep:0 epch:0.00 loss:0.580 grdn:26.823 lr:1.3e-07 updt_s:0.804 data_s:0.450
+INFO 2026-11-20 07:33:26 ot_train.py:493 step:5 smpl:20 ep:0 epch:0.01 loss:0.577 grdn:3.330 lr:1.7e-07 updt_s:0.805 data_s:0.452
+INFO 2026-11-20 07:33:27 ot_train.py:493 step:6 smpl:24 ep:0 epch:0.01 loss:0.630 grdn:4.004 lr:2.0e-07 updt_s:0.805 data_s:0.447
+INFO 2026-11-20 07:33:28 ot_train.py:493 step:7 smpl:28 ep:0 epch:0.01 loss:0.686 grdn:4.514 lr:2.3e-07 updt_s:0.804 data_s:0.472
+INFO 2026-11-20 07:33:30 ot_train.py:493 step:8 smpl:32 ep:0 epch:0.01 loss:0.740 grdn:4.177 lr:2.7e-07 updt_s:0.805 data_s:0.465
+INFO 2026-11-20 07:33:31 ot_train.py:493 step:9 smpl:36 ep:0 epch:0.01 loss:0.633 grdn:3.439 lr:3.0e-07 updt_s:1.089 data_s:0.486
+INFO 2026-11-20 07:33:33 ot_train.py:493 step:10 smpl:40 ep:0 epch:0.01 loss:0.655 grdn:4.366 lr:3.3e-07 updt_s:0.803 data_s:0.488
+INFO 2026-11-20 07:33:34 ot_train.py:493 step:11 smpl:44 ep:0 epch:0.01 loss:0.609 grdn:3.681 lr:3.7e-07 updt_s:0.803 data_s:0.482
+INFO 2026-11-20 07:33:35 ot_train.py:493 step:12 smpl:48 ep:0 epch:0.01 loss:0.583 grdn:3.243 lr:4.0e-07 updt_s:0.804 data_s:0.504
+INFO 2026-11-20 07:33:36 ot_train.py:493 step:13 smpl:52 ep:0 epch:0.02 loss:0.652 grdn:4.276 lr:4.3e-07 updt_s:0.803 data_s:0.489
+INFO 2026-11-20 07:33:38 ot_train.py:493 step:14 smpl:56 ep:0 epch:0.02 loss:0.628 grdn:3.379 lr:4.7e-07 updt_s:0.804 data_s:0.271
+INFO 2026-11-20 07:33:39 ot_train.py:493 step:15 smpl:60 ep:0 epch:0.02 loss:0.618 grdn:3.856 lr:5.0e-07 updt_s:0.804 data_s:0.470
+INFO 2026-11-20 07:33:40 ot_train.py:493 step:16 smpl:64 ep:0 epch:0.02 loss:0.666 grdn:3.982 lr:5.3e-07 updt_s:0.805 data_s:0.278
+INFO 2026-11-20 07:33:41 ot_train.py:493 step:17 smpl:68 ep:0 epch:0.02 loss:0.670 grdn:3.709 lr:5.7e-07 updt_s:0.804 data_s:0.484
+INFO 2026-11-20 07:33:42 ot_train.py:493 step:18 smpl:72 ep:0 epch:0.02 loss:0.573 grdn:3.179 lr:6.0e-07 updt_s:0.802 data_s:0.435
+INFO 2026-11-20 07:33:44 ot_train.py:493 step:19 smpl:76 ep:0 epch:0.02 loss:0.677 grdn:4.027 lr:6.3e-07 updt_s:0.804 data_s:0.447
+INFO 2026-11-20 07:33:45 ot_train.py:493 step:20 smpl:80 ep:0 epch:0.02 loss:0.617 grdn:2.995 lr:6.7e-07 updt_s:0.805 data_s:0.449
+INFO 2026-11-20 07:33:46 ot_train.py:493 step:21 smpl:84 ep:0 epch:0.02 loss:0.681 grdn:3.589 lr:7.0e-07 updt_s:0.805 data_s:0.443
+INFO 2026-11-20 07:33:47 ot_train.py:493 step:22 smpl:88 ep:0 epch:0.03 loss:0.549 grdn:3.237 lr:7.3e-07 updt_s:0.803 data_s:0.466
+INFO 2026-11-20 07:33:49 ot_train.py:493 step:23 smpl:92 ep:0 epch:0.03 loss:0.663 grdn:4.002 lr:7.7e-07 updt_s:0.805 data_s:0.448
+INFO 2026-11-20 07:33:50 ot_train.py:493 step:24 smpl:96 ep:0 epch:0.03 loss:0.751 grdn:3.573 lr:8.0e-07 updt_s:0.804 data_s:0.484
+INFO 2026-11-20 07:33:51 ot_train.py:493 step:25 smpl:100 ep:0 epch:0.03 loss:0.591 grdn:3.550 lr:8.3e-07 updt_s:0.805 data_s:0.315
+INFO 2026-11-20 07:33:52 ot_train.py:493 step:26 smpl:104 ep:0 epch:0.03 loss:0.513 grdn:3.828 lr:8.7e-07 updt_s:0.804 data_s:0.488
+INFO 2026-11-20 07:33:54 ot_train.py:493 step:27 smpl:108 ep:0 epch:0.03 loss:0.561 grdn:3.373 lr:9.0e-07 updt_s:0.805 data_s:0.260
+INFO 2026-11-20 07:33:55 ot_train.py:493 step:28 smpl:112 ep:0 epch:0.03 loss:0.677 grdn:4.049 lr:9.3e-07 updt_s:0.805 data_s:0.474
+INFO 2026-11-20 07:33:56 ot_train.py:493 step:29 smpl:116 ep:0 epch:0.03 loss:0.679 grdn:3.450 lr:9.7e-07 updt_s:0.803 data_s:0.448
+INFO 2026-11-20 07:33:57 ot_train.py:493 step:30 smpl:120 ep:0 epch:0.03 loss:0.643 grdn:4.129 lr:1.0e-06 updt_s:0.803 data_s:0.485
+INFO 2026-11-20 07:33:59 ot_train.py:493 step:31 smpl:124 ep:0 epch:0.04 loss:0.629 grdn:3.463 lr:1.0e-06 updt_s:0.805 data_s:0.453
+INFO 2026-11-20 07:34:00 ot_train.py:493 step:32 smpl:128 ep:0 epch:0.04 loss:0.584 grdn:4.542 lr:1.1e-06 updt_s:0.805 data_s:0.488
+INFO 2026-11-20 07:34:01 ot_train.py:493 step:33 smpl:132 ep:0 epch:0.04 loss:0.588 grdn:3.183 lr:1.1e-06 updt_s:0.804 data_s:0.452
+INFO 2026-11-20 07:34:02 ot_train.py:493 step:34 smpl:136 ep:0 epch:0.04 loss:0.573 grdn:4.129 lr:1.1e-06 updt_s:0.805 data_s:0.494
+INFO 2026-11-20 07:34:04 ot_train.py:493 step:35 smpl:140 ep:0 epch:0.04 loss:0.589 grdn:3.702 lr:1.2e-06 updt_s:0.804 data_s:0.447
+INFO 2026-11-20 07:34:04 ot_train.py:588 End of training
+INFO 2026-11-20 07:34:04 s/devices.py:49 MUSA memory [rank, peak_allocated_bytes, peak_reserved_bytes]: [[0, 9895278080, 12048138240]]

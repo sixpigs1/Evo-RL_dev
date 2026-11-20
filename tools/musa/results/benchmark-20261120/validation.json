@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "cases": 24,
+  "steps_per_case": 35,
+  "warmup_steps": 10,
+  "measured_steps_per_case": 25,
+  "per_step_records": 840,
+  "finite_timing_records": true,
+  "logged_loss_and_grad_finite": true,
+  "ddp_parameter_samples_agree": true,
+  "rank_memory_record_counts_verified": true,
+  "trainable_parameter_counts_verified": true,
+  "source_hashes_verified": true,
+  "python_syntax": "passed",
+  "bash_syntax": "passed"
+}

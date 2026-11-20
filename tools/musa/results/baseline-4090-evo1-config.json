@@ -1,0 +1,101 @@
+{
+    "type": "evo1",
+    "n_obs_steps": 1,
+    "input_features": {
+        "observation.state": {
+            "type": "STATE",
+            "shape": [
+                12
+            ]
+        },
+        "observation.images.left_wrist": {
+            "type": "VISUAL",
+            "shape": [
+                3,
+                480,
+                640
+            ]
+        },
+        "observation.images.right_wrist": {
+            "type": "VISUAL",
+            "shape": [
+                3,
+                480,
+                640
+            ]
+        },
+        "observation.images.right_top": {
+            "type": "VISUAL",
+            "shape": [
+                3,
+                480,
+                640
+            ]
+        }
+    },
+    "output_features": {
+        "action": {
+            "type": "ACTION",
+            "shape": [
+                12
+            ]
+        }
+    },
+    "device": "cuda",
+    "use_amp": true,
+    "use_peft": false,
+    "push_to_hub": false,
+    "repo_id": null,
+    "private": null,
+    "tags": null,
+    "license": null,
+    "pretrained_path": "/home/MINT-Minhang/work/YeZewei/RWorld-RL/checkpoints/FoldTowel/v1_1119/stage1/checkpoints/last/pretrained_model",
+    "training_stage": "stage2",
+    "chunk_size": 50,
+    "n_action_steps": 50,
+    "max_state_dim": 24,
+    "max_action_dim": 24,
+    "max_views": 3,
+    "image_resolution": [
+        448,
+        448
+    ],
+    "empty_cameras": 0,
+    "normalization_mapping": {
+        "VISUAL": "IDENTITY",
+        "STATE": "MIN_MAX",
+        "ACTION": "MIN_MAX"
+    },
+    "vlm_model_name": "OpenGVLab/InternVL3-1B",
+    "vlm_num_layers": 14,
+    "vlm_dtype": "bfloat16",
+    "use_flash_attn": false,
+    "embedder_tensor_fastpath": true,
+    "enable_vlm_gradient_checkpointing": true,
+    "gradient_checkpointing_use_reentrant": false,
+    "action_head": "flowmatching",
+    "embed_dim": 896,
+    "hidden_dim": 1024,
+    "state_hidden_dim": 1024,
+    "num_heads": 8,
+    "num_layers": 8,
+    "dropout": 0.0,
+    "num_inference_timesteps": 32,
+    "num_categories": 1,
+    "return_cls_only": false,
+    "finetune_vlm": true,
+    "finetune_action_head": true,
+    "task_field": "task",
+    "embodiment_id_field": null,
+    "default_embodiment_id": 0,
+    "optimizer_lr": 1e-05,
+    "optimizer_betas": [
+        0.9,
+        0.999
+    ],
+    "optimizer_eps": 1e-08,
+    "optimizer_weight_decay": 1e-05,
+    "optimizer_grad_clip_norm": 1.0,
+    "scheduler_warmup_steps": 1000,
+    "drop_last": true
+}

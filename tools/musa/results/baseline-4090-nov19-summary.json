@@ -1,0 +1,14 @@
+{
+  "source_host": "RTX 4090 MINT-Minhang",
+  "source_path": "/home/MINT-Minhang/work/YeZewei/RWorld-RL/checkpoints/FoldTowel/v1_1119/diagnostics/20261120-003552-epoch-monitor/before-stage2.log",
+  "date": "2026-11-19",
+  "batch_size": 8,
+  "excluded_first_logged_window": true,
+  "logged_windows": 71,
+  "steps_per_window": 100,
+  "mean_update_s": 1.3607605633802817,
+  "mean_data_s": 0.11125352112676057,
+  "mean_step_s": 1.4720140845070424,
+  "samples_per_s": 5.4347306076756,
+  "description": "Original logged window means; includes data loading, no checkpoint saves before crash. GPU Unlock enabled. Three cameras and BF16, full Stage2 with VLM checkpointing."
+}

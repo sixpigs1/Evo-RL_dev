@@ -1,0 +1,291 @@
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:lerobot.configs.policies:Device 'mps' is not available. Switching to 'musa'.
+WARNING:lerobot.configs.policies:Device 'mps' is not available. Switching to 'musa'.
+WARNING:lerobot.configs.policies:Device 'mps' is not available. Switching to 'musa'.
+WARNING:lerobot.configs.policies:Device 'mps' is not available. Switching to 'musa'.
+INFO 2026-11-20 08:14:54 ot_train.py:202 {'acp': {'enable': False,
+         'indicator_dropout_prob': 0.0,
+         'indicator_field': 'complementary_info.acp_indicator'},
+ 'batch_size': 8,
+ 'checkpoint_path': None,
+ 'dataset': {'episodes': None,
+             'image_transforms': {'enable': False,
+                                  'max_num_transforms': 3,
+                                  'random_order': False,
+                                  'tfs': {'affine': {'kwargs': {'degrees': [-5.0,
+                                                                            5.0],
+                                                                'translate': [0.05,
+                                                                              0.05]},
+                                                     'type': 'RandomAffine',
+                                                     'weight': 1.0},
+                                          'brightness': {'kwargs': {'brightness': [0.8,
+                                                                                   1.2]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'contrast': {'kwargs': {'contrast': [0.8,
+                                                                               1.2]},
+                                                       'type': 'ColorJitter',
+                                                       'weight': 1.0},
+                                          'hue': {'kwargs': {'hue': [-0.05,
+                                                                     0.05]},
+                                                  'type': 'ColorJitter',
+                                                  'weight': 1.0},
+                                          'saturation': {'kwargs': {'saturation': [0.5,
+                                                                                   1.5]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'sharpness': {'kwargs': {'sharpness': [0.5,
+                                                                                 1.5]},
+                                                        'type': 'SharpnessJitter',
+                                                        'weight': 1.0}}},
+             'repo_id': 'Elvinky/bi_so101_fold_towel_d0_acceptance',
+             'revision': None,
+             'root': '/workspace/storage/data/towel-small/acceptance',
+             'streaming': False,
+             'use_imagenet_stats': True,
+             'video_backend': 'pyav'},
+ 'env': None,
+ 'eval': {'batch_size': 50, 'n_episodes': 50, 'use_async_envs': False},
+ 'eval_freq': 0,
+ 'job_name': 'pi05',
+ 'log_freq': 1,
+ 'num_workers': 0,
+ 'optimizer': {'betas': [0.9, 0.95],
+               'eps': 1e-08,
+               'grad_clip_norm': 1.0,
+               'lr': 2.5e-05,
+               'type': 'adamw',
+               'weight_decay': 0.01},
+ 'output_dir': '/workspace/storage/benchmarks/20261120/pi05-g4-b8',
+ 'peft': None,
+ 'policy': {'action_expert_variant': 'gemma_300m',
+            'chunk_size': 50,
+            'compile_mode': 'max-autotune',
+            'compile_model': False,
+            'device': 'musa',
+            'dtype': 'bfloat16',
+            'empty_cameras': 0,
+            'freeze_vision_encoder': False,
+            'gradient_checkpointing': True,
+            'image_resolution': [224, 224],
+            'input_features': {'observation.images.base_0_rgb': {'shape': [3,
+                                                                           224,
+                                                                           224],
+                                                                 'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.left_wrist_0_rgb': {'shape': [3,
+                                                                                 224,
+                                                                                 224],
+                                                                       'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.images.right_wrist_0_rgb': {'shape': [3,
+                                                                                  224,
+                                                                                  224],
+                                                                        'type': <FeatureType.VISUAL: 'VISUAL'>},
+                               'observation.state': {'shape': [32],
+                                                     'type': <FeatureType.STATE: 'STATE'>}},
+            'license': None,
+            'mask_action_padding_loss': False,
+            'max_action_dim': 32,
+            'max_period': 4.0,
+            'max_state_dim': 32,
+            'min_period': 0.004,
+            'n_action_steps': 50,
+            'n_obs_steps': 1,
+            'normalization_mapping': {'ACTION': <NormalizationMode.QUANTILES: 'QUANTILES'>,
+                                      'STATE': <NormalizationMode.QUANTILES: 'QUANTILES'>,
+                                      'VISUAL': <NormalizationMode.IDENTITY: 'IDENTITY'>},
+            'num_inference_steps': 10,
+            'optimizer_betas': [0.9, 0.95],
+            'optimizer_eps': 1e-08,
+            'optimizer_grad_clip_norm': 1.0,
+            'optimizer_lr': 2.5e-05,
+            'optimizer_weight_decay': 0.01,
+            'output_features': {'action': {'shape': [32],
+                                           'type': <FeatureType.ACTION: 'ACTION'>}},
+            'paligemma_variant': 'gemma_2b',
+            'pretrained_path': '/workspace/storage/models/pi05',
+            'private': None,
+            'push_to_hub': False,
+            'repo_id': None,
+            'rtc_config': None,
+            'scheduler_decay_lr': 2.5e-06,
+            'scheduler_decay_steps': 30000,
+            'scheduler_warmup_steps': 1000,
+            'tags': None,
+            'time_sampling_beta_alpha': 1.5,
+            'time_sampling_beta_beta': 1.0,
+            'time_sampling_offset': 0.001,
+            'time_sampling_scale': 0.999,
+            'tokenizer_max_length': 200,
+            'tokenizer_name': '/workspace/storage/models/paligemma-tokenizer',
+            'train_expert_only': False,
+            'type': 'pi05',
+            'use_amp': True,
+            'use_peft': False},
+ 'rabc_epsilon': 1e-06,
+ 'rabc_head_mode': 'sparse',
+ 'rabc_kappa': 0.01,
+ 'rabc_progress_path': None,
+ 'rename_map': {'observation.images.left_wrist': 'observation.images.left_wrist_0_rgb',
+                'observation.images.right_front': 'observation.images.base_0_rgb',
+                'observation.images.right_wrist': 'observation.images.right_wrist_0_rgb'},
+ 'resume': False,
+ 'resume_pretrain': False,
+ 'save_checkpoint': False,
+ 'save_freq': 17,
+ 'scheduler': {'decay_lr': 2.5e-06,
+               'num_decay_steps': 30000,
+               'num_warmup_steps': 1000,
+               'peak_lr': 2.5e-05,
+               'type': 'cosine_decay_with_warmup'},
+ 'seed': 1000,
+ 'steps': 35,
+ 'tolerance_s': 0.0001,
+ 'use_policy_training_preset': True,
+ 'use_rabc': False,
+ 'wandb': {'disable_artifact': False,
+           'enable': False,
+           'entity': None,
+           'mode': None,
+           'notes': None,
+           'project': 'lerobot',
+           'run_id': None}}
+INFO 2026-11-20 08:14:54 ot_train.py:207 Logs will be saved locally.
+INFO 2026-11-20 08:14:54 ot_train.py:222 Creating dataset
+INFO 2026-11-20 08:14:57 ot_train.py:270 Creating policy
+The PI05 model is a direct port of the OpenPI implementation.
+This implementation follows the original OpenPI structure for compatibility.
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation.
+This implementation follows the original OpenPI structure for compatibility.
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation.
+This implementation follows the original OpenPI structure for compatibility.
+Original implementation: https://github.com/Physical-Intelligence/openpi
+The PI05 model is a direct port of the OpenPI implementation.
+This implementation follows the original OpenPI structure for compatibility.
+Original implementation: https://github.com/Physical-Intelligence/openpi
+Loading model from: /workspace/storage/models/pi05
+✓ Loaded state dict from model.safetensors
+INFO 2026-11-20 08:15:51 ing_pi05.py:592 Enabled gradient checkpointing for PI05Pytorch model
+Remapped: action_in_proj.bias -> model.action_in_proj.bias
+Remapped: action_in_proj.weight -> model.action_in_proj.weight
+Remapped: action_out_proj.bias -> model.action_out_proj.bias
+Remapped: action_out_proj.weight -> model.action_out_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.lm_head.weight -> model.paligemma_with_expert.gemma_expert.lm_head.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight
+Remapped 812 state dict keys
+Loading model from: /workspace/storage/models/pi05
+✓ Loaded state dict from model.safetensors
+Loading model from: /workspace/storage/models/pi05
+✓ Loaded state dict from model.safetensors
+Loading model from: /workspace/storage/models/pi05
+✓ Loaded state dict from model.safetensors
+Remapped: action_in_proj.bias -> model.action_in_proj.bias
+Remapped: action_in_proj.weight -> model.action_in_proj.weight
+Remapped: action_out_proj.bias -> model.action_out_proj.bias
+Remapped: action_out_proj.weight -> model.action_out_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.lm_head.weight -> model.paligemma_with_expert.gemma_expert.lm_head.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight
+Remapped 812 state dict keys
+Remapped: action_in_proj.bias -> model.action_in_proj.bias
+Remapped: action_in_proj.weight -> model.action_in_proj.weight
+Remapped: action_out_proj.bias -> model.action_out_proj.bias
+Remapped: action_out_proj.weight -> model.action_out_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.lm_head.weight -> model.paligemma_with_expert.gemma_expert.lm_head.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight
+Remapped 812 state dict keys
+WARNING 2026-11-20 08:15:52 ng_pi05.py:1098 Vision embedding key might need handling: paligemma_with_expert.paligemma.model.vision_tower.vision_model.embeddings.patch_embedding.bias
+WARNING 2026-11-20 08:15:52 ng_pi05.py:1098 Vision embedding key might need handling: paligemma_with_expert.paligemma.model.vision_tower.vision_model.embeddings.patch_embedding.weight
+Remapped: action_in_proj.bias -> model.action_in_proj.bias
+Remapped: action_in_proj.weight -> model.action_in_proj.weight
+Remapped: action_out_proj.bias -> model.action_out_proj.bias
+Remapped: action_out_proj.weight -> model.action_out_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.lm_head.weight -> model.paligemma_with_expert.gemma_expert.lm_head.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.bias
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.input_layernorm.dense.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.down_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.gate_proj.weight
+Remapped: paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight -> model.paligemma_with_expert.gemma_expert.model.layers.0.mlp.up_proj.weight
+Remapped 812 state dict keys
+All keys loaded successfully!
+All keys loaded successfully!
+All keys loaded successfully!
+All keys loaded successfully!
+INFO 2026-11-20 08:16:04 ot_train.py:330 Creating optimizer and scheduler
+INFO 2026-11-20 08:16:04 hedulers.py:105 Auto-scaling LR scheduler: num_training_steps (35) < num_decay_steps (30000). Scaling warmup: 1000 → 1, decay: 30000 → 35 (scale factor: 0.001)
+INFO 2026-11-20 08:16:04 ot_train.py:365 Output dir: /workspace/storage/benchmarks/20261120/pi05-g4-b8
+INFO 2026-11-20 08:16:04 ot_train.py:372 cfg.steps=35 (35)
+INFO 2026-11-20 08:16:04 ot_train.py:373 dataset.num_frames=3432 (3K)
+INFO 2026-11-20 08:16:04 ot_train.py:374 dataset.num_episodes=2
+INFO 2026-11-20 08:16:04 ot_train.py:377 Effective batch size: 8 x 4 = 32
+INFO 2026-11-20 08:16:04 ot_train.py:378 num_learnable_params=3616757520 (4B)
+INFO 2026-11-20 08:16:04 ot_train.py:379 num_total_params=3616757520 (4B)
+INFO 2026-11-20 08:16:06 ot_train.py:435 Start offline training on a fixed dataset, with effective batch size: 32
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+INFO 2026-11-20 08:16:10 ot_train.py:468 First policy prompt (task):
+Task: Fold the towels neatly and set them aside., State: 17 0 254 161 100 0 165 9 255 87 205 -1 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128;
+Action:
+INFO 2026-11-20 08:16:19 ot_train.py:493 step:1 smpl:32 ep:0 epch:0.01 loss:0.179 grdn:1.871 lr:2.5e-05 updt_s:9.053 data_s:3.205
+[rank3]:[W1120 08:16:19.886009650 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank0]:[W1120 08:16:19.890220918 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank2]:[W1120 08:16:19.960322419 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank1]:[W1120 08:16:20.303080143 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+INFO 2026-11-20 08:16:21 ot_train.py:493 step:2 smpl:64 ep:0 epch:0.02 loss:0.155 grdn:1.422 lr:2.5e-05 updt_s:1.939 data_s:0.587
+INFO 2026-11-20 08:16:24 ot_train.py:493 step:3 smpl:96 ep:0 epch:0.03 loss:0.073 grdn:1.224 lr:2.5e-05 updt_s:2.016 data_s:0.539
+INFO 2026-11-20 08:16:26 ot_train.py:493 step:4 smpl:128 ep:0 epch:0.04 loss:0.087 grdn:0.839 lr:2.4e-05 updt_s:1.956 data_s:0.585
+INFO 2026-11-20 08:16:29 ot_train.py:493 step:5 smpl:160 ep:0 epch:0.05 loss:0.134 grdn:0.713 lr:2.4e-05 updt_s:1.908 data_s:0.554
+INFO 2026-11-20 08:16:31 ot_train.py:493 step:6 smpl:192 ep:0 epch:0.06 loss:0.094 grdn:0.567 lr:2.3e-05 updt_s:1.950 data_s:0.571
+INFO 2026-11-20 08:16:34 ot_train.py:493 step:7 smpl:224 ep:0 epch:0.07 loss:0.077 grdn:0.657 lr:2.3e-05 updt_s:2.137 data_s:0.553
+INFO 2026-11-20 08:16:37 ot_train.py:493 step:8 smpl:256 ep:0 epch:0.07 loss:0.074 grdn:0.556 lr:2.2e-05 updt_s:2.005 data_s:0.514
+INFO 2026-11-20 08:16:39 ot_train.py:493 step:9 smpl:288 ep:0 epch:0.08 loss:0.073 grdn:0.613 lr:2.2e-05 updt_s:1.967 data_s:0.536
+INFO 2026-11-20 08:16:42 ot_train.py:493 step:10 smpl:320 ep:0 epch:0.09 loss:0.067 grdn:0.586 lr:2.1e-05 updt_s:1.943 data_s:0.582
+INFO 2026-11-20 08:16:44 ot_train.py:493 step:11 smpl:352 ep:0 epch:0.10 loss:0.134 grdn:0.527 lr:2.0e-05 updt_s:1.928 data_s:0.553
+INFO 2026-11-20 08:16:47 ot_train.py:493 step:12 smpl:384 ep:0 epch:0.11 loss:0.079 grdn:0.427 lr:1.9e-05 updt_s:2.017 data_s:0.515
+INFO 2026-11-20 08:16:49 ot_train.py:493 step:13 smpl:416 ep:0 epch:0.12 loss:0.094 grdn:0.601 lr:1.8e-05 updt_s:1.940 data_s:0.533
+INFO 2026-11-20 08:16:52 ot_train.py:493 step:14 smpl:448 ep:0 epch:0.13 loss:0.077 grdn:0.484 lr:1.7e-05 updt_s:2.270 data_s:0.556
+INFO 2026-11-20 08:16:55 ot_train.py:493 step:15 smpl:480 ep:0 epch:0.14 loss:0.094 grdn:0.429 lr:1.6e-05 updt_s:2.202 data_s:0.561
+INFO 2026-11-20 08:16:57 ot_train.py:493 step:16 smpl:512 ep:0 epch:0.15 loss:0.089 grdn:0.497 lr:1.5e-05 updt_s:2.056 data_s:0.524
+INFO 2026-11-20 08:17:00 ot_train.py:493 step:17 smpl:544 ep:0 epch:0.16 loss:0.064 grdn:0.475 lr:1.4e-05 updt_s:1.867 data_s:0.587
+INFO 2026-11-20 08:17:02 ot_train.py:493 step:18 smpl:576 ep:0 epch:0.17 loss:0.053 grdn:0.465 lr:1.3e-05 updt_s:2.028 data_s:0.560
+INFO 2026-11-20 08:17:05 ot_train.py:493 step:19 smpl:608 ep:0 epch:0.18 loss:0.067 grdn:0.631 lr:1.2e-05 updt_s:2.103 data_s:0.557
+INFO 2026-11-20 08:17:08 ot_train.py:493 step:20 smpl:640 ep:0 epch:0.19 loss:0.057 grdn:0.412 lr:1.1e-05 updt_s:2.144 data_s:0.565
+INFO 2026-11-20 08:17:10 ot_train.py:493 step:21 smpl:672 ep:0 epch:0.20 loss:0.076 grdn:0.498 lr:1.0e-05 updt_s:2.011 data_s:0.558
+INFO 2026-11-20 08:17:13 ot_train.py:493 step:22 smpl:704 ep:0 epch:0.21 loss:0.062 grdn:0.387 lr:9.3e-06 updt_s:2.488 data_s:0.556
+INFO 2026-11-20 08:17:16 ot_train.py:493 step:23 smpl:736 ep:0 epch:0.21 loss:0.071 grdn:0.399 lr:8.4e-06 updt_s:2.027 data_s:0.587
+INFO 2026-11-20 08:17:19 ot_train.py:493 step:24 smpl:768 ep:0 epch:0.22 loss:0.091 grdn:0.446 lr:7.6e-06 updt_s:2.129 data_s:0.532
+INFO 2026-11-20 08:17:21 ot_train.py:493 step:25 smpl:800 ep:0 epch:0.23 loss:0.063 grdn:0.565 lr:6.7e-06 updt_s:1.970 data_s:0.569
+INFO 2026-11-20 08:17:24 ot_train.py:493 step:26 smpl:832 ep:0 epch:0.24 loss:0.093 grdn:0.482 lr:6.0e-06 updt_s:2.090 data_s:0.562
+INFO 2026-11-20 08:17:26 ot_train.py:493 step:27 smpl:864 ep:1 epch:0.25 loss:0.068 grdn:0.488 lr:5.3e-06 updt_s:1.954 data_s:0.559
+INFO 2026-11-20 08:17:29 ot_train.py:493 step:28 smpl:896 ep:1 epch:0.26 loss:0.072 grdn:0.296 lr:4.6e-06 updt_s:2.092 data_s:0.539
+INFO 2026-11-20 08:17:32 ot_train.py:493 step:29 smpl:928 ep:1 epch:0.27 loss:0.097 grdn:0.383 lr:4.1e-06 updt_s:2.244 data_s:0.529
+INFO 2026-11-20 08:17:35 ot_train.py:493 step:30 smpl:960 ep:1 epch:0.28 loss:0.081 grdn:0.348 lr:3.6e-06 updt_s:2.384 data_s:0.546
+INFO 2026-11-20 08:17:37 ot_train.py:493 step:31 smpl:992 ep:1 epch:0.29 loss:0.071 grdn:0.735 lr:3.2e-06 updt_s:1.979 data_s:0.552
+INFO 2026-11-20 08:17:40 ot_train.py:493 step:32 smpl:1K ep:1 epch:0.30 loss:0.037 grdn:0.409 lr:2.9e-06 updt_s:2.063 data_s:0.555
+INFO 2026-11-20 08:17:43 ot_train.py:493 step:33 smpl:1K ep:1 epch:0.31 loss:0.079 grdn:0.426 lr:2.7e-06 updt_s:2.019 data_s:0.547
+INFO 2026-11-20 08:17:45 ot_train.py:493 step:34 smpl:1K ep:1 epch:0.32 loss:0.056 grdn:0.350 lr:2.5e-06 updt_s:2.082 data_s:0.519
+INFO 2026-11-20 08:17:48 ot_train.py:493 step:35 smpl:1K ep:1 epch:0.33 loss:0.074 grdn:0.573 lr:2.5e-06 updt_s:2.029 data_s:0.569
+INFO 2026-11-20 08:17:48 ot_train.py:588 End of training
+INFO 2026-11-20 08:17:48 s/devices.py:68 MUSA DDP parameter samples agree: 6496 values per rank
+INFO 2026-11-20 08:17:48 s/devices.py:49 MUSA memory [rank, peak_allocated_bytes, peak_reserved_bytes]: [[0, 42117112832, 42469425152], [1, 42089412096, 42425384960], [2, 42069423104, 42408607744], [3, 42119853056, 42435870720]]

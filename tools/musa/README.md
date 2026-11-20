@@ -142,3 +142,12 @@ the existing protocol uses pickle and is intended for trusted clients. Configure
 `robot_client` on the robot host with `--policy_type=evo1` (or `pi05`),
 `--policy_device=musa`, the exported checkpoint, correct camera rename map and
 actual robot arguments. The hardware client is not started by acceptance tests.
+
+## Training speed measurements
+
+[`BENCHMARK_20261120.md`](BENCHMARK_20261120.md) records real-data Evo-1 Stage 2
+and Pi0.5 full fine-tuning measurements on 1/2/4 S5000 cards, with historical
+4090 evidence and explicit comparison limits. `benchmark.py` runs one fresh
+configuration; `benchmark_matrix.sh` runs the batch sweep;
+`summarize_benchmark.py` excludes warmup and reports global samples/second.
+These benchmarks disable checkpoint writes and do not replace training acceptance.

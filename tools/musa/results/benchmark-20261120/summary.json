@@ -1,0 +1,837 @@
+{
+  "warmup_steps": 10,
+  "results": [
+    {
+      "name": "evo1-stage2-g1-b1",
+      "task": "evo1-stage2",
+      "gpus": 1,
+      "batch_per_rank": 1,
+      "global_batch": 1,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.4753493881225586,
+      "median_step_s": 0.47581011056900024,
+      "std_step_s": 0.004556540352304992,
+      "p90_step_s": 0.47960289716720583,
+      "mean_update_s": 0.34455175161361695,
+      "samples_per_s": 2.103715761473057,
+      "peak_allocated_gib": 8.43803358078003,
+      "peak_reserved_gib": 8.80859375,
+      "rank_memory_bytes": [
+        [
+          0,
+          9060269568,
+          9458155520
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "evo1-stage2-g1-b2",
+      "task": "evo1-stage2",
+      "gpus": 1,
+      "batch_per_rank": 2,
+      "global_batch": 2,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.7270873618125916,
+      "median_step_s": 0.7284398078918457,
+      "std_step_s": 0.00870386839973798,
+      "p90_step_s": 0.7388402581214905,
+      "mean_update_s": 0.4773405826091766,
+      "samples_per_s": 2.7507010918386787,
+      "peak_allocated_gib": 8.442333698272705,
+      "peak_reserved_gib": 9.373046875,
+      "rank_memory_bytes": [
+        [
+          0,
+          9064886784,
+          10064232448
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "evo1-stage2-g1-b4",
+      "task": "evo1-stage2",
+      "gpus": 1,
+      "batch_per_rank": 4,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.2453854560852051,
+      "median_step_s": 1.2612905502319336,
+      "std_step_s": 0.07124303179758233,
+      "p90_step_s": 1.296386432647705,
+      "mean_update_s": 0.8060403394699097,
+      "samples_per_s": 3.2118570041549717,
+      "peak_allocated_gib": 9.215695858001709,
+      "peak_reserved_gib": 11.220703125,
+      "rank_memory_bytes": [
+        [
+          0,
+          9895278080,
+          12048138240
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "evo1-stage2-g1-b8",
+      "task": "evo1-stage2",
+      "gpus": 1,
+      "batch_per_rank": 8,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.9746972560882567,
+      "median_step_s": 1.9437122344970703,
+      "std_step_s": 0.1112345068293342,
+      "p90_step_s": 1.973750114440918,
+      "mean_update_s": 1.4942418003082276,
+      "samples_per_s": 4.051253920232545,
+      "peak_allocated_gib": 12.254488468170166,
+      "peak_reserved_gib": 13.798828125,
+      "rank_memory_bytes": [
+        [
+          0,
+          13158156800,
+          14816378880
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "evo1-stage2-g2-b1",
+      "task": "evo1-stage2",
+      "gpus": 2,
+      "batch_per_rank": 1,
+      "global_batch": 2,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.5574813461303711,
+      "median_step_s": 0.5454423427581787,
+      "std_step_s": 0.056616488895427815,
+      "p90_step_s": 0.5512646913528443,
+      "mean_update_s": 0.432497181892395,
+      "samples_per_s": 3.587563985562102,
+      "peak_allocated_gib": 10.116479873657227,
+      "peak_reserved_gib": 10.30859375,
+      "rank_memory_bytes": [
+        [
+          0,
+          10862487552,
+          11068768256
+        ],
+        [
+          1,
+          10862487552,
+          11068768256
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g2-b2",
+      "task": "evo1-stage2",
+      "gpus": 2,
+      "batch_per_rank": 2,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.8430607295036316,
+      "median_step_s": 0.8323855400085449,
+      "std_step_s": 0.05785528214866,
+      "p90_step_s": 0.8382646322250367,
+      "mean_update_s": 0.6010432767868042,
+      "samples_per_s": 4.744616680645388,
+      "peak_allocated_gib": 10.117056846618652,
+      "peak_reserved_gib": 11.4375,
+      "rank_memory_bytes": [
+        [
+          0,
+          10863107072,
+          12280922112
+        ],
+        [
+          1,
+          10863107072,
+          12280922112
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g2-b4",
+      "task": "evo1-stage2",
+      "gpus": 2,
+      "batch_per_rank": 4,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.4006464910507201,
+      "median_step_s": 1.4118798971176147,
+      "std_step_s": 0.06222022452167405,
+      "p90_step_s": 1.4488465070724488,
+      "mean_update_s": 0.9807752203941346,
+      "samples_per_s": 5.711648193255856,
+      "peak_allocated_gib": 10.887767314910889,
+      "peak_reserved_gib": 12.87109375,
+      "rank_memory_bytes": [
+        [
+          0,
+          11690651136,
+          13820231680
+        ],
+        [
+          1,
+          11690651136,
+          13820231680
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g2-b8",
+      "task": "evo1-stage2",
+      "gpus": 2,
+      "batch_per_rank": 8,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 2.2580325603485107,
+      "median_step_s": 2.144820213317871,
+      "std_step_s": 0.18903707136781742,
+      "p90_step_s": 2.619079351425171,
+      "mean_update_s": 1.7368712663650512,
+      "samples_per_s": 7.085814563068355,
+      "peak_allocated_gib": 13.92899465560913,
+      "peak_reserved_gib": 15.037109375,
+      "rank_memory_bytes": [
+        [
+          0,
+          14956144128,
+          16145973248
+        ],
+        [
+          1,
+          14956144128,
+          16145973248
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g4-b1",
+      "task": "evo1-stage2",
+      "gpus": 4,
+      "batch_per_rank": 1,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.5610854744911193,
+      "median_step_s": 0.5316594243049622,
+      "std_step_s": 0.08487146865226194,
+      "p90_step_s": 0.5650349497795105,
+      "mean_update_s": 0.42733541965484617,
+      "samples_per_s": 7.129038590114687,
+      "peak_allocated_gib": 10.117721557617188,
+      "peak_reserved_gib": 10.498046875,
+      "rank_memory_bytes": [
+        [
+          0,
+          10862487552,
+          11068768256
+        ],
+        [
+          1,
+          10862114816,
+          11261706240
+        ],
+        [
+          2,
+          10861885952,
+          11272192000
+        ],
+        [
+          3,
+          10863820800,
+          11247026176
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g4-b2",
+      "task": "evo1-stage2",
+      "gpus": 4,
+      "batch_per_rank": 2,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.8345647811889648,
+      "median_step_s": 0.8262251019477844,
+      "std_step_s": 0.05772764343391711,
+      "p90_step_s": 0.8440502524375916,
+      "mean_update_s": 0.5646815443038941,
+      "samples_per_s": 9.585834653366009,
+      "peak_allocated_gib": 10.121819019317627,
+      "peak_reserved_gib": 11.4296875,
+      "rank_memory_bytes": [
+        [
+          0,
+          10857889792,
+          12268339200
+        ],
+        [
+          1,
+          10868220416,
+          12272533504
+        ],
+        [
+          2,
+          10868220416,
+          12272533504
+        ],
+        [
+          3,
+          10868220416,
+          12272533504
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g4-b4",
+      "task": "evo1-stage2",
+      "gpus": 4,
+      "batch_per_rank": 4,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.430164852142334,
+      "median_step_s": 1.4233720302581787,
+      "std_step_s": 0.05607004726798765,
+      "p90_step_s": 1.4381775617599488,
+      "mean_update_s": 1.0000010895729066,
+      "samples_per_s": 11.187521477704191,
+      "peak_allocated_gib": 10.894343852996826,
+      "peak_reserved_gib": 12.890625,
+      "rank_memory_bytes": [
+        [
+          0,
+          11697712640,
+          13841203200
+        ],
+        [
+          1,
+          11691386880,
+          13419675648
+        ],
+        [
+          2,
+          11692210688,
+          13824425984
+        ],
+        [
+          3,
+          11691386880,
+          13419675648
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "evo1-stage2-g4-b8",
+      "task": "evo1-stage2",
+      "gpus": 4,
+      "batch_per_rank": 8,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 2.3866011905670166,
+      "median_step_s": 2.385033369064331,
+      "std_step_s": 0.18137929981718287,
+      "p90_step_s": 2.6287086486816404,
+      "mean_update_s": 1.8307872009277344,
+      "samples_per_s": 13.408189070917766,
+      "peak_allocated_gib": 13.92899465560913,
+      "peak_reserved_gib": 15.70703125,
+      "rank_memory_bytes": [
+        [
+          0,
+          14956144128,
+          16145973248
+        ],
+        [
+          1,
+          14956144128,
+          16145973248
+        ],
+        [
+          2,
+          14956144128,
+          16145973248
+        ],
+        [
+          3,
+          14952196608,
+          16865296384
+        ]
+      ],
+      "trainable_parameters": 775198640,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g1-b1",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 1,
+      "global_batch": 1,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 0.8305277943611145,
+      "median_step_s": 0.7978975772857666,
+      "std_step_s": 0.0856549646769862,
+      "p90_step_s": 0.9533377170562745,
+      "mean_update_s": 0.7714142751693726,
+      "samples_per_s": 1.2040536232375612,
+      "peak_allocated_gib": 32.12717533111572,
+      "peak_reserved_gib": 32.54296875,
+      "rank_memory_bytes": [
+        [
+          0,
+          34496291840,
+          34942746624
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g1-b2",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 2,
+      "global_batch": 2,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.0211586809158326,
+      "median_step_s": 0.9924070835113525,
+      "std_step_s": 0.08425161258524055,
+      "p90_step_s": 1.1397832393646241,
+      "mean_update_s": 0.7877567315101623,
+      "samples_per_s": 1.9585594652207112,
+      "peak_allocated_gib": 32.167853355407715,
+      "peak_reserved_gib": 32.447265625,
+      "rank_memory_bytes": [
+        [
+          0,
+          34539969536,
+          34839986176
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g1-b4",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 4,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.4088827323913575,
+      "median_step_s": 1.3784905672073364,
+      "std_step_s": 0.08817749065314126,
+      "p90_step_s": 1.5293265581130981,
+      "mean_update_s": 0.9299699425697326,
+      "samples_per_s": 2.839129125538097,
+      "peak_allocated_gib": 32.16649675369263,
+      "peak_reserved_gib": 32.498046875,
+      "rank_memory_bytes": [
+        [
+          0,
+          34538512896,
+          34894512128
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g1-b8",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 8,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.8064083385467529,
+      "median_step_s": 1.7749396562576294,
+      "std_step_s": 0.08382946086800752,
+      "p90_step_s": 1.9351832866668701,
+      "mean_update_s": 1.3492197561264039,
+      "samples_per_s": 4.428677519522504,
+      "peak_allocated_gib": 32.22473478317261,
+      "peak_reserved_gib": 32.6015625,
+      "rank_memory_bytes": [
+        [
+          0,
+          34601045504,
+          35005661184
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g2-b1",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 1,
+      "global_batch": 2,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.1888978242874146,
+      "median_step_s": 1.1472569704055786,
+      "std_step_s": 0.10574387731467312,
+      "p90_step_s": 1.3986162662506103,
+      "mean_update_s": 1.1233118152618409,
+      "samples_per_s": 1.6822303474217666,
+      "peak_allocated_gib": 39.11967325210571,
+      "peak_reserved_gib": 39.517578125,
+      "rank_memory_bytes": [
+        [
+          0,
+          42004429312,
+          42431676416
+        ],
+        [
+          1,
+          41995252224,
+          42396024832
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g2-b2",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 2,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.247823305130005,
+      "median_step_s": 1.1830536127090454,
+      "std_step_s": 0.11549511122885144,
+      "p90_step_s": 1.4535746097564697,
+      "mean_update_s": 1.123597836494446,
+      "samples_per_s": 3.20558205921892,
+      "peak_allocated_gib": 39.15181255340576,
+      "peak_reserved_gib": 39.451171875,
+      "rank_memory_bytes": [
+        [
+          0,
+          42038938624,
+          42360373248
+        ],
+        [
+          1,
+          42038938624,
+          42360373248
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g2-b4",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 4,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.8273027658462524,
+      "median_step_s": 1.7592620849609375,
+      "std_step_s": 0.1266223777848376,
+      "p90_step_s": 2.0444257259368896,
+      "mean_update_s": 1.3015230703353882,
+      "samples_per_s": 4.3780374820891135,
+      "peak_allocated_gib": 39.17327070236206,
+      "peak_reserved_gib": 39.470703125,
+      "rank_memory_bytes": [
+        [
+          0,
+          42061979136,
+          42370859008
+        ],
+        [
+          1,
+          42046994944,
+          42381344768
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g2-b8",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 8,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 2.22463116645813,
+      "median_step_s": 2.169337749481201,
+      "std_step_s": 0.10678307325815013,
+      "p90_step_s": 2.4363645553588866,
+      "mean_update_s": 1.7406168460845948,
+      "samples_per_s": 7.192203472305861,
+      "peak_allocated_gib": 39.22727680206299,
+      "peak_reserved_gib": 39.55078125,
+      "rank_memory_bytes": [
+        [
+          0,
+          42119967744,
+          42467328000
+        ],
+        [
+          1,
+          42106776064,
+          42452647936
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b1",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 1,
+      "global_batch": 4,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.0440432143211364,
+      "median_step_s": 0.9690563082695007,
+      "std_step_s": 0.1279702228472309,
+      "p90_step_s": 1.252942728996277,
+      "mean_update_s": 0.9698705911636353,
+      "samples_per_s": 3.831259037108825,
+      "peak_allocated_gib": 39.122411251068115,
+      "peak_reserved_gib": 39.517578125,
+      "rank_memory_bytes": [
+        [
+          0,
+          42004429312,
+          42431676416
+        ],
+        [
+          1,
+          41987841536,
+          42400219136
+        ],
+        [
+          2,
+          41981819392,
+          42368761856
+        ],
+        [
+          3,
+          42007369216,
+          42419093504
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b2",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 2,
+      "global_batch": 8,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.2415546703338622,
+      "median_step_s": 1.1650304794311523,
+      "std_step_s": 0.12583040403974324,
+      "p90_step_s": 1.4445917129516601,
+      "mean_update_s": 1.1040262842178346,
+      "samples_per_s": 6.443534216538969,
+      "peak_allocated_gib": 39.16856288909912,
+      "peak_reserved_gib": 39.453125,
+      "rank_memory_bytes": [
+        [
+          0,
+          42056924160,
+          42312138752
+        ],
+        [
+          1,
+          42056924160,
+          42312138752
+        ],
+        [
+          2,
+          42056924160,
+          42312138752
+        ],
+        [
+          3,
+          42051954176,
+          42362470400
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b4",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 4,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 1.662167739868164,
+      "median_step_s": 1.600320816040039,
+      "std_step_s": 0.14318816618968974,
+      "p90_step_s": 1.873443102836609,
+      "mean_update_s": 1.397201385498047,
+      "samples_per_s": 9.625983958315212,
+      "peak_allocated_gib": 39.14238405227661,
+      "peak_reserved_gib": 39.46875,
+      "rank_memory_bytes": [
+        [
+          0,
+          42024083456,
+          42347790336
+        ],
+        [
+          1,
+          42028814848,
+          42379247616
+        ],
+        [
+          2,
+          42014525440,
+          42370859008
+        ],
+        [
+          3,
+          42024163840,
+          42324721664
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b8",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 8,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 2.6491519737243654,
+      "median_step_s": 2.6084818840026855,
+      "std_step_s": 0.1390082977465088,
+      "p90_step_s": 2.813922882080078,
+      "mean_update_s": 2.0952298402786256,
+      "samples_per_s": 12.07933720578972,
+      "peak_allocated_gib": 39.22716999053955,
+      "peak_reserved_gib": 39.552734375,
+      "rank_memory_bytes": [
+        [
+          0,
+          42117112832,
+          42469425152
+        ],
+        [
+          1,
+          42089412096,
+          42425384960
+        ],
+        [
+          2,
+          42069423104,
+          42408607744
+        ],
+        [
+          3,
+          42119853056,
+          42435870720
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    }
+  ]
+}
