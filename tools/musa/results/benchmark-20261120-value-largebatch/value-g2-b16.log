@@ -1,0 +1,194 @@
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+WARNING:root:'torchcodec' is not available in your platform, falling back to 'pyav' as a default decoder
+INFO 2026-11-20 10:18:26 ue_train.py:100 {'batch_size': 16,
+ 'checkpoint_path': None,
+ 'dataset': {'episodes': None,
+             'image_transforms': {'enable': False,
+                                  'max_num_transforms': 3,
+                                  'random_order': False,
+                                  'tfs': {'affine': {'kwargs': {'degrees': [-5.0,
+                                                                            5.0],
+                                                                'translate': [0.05,
+                                                                              0.05]},
+                                                     'type': 'RandomAffine',
+                                                     'weight': 1.0},
+                                          'brightness': {'kwargs': {'brightness': [0.8,
+                                                                                   1.2]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'contrast': {'kwargs': {'contrast': [0.8,
+                                                                               1.2]},
+                                                       'type': 'ColorJitter',
+                                                       'weight': 1.0},
+                                          'hue': {'kwargs': {'hue': [-0.05,
+                                                                     0.05]},
+                                                  'type': 'ColorJitter',
+                                                  'weight': 1.0},
+                                          'saturation': {'kwargs': {'saturation': [0.5,
+                                                                                   1.5]},
+                                                         'type': 'ColorJitter',
+                                                         'weight': 1.0},
+                                          'sharpness': {'kwargs': {'sharpness': [0.5,
+                                                                                 1.5]},
+                                                        'type': 'SharpnessJitter',
+                                                        'weight': 1.0}}},
+             'repo_id': 'Elvinky/bi_so101_fold_towel_d0_acceptance',
+             'revision': None,
+             'root': '/workspace/storage/data/towel-small/acceptance',
+             'streaming': False,
+             'use_imagenet_stats': True,
+             'video_backend': 'pyav'},
+ 'env': None,
+ 'job_name': 'pistar06_value',
+ 'log_freq': 1,
+ 'num_workers': 0,
+ 'optimizer': {'betas': [0.9, 0.999],
+               'eps': 1e-08,
+               'grad_clip_norm': 10.0,
+               'lr': 5e-05,
+               'type': 'adamw',
+               'weight_decay': 1e-05},
+ 'output_dir': '/workspace/storage/benchmarks/20261120-value-largebatch/value-g2-b16',
+ 'peft': None,
+ 'rename_map': {},
+ 'resume': False,
+ 'reward': None,
+ 'save_checkpoint': False,
+ 'save_freq': 35,
+ 'scheduler': {'decay_lr': 1e-06,
+               'num_decay_steps': 8000,
+               'num_warmup_steps': 500,
+               'peak_lr': 5e-05,
+               'type': 'cosine_decay_with_warmup'},
+ 'seed': 1000,
+ 'steps': 35,
+ 'targets': {'c_fail_coef': 1.0,
+             'default_success': 'failure',
+             'success_field': 'episode_success',
+             'target_field': 'observation.value_target'},
+ 'tolerance_s': 0.0001,
+ 'use_policy_training_preset': True,
+ 'use_value_training_preset': True,
+ 'value': {'bin_max': 0.0,
+           'bin_min': -1.0,
+           'camera_features': [],
+           'device': 'musa',
+           'dropout': 0.1,
+           'dtype': 'bfloat16',
+           'freeze_language_model': False,
+           'freeze_vision_encoder': False,
+           'fusion_hidden_dim': 512,
+           'fusion_num_heads': 8,
+           'fusion_num_layers': 2,
+           'include_state_in_prompt': True,
+           'input_features': {},
+           'language_repo_id': '/workspace/storage/models/value_language',
+           'language_revision': None,
+           'license': None,
+           'loss_weight_key': 'observation.value_loss_weight',
+           'max_state_dim': 32,
+           'mode': 'vision_language',
+           'n_obs_steps': 1,
+           'normalization_mapping': {'ACTION': <NormalizationMode.IDENTITY: 'IDENTITY'>,
+                                     'STATE': <NormalizationMode.QUANTILES: 'QUANTILES'>,
+                                     'VISUAL': <NormalizationMode.IDENTITY: 'IDENTITY'>},
+           'num_bins': 201,
+           'optimizer_grad_clip_norm': 10.0,
+           'optimizer_lr': 5e-05,
+           'optimizer_weight_decay': 1e-05,
+           'output_features': {},
+           'pretrained_path': None,
+           'private': None,
+           'push_to_hub': False,
+           'repo_id': None,
+           'reward': None,
+           'reward_scales': {},
+           'scheduler_decay_lr': 1e-06,
+           'scheduler_decay_steps': 8000,
+           'scheduler_warmup_steps': 500,
+           'state_discretization_bins': 256,
+           'state_feature': 'observation.state',
+           'state_proj_dim': 512,
+           'tags': None,
+           'target_key': 'observation.value_target',
+           'task_field': 'task',
+           'task_index_feature': 'task_index',
+           'tokenizer_max_length': 200,
+           'type': 'pistar06',
+           'use_amp': True,
+           'use_gradient_checkpointing': True,
+           'use_peft': False,
+           'vision_repo_id': '/workspace/storage/models/value_vision',
+           'vision_revision': None},
+ 'wandb': {'disable_artifact': False,
+           'enable': False,
+           'entity': None,
+           'mode': None,
+           'notes': None,
+           'project': 'lerobot',
+           'run_id': None}}
+INFO 2026-11-20 10:18:26 ue_train.py:104 Logs will be saved locally.
+INFO 2026-11-20 10:18:26 ue_train.py:117 Creating dataset
+INFO 2026-11-20 10:18:28 ue_train.py:126 Creating value model
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+INFO 2026-11-20 10:18:30 ue_train.py:142 Using value model raw-batch hook for target construction.
+INFO 2026-11-20 10:18:31 ue_train.py:177 Creating optimizer and scheduler
+INFO 2026-11-20 10:18:31 hedulers.py:105 Auto-scaling LR scheduler: num_training_steps (35) < num_decay_steps (8000). Scaling warmup: 500 → 2, decay: 8000 → 35 (scale factor: 0.004)
+INFO 2026-11-20 10:18:31 ue_train.py:190 Output dir: /workspace/storage/benchmarks/20261120-value-largebatch/value-g2-b16
+INFO 2026-11-20 10:18:31 ue_train.py:191 cfg.steps=35 (35)
+INFO 2026-11-20 10:18:31 ue_train.py:192 dataset.num_frames=3432 (3K)
+INFO 2026-11-20 10:18:31 ue_train.py:193 dataset.num_episodes=2
+INFO 2026-11-20 10:18:31 ue_train.py:196 Effective batch size: 16 x 2 = 32
+INFO 2026-11-20 10:18:31 ue_train.py:197 num_learnable_params=923937929 (924M)
+INFO 2026-11-20 10:18:31 ue_train.py:198 num_total_params=1373672827 (1B)
+INFO 2026-11-20 10:18:32 ue_train.py:238 Start value training on a fixed dataset, with effective batch size: 32
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/torchvision/io/_video_deprecation_warning.py:5: UserWarning: The video decoding and encoding capabilities of torchvision are deprecated from version 0.22 and will be removed in version 0.24. We recommend that you migrate to TorchCodec, where we'll consolidate the future decoding/encoding capabilities of PyTorch: https://github.com/pytorch/torchcodec
+  warnings.warn(
+INFO 2026-11-20 10:18:39 ue_train.py:260 First value prompt:
+Task: Fold the towels neatly and set them aside., State: 94 130 168 111 27 2 79 118 155 132 128 1 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128 128
+Value:
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+INFO 2026-11-20 10:18:47 ue_train.py:281 step:1 smpl:32 ep:0 epch:0.01 loss:5.282 grdn:5.938 lr:3.3e-05 updt_s:8.003 data_s:6.032
+[rank1]:[W1120 10:18:48.127414985 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank0]:[W1120 10:18:48.131732303 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+INFO 2026-11-20 10:18:50 ue_train.py:281 step:2 smpl:64 ep:0 epch:0.02 loss:5.268 grdn:6.942 lr:5.0e-05 updt_s:1.206 data_s:1.971
+INFO 2026-11-20 10:18:53 ue_train.py:281 step:3 smpl:96 ep:0 epch:0.03 loss:5.292 grdn:6.922 lr:4.9e-05 updt_s:1.460 data_s:2.055
+INFO 2026-11-20 10:18:57 ue_train.py:281 step:4 smpl:128 ep:0 epch:0.04 loss:5.237 grdn:6.789 lr:4.8e-05 updt_s:1.491 data_s:2.024
+INFO 2026-11-20 10:19:00 ue_train.py:281 step:5 smpl:160 ep:0 epch:0.05 loss:5.279 grdn:4.350 lr:4.8e-05 updt_s:1.204 data_s:2.035
+INFO 2026-11-20 10:19:03 ue_train.py:281 step:6 smpl:192 ep:0 epch:0.06 loss:5.232 grdn:3.728 lr:4.7e-05 updt_s:1.216 data_s:2.058
+INFO 2026-11-20 10:19:07 ue_train.py:281 step:7 smpl:224 ep:0 epch:0.07 loss:5.158 grdn:3.814 lr:4.5e-05 updt_s:1.204 data_s:2.066
+INFO 2026-11-20 10:19:10 ue_train.py:281 step:8 smpl:256 ep:0 epch:0.07 loss:5.238 grdn:3.786 lr:4.4e-05 updt_s:1.200 data_s:2.027
+INFO 2026-11-20 10:19:13 ue_train.py:281 step:9 smpl:288 ep:0 epch:0.08 loss:5.272 grdn:4.140 lr:4.2e-05 updt_s:1.220 data_s:2.114
+INFO 2026-11-20 10:19:16 ue_train.py:281 step:10 smpl:320 ep:0 epch:0.09 loss:5.209 grdn:3.323 lr:4.1e-05 updt_s:1.230 data_s:2.041
+INFO 2026-11-20 10:19:20 ue_train.py:281 step:11 smpl:352 ep:0 epch:0.10 loss:5.161 grdn:3.696 lr:3.9e-05 updt_s:1.205 data_s:2.033
+INFO 2026-11-20 10:19:23 ue_train.py:281 step:12 smpl:384 ep:0 epch:0.11 loss:5.115 grdn:3.539 lr:3.7e-05 updt_s:1.202 data_s:2.124
+INFO 2026-11-20 10:19:26 ue_train.py:281 step:13 smpl:416 ep:0 epch:0.12 loss:5.182 grdn:3.913 lr:3.5e-05 updt_s:1.209 data_s:2.028
+INFO 2026-11-20 10:19:29 ue_train.py:281 step:14 smpl:448 ep:0 epch:0.13 loss:5.147 grdn:3.170 lr:3.3e-05 updt_s:1.200 data_s:2.090
+INFO 2026-11-20 10:19:33 ue_train.py:281 step:15 smpl:480 ep:0 epch:0.14 loss:5.180 grdn:3.365 lr:3.1e-05 updt_s:1.203 data_s:2.072
+INFO 2026-11-20 10:19:36 ue_train.py:281 step:16 smpl:512 ep:0 epch:0.15 loss:5.265 grdn:3.306 lr:2.9e-05 updt_s:1.200 data_s:2.094
+INFO 2026-11-20 10:19:39 ue_train.py:281 step:17 smpl:544 ep:0 epch:0.16 loss:5.160 grdn:3.266 lr:2.7e-05 updt_s:1.204 data_s:2.046
+INFO 2026-11-20 10:19:43 ue_train.py:281 step:18 smpl:576 ep:0 epch:0.17 loss:5.147 grdn:3.285 lr:2.4e-05 updt_s:1.206 data_s:2.129
+INFO 2026-11-20 10:19:46 ue_train.py:281 step:19 smpl:608 ep:0 epch:0.18 loss:5.125 grdn:3.385 lr:2.2e-05 updt_s:1.206 data_s:2.041
+INFO 2026-11-20 10:19:49 ue_train.py:281 step:20 smpl:640 ep:0 epch:0.19 loss:5.157 grdn:3.675 lr:2.0e-05 updt_s:1.204 data_s:2.109
+INFO 2026-11-20 10:19:53 ue_train.py:281 step:21 smpl:672 ep:0 epch:0.20 loss:5.249 grdn:3.644 lr:1.8e-05 updt_s:1.244 data_s:2.048
+INFO 2026-11-20 10:19:56 ue_train.py:281 step:22 smpl:704 ep:0 epch:0.21 loss:5.057 grdn:3.560 lr:1.6e-05 updt_s:1.225 data_s:2.064
+INFO 2026-11-20 10:19:59 ue_train.py:281 step:23 smpl:736 ep:0 epch:0.21 loss:5.120 grdn:3.173 lr:1.4e-05 updt_s:1.204 data_s:2.091
+INFO 2026-11-20 10:20:02 ue_train.py:281 step:24 smpl:768 ep:0 epch:0.22 loss:5.128 grdn:3.627 lr:1.2e-05 updt_s:1.232 data_s:2.047
+INFO 2026-11-20 10:20:06 ue_train.py:281 step:25 smpl:800 ep:0 epch:0.23 loss:5.077 grdn:3.681 lr:1.0e-05 updt_s:1.481 data_s:2.088
+INFO 2026-11-20 10:20:10 ue_train.py:281 step:26 smpl:832 ep:0 epch:0.24 loss:5.099 grdn:3.175 lr:8.6e-06 updt_s:1.458 data_s:2.112
+INFO 2026-11-20 10:20:13 ue_train.py:281 step:27 smpl:864 ep:1 epch:0.25 loss:5.082 grdn:3.538 lr:7.0e-06 updt_s:1.202 data_s:2.103
+INFO 2026-11-20 10:20:16 ue_train.py:281 step:28 smpl:896 ep:1 epch:0.26 loss:5.108 grdn:3.678 lr:5.7e-06 updt_s:1.211 data_s:2.137
+INFO 2026-11-20 10:20:20 ue_train.py:281 step:29 smpl:928 ep:1 epch:0.27 loss:5.087 grdn:3.595 lr:4.5e-06 updt_s:1.228 data_s:2.052
+INFO 2026-11-20 10:20:23 ue_train.py:281 step:30 smpl:960 ep:1 epch:0.28 loss:5.074 grdn:3.224 lr:3.4e-06 updt_s:1.205 data_s:2.105
+INFO 2026-11-20 10:20:26 ue_train.py:281 step:31 smpl:992 ep:1 epch:0.29 loss:5.121 grdn:3.541 lr:2.6e-06 updt_s:1.205 data_s:2.065
+INFO 2026-11-20 10:20:29 ue_train.py:281 step:32 smpl:1K ep:1 epch:0.30 loss:5.050 grdn:3.853 lr:1.9e-06 updt_s:1.201 data_s:2.142
+INFO 2026-11-20 10:20:33 ue_train.py:281 step:33 smpl:1K ep:1 epch:0.31 loss:5.088 grdn:3.473 lr:1.4e-06 updt_s:1.211 data_s:2.113
+INFO 2026-11-20 10:20:36 ue_train.py:281 step:34 smpl:1K ep:1 epch:0.32 loss:5.106 grdn:3.198 lr:1.1e-06 updt_s:1.205 data_s:2.093
+INFO 2026-11-20 10:20:39 ue_train.py:281 step:35 smpl:1K ep:1 epch:0.33 loss:5.111 grdn:3.452 lr:1.0e-06 updt_s:1.216 data_s:2.111
+INFO 2026-11-20 10:20:39 ue_train.py:314 End of value training
+INFO 2026-11-20 10:20:39 s/devices.py:68 MUSA DDP parameter samples agree: 5984 values per rank
+INFO 2026-11-20 10:20:39 s/devices.py:49 MUSA memory [rank, peak_allocated_bytes, peak_reserved_bytes]: [[0, 13940884480, 16080961536], [1, 13940884480, 16080961536]]

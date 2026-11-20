@@ -1,0 +1,53 @@
+{
+  "source_base_commit": "c2f5f3b",
+  "tasks": [
+    "value"
+  ],
+  "gpus": [
+    1,
+    2,
+    4
+  ],
+  "per_rank_batches": [
+    16,
+    32
+  ],
+  "steps": 35,
+  "warmup": 10,
+  "physical_devices": {
+    "1": [
+      2
+    ],
+    "2": [
+      2,
+      3
+    ],
+    "4": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "server_root": "/data/yzw_explore/benchmarks/20261120-value-largebatch",
+  "container_uid": 0,
+  "model": "pistar06 SigLIP + Qwen2.5-0.5B; pretrained encoders, newly initialized fusion/value head",
+  "freeze_vision_encoder": false,
+  "freeze_language_model": false,
+  "gradient_checkpointing": true,
+  "precision": "BF16 mixed",
+  "optimizer": "GPU AdamW",
+  "source_assets": "../benchmark-20261120/provenance.json",
+  "data": "Same real labeled 3432-frame 2-episode public towel acceptance subset; no synthesized outcomes",
+  "executed_sha256": {
+    "benchmark_matrix.sh": "1750816dee352f24dd877d708491d93e191e7783fcace4f5f07e99a2a98fa209",
+    "2gpu.yaml": "6f8d0a55f81995616a8e7ced19d608442dea291380a7abadc64c91b015e13f20",
+    "benchmark.py": "de775bf410807a0b49bb6f09a68738c152880e1287463ca806392337e2778879",
+    "4gpu.yaml": "552e554060d069422c543a22de15a544b8b5500a7914af4de3813ea5ae7ff5fc",
+    "1gpu.yaml": "39c8febe5f9f5559b79b02c7c4ffd65fb80619520f3401ff1351d7eb0f018d50",
+    "summarize_benchmark.py": "b511d98b9a4c01eb04a97208eac1e3945b1992a54a18e81c0db2fcbf1b2b153c",
+    "benchmark_step.py": "72ce38b79c5accbeabf91c03d2b8539751d7b174b6d3f31a9bc7510fc57a604b"
+  },
+  "started_utc": "2026-11-20T10:11:34+00:00",
+  "finished_utc": "2026-11-20T10:32:22+00:00"
+}

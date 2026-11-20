@@ -1,0 +1,213 @@
+{
+  "warmup_steps": 10,
+  "results": [
+    {
+      "name": "value-g1-b16",
+      "task": "value",
+      "gpus": 1,
+      "batch_per_rank": 16,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 3.1569464588165284,
+      "median_step_s": 3.148761034011841,
+      "std_step_s": 0.04884834949048368,
+      "p90_step_s": 3.1674075603485106,
+      "mean_update_s": 1.11643497467041,
+      "samples_per_s": 5.068188583089894,
+      "peak_allocated_gib": 11.250670909881592,
+      "peak_reserved_gib": 13.5546875,
+      "rank_memory_bytes": [
+        [
+          0,
+          12080315904,
+          14554234880
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "value-g1-b32",
+      "task": "value",
+      "gpus": 1,
+      "batch_per_rank": 32,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 6.112243328094483,
+      "median_step_s": 6.106226444244385,
+      "std_step_s": 0.06783634737591235,
+      "p90_step_s": 6.20137939453125,
+      "mean_update_s": 2.0584968090057374,
+      "samples_per_s": 5.235393665189068,
+      "peak_allocated_gib": 15.463080406188965,
+      "peak_reserved_gib": 18.376953125,
+      "rank_memory_bytes": [
+        [
+          0,
+          16603356160,
+          19732103168
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "value-g2-b16",
+      "task": "value",
+      "gpus": 2,
+      "batch_per_rank": 16,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 3.3216752433776855,
+      "median_step_s": 3.300119400024414,
+      "std_step_s": 0.08002425590789333,
+      "p90_step_s": 3.3519017696380615,
+      "mean_update_s": 1.2388026332855224,
+      "samples_per_s": 9.633693138363645,
+      "peak_allocated_gib": 12.983460426330566,
+      "peak_reserved_gib": 14.9765625,
+      "rank_memory_bytes": [
+        [
+          0,
+          13940884480,
+          16080961536
+        ],
+        [
+          1,
+          13940884480,
+          16080961536
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "value-g2-b32",
+      "task": "value",
+      "gpus": 2,
+      "batch_per_rank": 32,
+      "global_batch": 64,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 6.377759799957276,
+      "median_step_s": 6.377856731414795,
+      "std_step_s": 0.05161894937911025,
+      "p90_step_s": 6.430081462860107,
+      "mean_update_s": 2.224601650238037,
+      "samples_per_s": 10.034871492091742,
+      "peak_allocated_gib": 17.194802284240723,
+      "peak_reserved_gib": 19.283203125,
+      "rank_memory_bytes": [
+        [
+          0,
+          18462778368,
+          20705181696
+        ],
+        [
+          1,
+          18462778368,
+          20705181696
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "value-g4-b16",
+      "task": "value",
+      "gpus": 4,
+      "batch_per_rank": 16,
+      "global_batch": 64,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 3.423307466506958,
+      "median_step_s": 3.4280967712402344,
+      "std_step_s": 0.08241487500181076,
+      "p90_step_s": 3.4899160861968994,
+      "mean_update_s": 1.2491879177093506,
+      "samples_per_s": 18.69537008468121,
+      "peak_allocated_gib": 12.981629848480225,
+      "peak_reserved_gib": 14.9765625,
+      "rank_memory_bytes": [
+        [
+          0,
+          13938113024,
+          16072572928
+        ],
+        [
+          1,
+          13932759552,
+          16080961536
+        ],
+        [
+          2,
+          13938113024,
+          16072572928
+        ],
+        [
+          3,
+          13938918912,
+          15936258048
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "value-g4-b32",
+      "task": "value",
+      "gpus": 4,
+      "batch_per_rank": 32,
+      "global_batch": 128,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 6.707670698165893,
+      "median_step_s": 6.689248085021973,
+      "std_step_s": 1.2999064772903264,
+      "p90_step_s": 6.836166286468506,
+      "mean_update_s": 2.6811506843566892,
+      "samples_per_s": 19.08263028401194,
+      "peak_allocated_gib": 17.198780059814453,
+      "peak_reserved_gib": 19.671875,
+      "rank_memory_bytes": [
+        [
+          0,
+          18458734592,
+          21122514944
+        ],
+        [
+          1,
+          18458734592,
+          21122514944
+        ],
+        [
+          2,
+          18467049472,
+          21107834880
+        ],
+        [
+          3,
+          18467049472,
+          21107834880
+        ]
+      ],
+      "trainable_parameters": 923937929,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    }
+  ]
+}

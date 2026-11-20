@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 p = argparse.ArgumentParser()
-p.add_argument('--task', choices=['pi05', 'evo1-stage2'], required=True)
+p.add_argument('--task', choices=['pi05', 'evo1-stage2', 'value'], required=True)
 p.add_argument('--gpus', type=int, choices=[1, 2, 4], default=1)
 p.add_argument('--steps', type=int, default=35)
 p.add_argument('--batch-size', type=int, default=1, help='Per-rank batch; accumulation is one')
@@ -52,17 +52,28 @@ while True:
         fcntl.flock(lock, fcntl.LOCK_UN)
     time.sleep(5)
 
-profile = 'pi05' if a.task == 'pi05' else 'evo1'
+profile = 'evo1' if a.task == 'evo1-stage2' else a.task
 values = {
     'dataset.repo_id': a.dataset_repo_id,
     'dataset.root': a.dataset_root or storage / 'data/towel-small/acceptance',
     'dataset.video_backend': 'pyav', 'dataset.image_transforms.enable': False,
     'batch_size': a.batch_size, 'num_workers': 0, 'steps': a.steps,
     'save_freq': a.steps, 'log_freq': 1, 'output_dir': out,
-    'save_checkpoint': False, 'wandb.enable': False, 'eval_freq': 0,
-    'policy.device': 'musa', 'policy.push_to_hub': False, 'policy.use_peft': False,
+    'save_checkpoint': False, 'wandb.enable': False,
 }
-if profile == 'pi05':
+if profile != 'value':
+    values |= {'eval_freq': 0, 'policy.device': 'musa', 'policy.push_to_hub': False,
+               'policy.use_peft': False}
+if profile == 'value':
+    values |= {
+        'value.type': 'pistar06', 'value.device': 'musa', 'value.dtype': 'bfloat16',
+        'value.use_amp': True, 'value.use_gradient_checkpointing': True,
+        'value.push_to_hub': False, 'value.freeze_vision_encoder': False,
+        'value.freeze_language_model': False,
+        'value.vision_repo_id': storage / 'models/value_vision',
+        'value.language_repo_id': storage / 'models/value_language',
+    }
+elif profile == 'pi05':
     values |= {
         'policy.path': storage / 'models/pi05', 'policy.dtype': 'bfloat16',
         'policy.gradient_checkpointing': True, 'policy.compile_model': False,
@@ -82,6 +93,7 @@ else:
         'policy.enable_vlm_gradient_checkpointing': True,
         'policy.vlm_model_name': storage / 'models/internvl3',
     }
+os.environ['EVORL_BENCH_TASK'] = a.task
 os.environ['EVORL_BENCH_OUTPUT'] = str(out) + '.jsonl'
 os.environ['EVORL_BENCH_BATCH'] = str(a.batch_size)
 options = [f'--{k}={str(v).lower() if isinstance(v, bool) else v}' for k, v in values.items()]

@@ -142,3 +142,5 @@ EVORL_BENCH_TASKS=pi05 EVORL_BENCH_BATCHES="16 32" \
 python tools/musa/summarize_benchmark.py \
   /workspace/storage/benchmarks/pi05-largebatch-new --tasks pi05 --batches 16 32
 ```
+
+ValueFunction 的单卡/两卡/四卡、每卡 batch 16/32 训练速度另见 [ValueFunction 实测报告](BENCHMARK_VALUE_20261120.md)。

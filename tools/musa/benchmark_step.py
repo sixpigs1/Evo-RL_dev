@@ -6,7 +6,12 @@ from pathlib import Path
 
 import torch
 
-from lerobot.scripts import lerobot_train as training
+if os.environ.get("EVORL_BENCH_TASK") == "value":
+    from lerobot.scripts import lerobot_value_train as training
+    batch_key = "observation.value_target"
+else:
+    from lerobot.scripts import lerobot_train as training
+    batch_key = "action"
 
 original = training.update_policy
 count = 0
@@ -35,7 +40,7 @@ def measured(*args, **kwargs):
         update_s=timings[0].item(),
         interval_s=timings[1].item(),
         batch_per_rank=int(os.environ["EVORL_BENCH_BATCH"]),
-        observed_batch_size=int(args[2]["action"].shape[0]),
+        observed_batch_size=int(args[2][batch_key].shape[0]),
         world_size=accelerator.num_processes,
         peak_allocated_gib=torch.musa.max_memory_allocated() / 1024**3,
         peak_reserved_gib=torch.musa.max_memory_reserved() / 1024**3,

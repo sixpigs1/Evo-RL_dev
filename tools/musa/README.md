@@ -151,3 +151,8 @@ and Pi0.5 full fine-tuning measurements on 1/2/4 S5000 cards, with historical
 configuration; `benchmark_matrix.sh` runs the batch sweep;
 `summarize_benchmark.py` excludes warmup and reports global samples/second.
 These benchmarks disable checkpoint writes and do not replace training acceptance.
+
+ValueFunction speed results for full SigLIP + Qwen2.5-0.5B training at per-card
+batch 16/32 are in [`BENCHMARK_VALUE_20261120.md`](BENCHMARK_VALUE_20261120.md).
+Select this sweep with `EVORL_BENCH_TASKS=value EVORL_BENCH_BATCHES="16 32"`;
+pass `--tasks value --batches 16 32` to the summarizer.
