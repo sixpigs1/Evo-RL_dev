@@ -1,0 +1,6 @@
+[rank1]:[W1120 06:11:31.437212607 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+[rank0]:[W1120 06:11:31.463352298 logger.cpp:329] Warning: Time stats are currently only collected for CPU and CUDA devices. Please refer to CpuTimer or CudaTimer for how to register timer for other device type. (function operator())
+/usr/local/lib/python3.10/dist-packages/torch/distributed/distributed_c10d.py:4889: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  warnings.warn(  # warn only once
+{"rank": 0, "device": "musa:0", "world_size": 2, "status": "passed"}
+{"rank": 1, "device": "musa:1", "world_size": 2, "status": "passed"}

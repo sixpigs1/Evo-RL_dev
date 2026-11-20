@@ -44,7 +44,7 @@ for name in (
     "help-record.exit",
     "help-policy-server.exit",
 ):
-    shutil.copy2(storage / "logs" / name, results / name)
+    shutil.copy2(storage / "logs" / name, results / (Path(name).with_suffix(".txt").name if name.endswith(".log") else name))
 shutil.copy2(
     storage / "outputs/annotation-acceptance/comparison.json", results / "annotation-comparison.json"
 )
