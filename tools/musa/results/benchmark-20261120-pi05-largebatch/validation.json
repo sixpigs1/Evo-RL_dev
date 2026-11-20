@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "cases": 6,
+  "passed_cases": 6,
+  "steps_per_passed_case": 35,
+  "measured_steps_per_passed_case": 25,
+  "passed_cases_sequential_finite_records": true,
+  "observed_batch_sizes_match_where_recorded": true,
+  "trainable_parameters": 3616757520,
+  "ddp_parameter_samples_agree": true,
+  "per_step_records": 210,
+  "python_syntax": "passed",
+  "bash_syntax": "passed",
+  "accelerate_tail_padding_default_verified": true
+}

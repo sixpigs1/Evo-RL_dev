@@ -9,15 +9,18 @@ p = argparse.ArgumentParser()
 p.add_argument("root", type=Path)
 p.add_argument("--warmup", type=int, default=10)
 p.add_argument("--steps", type=int, default=35)
+p.add_argument("--tasks", nargs="+", choices=["evo1-stage2", "pi05"], default=["evo1-stage2", "pi05"])
+p.add_argument("--gpus", nargs="+", type=int, choices=[1, 2, 4], default=[1, 2, 4])
+p.add_argument("--batches", nargs="+", type=int, default=[1, 2, 4, 8])
 a = p.parse_args()
 if not 0 <= a.warmup < a.steps:
     p.error("Require 0 <= warmup < steps")
 results = []
 status_path = a.root / "status.log"
 status = status_path.read_text() if status_path.exists() else ""
-for task in ("evo1-stage2", "pi05"):
-    for world in (1, 2, 4):
-        for batch in (1, 2, 4, 8):
+for task in a.tasks:
+    for world in a.gpus:
+        for batch in a.batches:
             name = f"{task}-g{world}-b{batch}"
             log = a.root / f"{name}.log"
             path = a.root / f"{name}.jsonl"
@@ -31,6 +34,9 @@ for task in ("evo1-stage2", "pi05"):
                 state = "oom"
             else:
                 state = "failed" if rc else "pending"
+            observed = [r.get("observed_batch_size", batch) for r in rows]
+            if rows and any(n != batch for n in observed):
+                state = "failed_batch_validation"
             result = dict(
                 name=name, task=task, gpus=world, batch_per_rank=batch,
                 global_batch=batch * world, status=state, completed_steps=len(rows),

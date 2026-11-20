@@ -1,0 +1,6 @@
+Verified from installed Accelerate source (no training configuration override):
+DataLoaderConfiguration.even_batches defaults to True.
+BatchSamplerShard._iter_with_no_split duplicates initial samples to fill each rank batch at epoch end.
+Source: /workspace/storage/environments/pi05/lib/python3.10/site-packages/accelerate/utils/dataclasses.py
+Source: /workspace/storage/environments/pi05/lib/python3.10/site-packages/accelerate/data_loader.py
+SHA256 of inspected class/method source snapshot: 8d223ae75669d1143255e7bab0e3f9018420a6a1eb59ff9767b7acb81a13302f

@@ -1,0 +1,213 @@
+{
+  "warmup_steps": 10,
+  "results": [
+    {
+      "name": "pi05-g1-b16",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 16,
+      "global_batch": 16,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 3.7475465965270995,
+      "median_step_s": 3.4409573078155518,
+      "std_step_s": 0.5560336716684527,
+      "p90_step_s": 4.321600532531738,
+      "mean_update_s": 2.2704885673522948,
+      "samples_per_s": 4.269459922080064,
+      "peak_allocated_gib": 32.28001594543457,
+      "peak_reserved_gib": 33.966796875,
+      "rank_memory_bytes": [
+        [
+          0,
+          34660403200,
+          36471570432
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g1-b32",
+      "task": "pi05",
+      "gpus": 1,
+      "batch_per_rank": 32,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 6.739942588806152,
+      "median_step_s": 6.6984710693359375,
+      "std_step_s": 0.10716507669613838,
+      "p90_step_s": 6.9141356468200685,
+      "mean_update_s": 4.173201599121094,
+      "samples_per_s": 4.747814922510812,
+      "peak_allocated_gib": 35.76295280456543,
+      "peak_reserved_gib": 40.345703125,
+      "rank_memory_bytes": [
+        [
+          0,
+          38400178176,
+          43320868864
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": null
+    },
+    {
+      "name": "pi05-g2-b16",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 16,
+      "global_batch": 32,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 4.775402698516846,
+      "median_step_s": 4.757444381713867,
+      "std_step_s": 0.07028676590746392,
+      "p90_step_s": 4.81408281326294,
+      "mean_update_s": 3.025299425125122,
+      "samples_per_s": 6.7010055528801,
+      "peak_allocated_gib": 39.29072666168213,
+      "peak_reserved_gib": 41.46875,
+      "rank_memory_bytes": [
+        [
+          0,
+          42188096512,
+          44526731264
+        ],
+        [
+          1,
+          42170765312,
+          44491079680
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g2-b32",
+      "task": "pi05",
+      "gpus": 2,
+      "batch_per_rank": 32,
+      "global_batch": 64,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 7.622833576202392,
+      "median_step_s": 6.917531490325928,
+      "std_step_s": 1.004007624414994,
+      "p90_step_s": 8.673123359680176,
+      "mean_update_s": 5.60770170211792,
+      "samples_per_s": 8.39582805530487,
+      "peak_allocated_gib": 42.76978158950806,
+      "peak_reserved_gib": 47.37890625,
+      "rank_memory_bytes": [
+        [
+          0,
+          45923703296,
+          50872713216
+        ],
+        [
+          1,
+          45905050112,
+          50851741696
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b16",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 16,
+      "global_batch": 64,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 4.654377021789551,
+      "median_step_s": 4.636203765869141,
+      "std_step_s": 0.09708041479950742,
+      "p90_step_s": 4.771512603759765,
+      "mean_update_s": 3.5763650703430176,
+      "samples_per_s": 13.75049758547338,
+      "peak_allocated_gib": 39.27688455581665,
+      "peak_reserved_gib": 41.884765625,
+      "rank_memory_bytes": [
+        [
+          0,
+          42173233664,
+          44484788224
+        ],
+        [
+          1,
+          42168328704,
+          44495273984
+        ],
+        [
+          2,
+          42141871616,
+          43935334400
+        ],
+        [
+          3,
+          42160251392,
+          44973424640
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    },
+    {
+      "name": "pi05-g4-b32",
+      "task": "pi05",
+      "gpus": 4,
+      "batch_per_rank": 32,
+      "global_batch": 128,
+      "status": "passed",
+      "completed_steps": 35,
+      "measured_steps": 25,
+      "mean_step_s": 8.796162242889404,
+      "median_step_s": 8.787086486816406,
+      "std_step_s": 1.239640997216394,
+      "p90_step_s": 8.98458652496338,
+      "mean_update_s": 6.496052894592285,
+      "samples_per_s": 14.551800713256737,
+      "peak_allocated_gib": 42.76978158950806,
+      "peak_reserved_gib": 47.37890625,
+      "rank_memory_bytes": [
+        [
+          0,
+          45923703296,
+          50872713216
+        ],
+        [
+          1,
+          45909469184,
+          50853838848
+        ],
+        [
+          2,
+          45919984128,
+          50868518912
+        ],
+        [
+          3,
+          45884625408,
+          50830770176
+        ]
+      ],
+      "trainable_parameters": 3616757520,
+      "finite_logged_loss_and_grad": true,
+      "ddp_parameter_samples_agree": true
+    }
+  ]
+}

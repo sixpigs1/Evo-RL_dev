@@ -35,6 +35,7 @@ def measured(*args, **kwargs):
         update_s=timings[0].item(),
         interval_s=timings[1].item(),
         batch_per_rank=int(os.environ["EVORL_BENCH_BATCH"]),
+        observed_batch_size=int(args[2]["action"].shape[0]),
         world_size=accelerator.num_processes,
         peak_allocated_gib=torch.musa.max_memory_allocated() / 1024**3,
         peak_reserved_gib=torch.musa.max_memory_reserved() / 1024**3,

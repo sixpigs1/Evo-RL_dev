@@ -1,0 +1,52 @@
+{
+  "source_base_commit": "e0aad36",
+  "tasks": [
+    "pi05"
+  ],
+  "gpus": [
+    1,
+    2,
+    4
+  ],
+  "per_rank_batches": [
+    16,
+    32
+  ],
+  "steps": 35,
+  "warmup": 10,
+  "physical_devices": {
+    "1": [
+      2
+    ],
+    "2": [
+      2,
+      3
+    ],
+    "4": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "server_root": "/data/yzw_explore/benchmarks/20261120-pi05-largebatch",
+  "optimizer": "GPU AdamW, full fine-tuning, no LoRA or offload",
+  "environment_and_model_sources": "../benchmark-20261120/provenance.json",
+  "prior_batch8_results": "../benchmark-20261120/summary.json",
+  "metadata_change": "First case uses prior timing wrapper; remaining cases additionally record rank0 observed action batch size, without changing timing boundaries or collectives.",
+  "executed_sha256": {
+    "benchmark_matrix.sh": "596614f15467ee5e16030cf8b509a37f32da3327b4fd7d3e8d8f2699b7f9c19a",
+    "2gpu.yaml": "6f8d0a55f81995616a8e7ced19d608442dea291380a7abadc64c91b015e13f20",
+    "benchmark_step-first-case.py": "95b475d8219feb5ec1704c83c5431ef5fb1f24ded0568f7ec2ec0e90439881ee",
+    "benchmark.py": "99cb327bdb712e5b9067c03aa327b3dc4b91c0d8ac7ec61d4cfd6f913176f66f",
+    "4gpu.yaml": "552e554060d069422c543a22de15a544b8b5500a7914af4de3813ea5ae7ff5fc",
+    "1gpu.yaml": "39c8febe5f9f5559b79b02c7c4ffd65fb80619520f3401ff1351d7eb0f018d50",
+    "summarize_benchmark.py": "a792806cff04ce25e81f7756b6095da30f178672dd4df40f0c34db9a4724474e",
+    "benchmark_step.py": "049419acd6850309550b866dcc3cc1204759bab7609d5d56e3ba9c38b64a6ad6"
+  },
+  "container_execution_uid": 0,
+  "host_output_ownership": "1002:100",
+  "accelerate_even_batches": true,
+  "started_utc": "2026-11-20T08:25:20+00:00",
+  "finished_utc": "2026-11-20T08:56:53+00:00"
+}

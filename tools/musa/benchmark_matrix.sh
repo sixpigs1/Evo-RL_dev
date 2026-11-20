@@ -9,11 +9,11 @@ fi
 mkdir -p "$root"
 failed=0
 export PYTHONUNBUFFERED=1
-for task in evo1-stage2 pi05; do
+for task in ${EVORL_BENCH_TASKS:-evo1-stage2 pi05}; do
  profile=evo1; [ "$task" = pi05 ] && profile=pi05
- for gpus in 1 2 4; do
+ for gpus in ${EVORL_BENCH_GPUS:-1 2 4}; do
   devices=2; [ "$gpus" = 2 ] && devices=2,3; [ "$gpus" = 4 ] && devices=2,3,4,5
-  for batch in 1 2 4 8; do
+  for batch in ${EVORL_BENCH_BATCHES:-1 2 4 8}; do
    name=$task-g${gpus}-b${batch}
    echo "$(date -Is) START $name" | tee -a "$root/status.log"
    timeout 1800 env MUSA_VISIBLE_DEVICES=$devices tools/musa/run.sh "$profile" python tools/musa/benchmark.py --task "$task" --gpus "$gpus" --batch-size "$batch" --steps 35 --stage1-checkpoint /workspace/storage/outputs/accept-evo1-stage1-1gpu/checkpoints/000100/pretrained_model --output "$root/$name" >"$root/$name.log" 2>&1
