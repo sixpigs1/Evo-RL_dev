@@ -73,6 +73,7 @@ class EnvConfig(draccus.ChoiceRegistry, abc.ABC):
 @dataclass
 class MujocoEnvConfig(EnvConfig):
     robot: MujocoRobotConfig = field(default_factory=MujocoRobotConfig)
+    joint_target_ranges: dict[str, tuple[float, float]] = field(default_factory=dict)
 
     def __post_init__(self):
         from lerobot.simulation.backend import control_names

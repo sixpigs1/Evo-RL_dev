@@ -1,0 +1,12 @@
+{
+  "embodiment": "piper",
+  "fps": 30,
+  "task": "reach",
+  "camera_views": {
+    "front": {
+      "width": 640,
+      "height": 480
+    }
+  },
+  "calibration_version": "menagerie-default"
+}

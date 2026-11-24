@@ -1,0 +1,17 @@
+{
+  "embodiment": "so101",
+  "fps": 30,
+  "task": "reach",
+  "camera_views": {
+    "front": {
+      "width": 640,
+      "height": 480
+    },
+    "wrist": {
+      "width": 640,
+      "height": 480,
+      "native": "wrist_cam"
+    }
+  },
+  "calibration_version": "menagerie-default"
+}

@@ -162,7 +162,9 @@ class MujocoSimulation:
         result = {}
         for key, value, mapping in zip(self.names, values, self.mappings, strict=True):
             direction = 1 if mapping.simulation[0] < mapping.simulation[1] else -1
-            result[key] = float(np.interp(value, mapping.simulation[::direction], mapping.policy[::direction]))
+            result[key] = float(
+                np.interp(value, mapping.simulation[::direction], mapping.policy[::direction])
+            )
         return result
 
     def read_joints(self):

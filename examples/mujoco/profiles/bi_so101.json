@@ -1,0 +1,22 @@
+{
+  "embodiment": "bi_so101",
+  "fps": 30,
+  "task": "reach",
+  "camera_views": {
+    "left_wrist": {
+      "width": 640,
+      "height": 480,
+      "native": "left_wrist_cam"
+    },
+    "right_wrist": {
+      "width": 640,
+      "height": 480,
+      "native": "right_wrist_cam"
+    },
+    "right_top": {
+      "width": 640,
+      "height": 480
+    }
+  },
+  "calibration_version": "menagerie-default"
+}

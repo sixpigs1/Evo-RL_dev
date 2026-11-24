@@ -180,7 +180,7 @@ def make_env(
 
         from lerobot.simulation.gym_env import JointTargetEnv
 
-        factory = partial(JointTargetEnv.for_simulation, cfg.robot)
+        factory = partial(JointTargetEnv.for_simulation, cfg.robot, target_ranges=cfg.joint_target_ranges)
         kwargs = {"context": "spawn"} if use_async_envs else {}
         vector = env_cls([factory] * n_envs, autoreset_mode=gym.vector.AutoresetMode.SAME_STEP, **kwargs)
         return {cfg.type: {0: vector}}

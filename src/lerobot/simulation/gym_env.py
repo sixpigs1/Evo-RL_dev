@@ -21,6 +21,7 @@ class JointTargetEnv(gym.Env):
         self.task = instruction
         self._max_episode_steps = episode_steps
         self.render_mode = "rgb_array" if simulated else None
+        self.metadata = {**self.metadata, "render_fps": robot.config.fps if simulated else 30}
         self.names = tuple(robot.action_features)
         self.images = {
             key: shape for key, shape in robot.observation_features.items() if isinstance(shape, tuple)
@@ -61,16 +62,18 @@ class JointTargetEnv(gym.Env):
         return np.clip(2 * (targets - lower) / (upper - lower) - 1, -1, 1)
 
     @classmethod
-    def for_simulation(cls, config, teleop=None):
+    def for_simulation(cls, config, teleop=None, *, target_ranges=None):
         from .tasks import TASKS
 
-        return cls(
+        env = cls(
             MujocoRobot(config),
             config.instruction or TASKS[config.task].instruction,
             config.episode_steps,
             simulated=True,
             teleop=teleop,
         )
+        env.set_target_ranges(target_ranges)
+        return env
 
     def configure_intervention(self):
         if not callable(getattr(self.teleop, "get_teleop_events", None)):

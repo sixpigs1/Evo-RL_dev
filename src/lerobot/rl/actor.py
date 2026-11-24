@@ -184,10 +184,9 @@ def actor_cli(cfg: TrainRLServerPipelineConfig):
     )
     logging.info("[ACTOR] Policy process joined")
 
-    logging.info("[ACTOR] Closing queues")
-    transitions_queue.close()
-    interactions_queue.close()
-    parameters_queue.close()
+    shutdown_event.set()
+    if grpc_channel is not None:
+        grpc_channel.close()
 
     transitions_process.join()
     logging.info("[ACTOR] Transitions process joined")
@@ -196,7 +195,10 @@ def actor_cli(cfg: TrainRLServerPipelineConfig):
     receive_policy_process.join()
     logging.info("[ACTOR] Receive policy process joined")
 
-    logging.info("[ACTOR] join queues")
+    logging.info("[ACTOR] Closing queues")
+    transitions_queue.close()
+    interactions_queue.close()
+    parameters_queue.close()
     transitions_queue.cancel_join_thread()
     interactions_queue.cancel_join_thread()
     parameters_queue.cancel_join_thread()
