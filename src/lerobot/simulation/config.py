@@ -31,6 +31,7 @@ class MujocoRobotConfig(RobotConfig):
     embodiment: str = "so101"
     task: str = "pick_place"
     instruction: str | None = None
+    task_difficulty: str = "nominal"
     fps: int = 30
     episode_steps: int = 300
     seed: int = 0
@@ -48,6 +49,8 @@ class MujocoRobotConfig(RobotConfig):
     def __post_init__(self):
         if self.embodiment not in {"so101", "bi_so101", "piper", "bi_piper"}:
             raise ValueError(f"Unsupported MuJoCo embodiment: {self.embodiment}")
+        if self.task_difficulty not in {"nominal", "precision"}:
+            raise ValueError("task_difficulty must be nominal or precision")
         if self.fps <= 0 or self.episode_steps <= 0 or self.randomization < 0:
             raise ValueError("fps and episode_steps must be positive and randomization nonnegative")
         for name, camera in self.camera_views.items():

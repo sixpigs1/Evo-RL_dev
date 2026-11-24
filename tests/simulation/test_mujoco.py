@@ -49,12 +49,7 @@ def test_mapping_snapshot_and_isolation(robot, assets):
 
 @pytest.mark.parametrize(
     "robot,task",
-    [
-        (robot, name)
-        for robot in ROBOTS
-        for name, task in TASKS.items()
-        if robot.startswith("bi_") or task.arms == 1
-    ],
+    [(robot, name) for robot in ROBOTS for name, task in TASKS.items() if task.supports(robot)],
 )
 def test_task_reset_and_timeout(robot, task, assets):
     env = JointTargetEnv.for_simulation(

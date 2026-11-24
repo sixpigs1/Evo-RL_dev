@@ -160,6 +160,7 @@ class JointTargetEnv(gym.Env):
         failure_reason = "timeout" if truncated else ""
         if self.simulated:
             info["phase"] = self.robot.sim.phase
+            info.update(self.robot.sim.task_progress())
             failure_reason = self.robot.sim.failure_reason
         info["failure_reason"] = failure_reason
         terminated = success or bool(failure_reason and failure_reason != "timeout")

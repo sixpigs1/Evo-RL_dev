@@ -2,6 +2,8 @@
 
 import numpy as np
 
+from .advanced_expert import AdvancedExpert
+
 
 class ScriptedExpert:
     def __init__(self, sim):
@@ -9,6 +11,7 @@ class ScriptedExpert:
         self.stage = 0
         self.stage_steps = 0
         self.drawer_plan = None
+        self.advanced = AdvancedExpert(sim, self._move) if sim.task.stage_names else None
 
     def _move(self, arm, goal, opening):
         sim = self.sim
@@ -28,7 +31,11 @@ class ScriptedExpert:
         if sim.cfg.task not in {"reach", "handover", "cooperative_carry"}:
             rotation = sim.data.site_xmat[site].reshape(3, 3)
             axis = rotation[:, 0 if sim.robot == "so101" else 2]
-            direction = np.array([1, 0, 0]) if sim.cfg.task == "open_drawer" else np.array([0, 0, -1])
+            direction = (
+                np.array([1, 0, 0])
+                if sim.cfg.task in {"open_drawer", "drawer_stow_close"}
+                else np.array([0, 0, -1])
+            )
             derivative = np.cross(angular[:, dofs].T, axis).T
             jacobian = np.vstack([jacobian, 0.09 * derivative])
             error = np.concatenate([error, 0.09 * (direction - axis)])
@@ -45,6 +52,8 @@ class ScriptedExpert:
         return result
 
     def action(self):
+        if self.advanced is not None:
+            return self.advanced.action()
         sim = self.sim
         task = sim.cfg.task
         if task == "reach":

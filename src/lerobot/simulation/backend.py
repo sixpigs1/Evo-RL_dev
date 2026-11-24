@@ -1,6 +1,7 @@
 """Shared MuJoCo physics, control, camera and episode state."""
 
 import json
+import math
 from dataclasses import asdict
 from functools import lru_cache
 from pathlib import Path
@@ -35,11 +36,16 @@ class MujocoSimulation:
 
         self.mj = mujoco
         self.cfg = cfg
+        if task is None and cfg.task not in TASKS:
+            raise ValueError(f"Unknown MuJoCo task {cfg.task!r}")
         self.task = task or TASKS[cfg.task]
+        if not self.task.supports(cfg.embodiment):
+            raise ValueError(f"{cfg.task!r} does not support {cfg.embodiment!r}")
+        self.substeps = 8
+        if self.task.max_physics_dt:
+            self.substeps = max(self.substeps, math.ceil(1 / (cfg.fps * self.task.max_physics_dt)))
         self.robot = cfg.embodiment.removeprefix("bi_")
         self.prefixes = ("left_", "right_") if cfg.embodiment.startswith("bi_") else ("",)
-        if len(self.prefixes) < self.task.arms:
-            raise ValueError(f"Task {cfg.task!r} requires {self.task.arms} arms")
         self.names = control_names(cfg)
         self.rng = np.random.default_rng(cfg.seed)
         self.renderers = {}
@@ -54,7 +60,11 @@ class MujocoSimulation:
         cfg = self.cfg
         root = ET.Element("mujoco", model=cfg.task)
         ET.SubElement(
-            root, "option", timestep=str(1 / (cfg.fps * 8)), integrator="implicitfast", cone="elliptic"
+            root,
+            "option",
+            timestep=str(1 / (cfg.fps * self.substeps)),
+            integrator="implicitfast",
+            cone="elliptic",
         )
         visual = ET.SubElement(root, "visual")
         ET.SubElement(
@@ -75,7 +85,10 @@ class MujocoSimulation:
             rgba=".48 .49 .52 1",
         )
         ET.SubElement(world, "camera", name="overview", pos=".8 -.78 .65", xyaxes=".8 .6 0 -.25 .33 .91")
-        self.task.build(world)
+        if self.task.stage_names:
+            self.task.build(world, cfg.task_difficulty)
+        else:
+            self.task.build(world)
         spec = self.mj.MjSpec.from_string(ET.tostring(root, encoding="unicode"))
         path = _verified_model((cfg.assets or asset_root()).resolve(), self.robot)
         positions = cfg.base_positions or (
@@ -144,21 +157,32 @@ class MujocoSimulation:
         self.phase = self.steps = 0
         self.success = False
         self.failure_reason = ""
+        self.stage_frames = [0] * len(self.task.stages)
+        self.stage_restarts = 0
+        self.stage_hold = 0
         for prefix in self.prefixes:
             if self.robot == "piper":
                 self.data.joint(prefix + "joint2").qpos[0] = 1.57
                 self.data.joint(prefix + "joint3").qpos[0] = -1.3485
+        if self.robot == "piper" and self.task.stage_names:
+            for arm, prefix in enumerate(self.prefixes):
+                self.data.joint(prefix + "joint1").qpos[0] = 0.65 if arm == 0 else -0.65
         if self.robot == "so101":
             for prefix in self.prefixes:
                 self.data.joint(prefix + "gripper").qpos[0] = 0.65
+        if self.task.reset is not None:
+            self.task.reset(self)
+        else:
+            self._randomize_free_joints()
+        self.data.ctrl[self.actuators] = self.data.qpos[self.model.jnt_qposadr[self.joints]]
+        self.mj.mj_forward(self.model, self.data)
+
+    def _randomize_free_joints(self):
+        shift = min(self.cfg.randomization, 0.005) if self.task.stage_names else self.cfg.randomization
         for index in range(self.model.njnt):
             if self.model.jnt_type[index] == self.mj.mjtJoint.mjJNT_FREE:
                 address = self.model.jnt_qposadr[index]
-                self.data.qpos[address : address + 2] += self.rng.uniform(
-                    -self.cfg.randomization, self.cfg.randomization, 2
-                )
-        self.data.ctrl[self.actuators] = self.data.qpos[self.model.jnt_qposadr[self.joints]]
-        self.mj.mj_forward(self.model, self.data)
+                self.data.qpos[address : address + 2] += self.rng.uniform(-shift, shift, 2)
 
     def _to_policy(self, values):
         result = {}
@@ -187,13 +211,11 @@ class MujocoSimulation:
             targets.append((actuator, np.interp(value, mapping.policy, mapping.simulation)))
         for actuator, value in targets:
             self.data.ctrl[actuator] = value
-        self.mj.mj_step(self.model, self.data, nstep=8)
+        self.mj.mj_step(self.model, self.data, nstep=self.substeps)
         self.mj.mj_forward(self.model, self.data)
         self.steps += 1
         if evaluate_task:
-            if self.task.stages[self.phase](self):
-                self.phase += 1
-                self.success = self.phase == len(self.task.stages)
+            self.advance_task()
             if (
                 not self.success
                 and self.object_body_id >= 0
@@ -205,6 +227,31 @@ class MujocoSimulation:
         if not np.isfinite(self.data.qpos).all():
             raise RuntimeError("MuJoCo produced nonfinite joint state")
         return self._to_policy(self.data.ctrl[self.actuators])
+
+    def advance_task(self):
+        if self.task.recover is not None:
+            phase = self.task.recover(self)
+            if phase != self.phase:
+                self.phase = phase
+                self.stage_restarts += 1
+                self.stage_hold = 0
+        self.stage_frames[self.phase] += 1
+        self.stage_hold = self.stage_hold + 1 if self.task.stages[self.phase](self) else 0
+        required = self.task.hold_frames if self.phase == len(self.task.stages) - 1 else 1
+        if self.stage_hold >= required:
+            self.phase += 1
+            self.stage_hold = 0
+            self.success = self.phase == len(self.task.stages)
+
+    def task_progress(self):
+        if not self.task.stage_names:
+            return {}
+        idx = min(self.phase, len(self.task.stage_names) - 1)
+        return {
+            "task_stage": "complete" if self.success else self.task.stage_names[idx],
+            "stage_frames": np.asarray(self.stage_frames, dtype=np.int32),
+            "stage_restarts": self.stage_restarts,
+        }
 
     @property
     def done(self):
@@ -219,17 +266,30 @@ class MujocoSimulation:
     def settled(self, obj):
         return np.linalg.norm(self.data.joint(f"{obj}_free").qvel) < 0.18
 
-    def grasping(self, arm):
+    def _finger_contacts(self, arm, target, target_geom=None):
         prefix = self.prefixes[arm]
         fingers = ("gripper", "moving_jaw_so101_v1") if self.robot == "so101" else ("link7", "link8")
         bodies = {self.model.body(prefix + finger).id for finger in fingers}
-        target = self.model.body("object").id
+        target_id = self.model.body(target).id
+        geom_id = self.model.geom(target_geom).id if target_geom else None
         contacts = set()
         for contact in self.data.contact:
+            if contact.dist > 0:
+                continue
             one, two = self.model.geom_bodyid[[contact.geom1, contact.geom2]]
-            if contact.dist <= 0 and target in (one, two):
-                contacts.add(two if one == target else one)
+            if one == target_id and (geom_id is None or contact.geom1 == geom_id):
+                contacts.add(two)
+            if two == target_id and (geom_id is None or contact.geom2 == geom_id):
+                contacts.add(one)
+        return bodies, contacts
+
+    def grasping(self, arm, target="object", target_geom=None):
+        bodies, contacts = self._finger_contacts(arm, target, target_geom)
         return bodies <= contacts
+
+    def gripper_touches(self, arm, target):
+        bodies, contacts = self._finger_contacts(arm, target)
+        return bool(bodies & contacts)
 
     def image(self, camera="overview", width=320, height=240):
         size = (width, height)
@@ -261,6 +321,9 @@ class MujocoSimulation:
             "integration": state.tolist(),
             "rng": self.rng.bit_generator.state,
             "phase": self.phase,
+            "stage_frames": self.stage_frames.copy(),
+            "stage_restarts": self.stage_restarts,
+            "stage_hold": self.stage_hold,
             "steps": self.steps,
             "success": self.success,
             "failure_reason": self.failure_reason,
@@ -276,11 +339,15 @@ class MujocoSimulation:
             raise ValueError("Snapshot simulator or asset version differs")
         if snapshot.get("scene_version", "tabletop-v1") != f"tabletop-v{self.task.scene_version}":
             raise ValueError("Snapshot scene version differs")
-        if snapshot["config"] != self.scene_signature():
+        config = {"task_difficulty": "nominal", **snapshot["config"]}
+        if config != self.scene_signature():
             raise ValueError("Snapshot scene or calibration configuration differs")
         self.mj.mj_setState(self.model, self.data, state, self.state_spec)
         self.rng.bit_generator.state = snapshot["rng"]
         self.phase = snapshot["phase"]
+        self.stage_frames = list(snapshot.get("stage_frames", [0] * len(self.task.stages)))
+        self.stage_restarts = snapshot.get("stage_restarts", 0)
+        self.stage_hold = snapshot.get("stage_hold", 0)
         self.steps = snapshot["steps"]
         self.success = snapshot["success"]
         self.failure_reason = snapshot.get("failure_reason", "")

@@ -16,14 +16,21 @@ def main():
     parser.add_argument("--episodes", type=int, default=3)
     parser.add_argument("--steps", type=int, default=300)
     parser.add_argument("--rgb", action="store_true")
+    parser.add_argument("--difficulty", choices=("nominal", "precision"), default="nominal")
     parser.add_argument("--robot", choices=("so101", "bi_so101", "piper", "bi_piper"))
     parser.add_argument("--task", choices=sorted(TASKS))
     args = parser.parse_args()
+    if args.episodes <= 0 or args.steps <= 0:
+        parser.error("--episodes and --steps must be positive")
+    if args.task and args.robot and not TASKS[args.task].supports(args.robot):
+        parser.error(f"{args.task} does not support {args.robot}")
     for robot in (args.robot,) if args.robot else ("so101", "bi_so101", "piper", "bi_piper"):
         for name, task in TASKS.items():
-            if args.task and args.task != name or task.arms == 2 and not robot.startswith("bi_"):
+            if (args.task and args.task != name) or not task.supports(robot):
                 continue
-            config = MujocoRobotConfig(embodiment=robot, task=name, episode_steps=args.steps)
+            config = MujocoRobotConfig(
+                embodiment=robot, task=name, episode_steps=args.steps, task_difficulty=args.difficulty
+            )
             if args.rgb:
                 config.camera_views["front"] = SimCamera()
             sim = MujocoSimulation(config)
@@ -31,6 +38,8 @@ def main():
                 successes = 0
                 failures = Counter()
                 frames = 0
+                phase_times = Counter()
+                restarts = retries = 0
                 resets = []
                 start = time.perf_counter()
                 for seed in range(args.episodes):
@@ -44,6 +53,11 @@ def main():
                             sim.observation()
                     frames += sim.steps
                     successes += sim.success
+                    restarts += sim.stage_restarts
+                    if expert.advanced is not None:
+                        retries += expert.advanced.retries
+                    phase_times.update(dict(zip(task.stage_names, sim.stage_frames, strict=False)))
+
                     if sim.failure_reason:
                         failures[sim.failure_reason] += 1
                 print(
@@ -52,6 +66,10 @@ def main():
                             "robot": robot,
                             "task": name,
                             "episodes": args.episodes,
+                            "difficulty": args.difficulty,
+                            "stage_frames": dict(phase_times),
+                            "stage_restarts": restarts,
+                            "expert_retries": retries,
                             "successes": successes,
                             "failures": dict(failures),
                             "control_frames_per_s": frames / (time.perf_counter() - start),

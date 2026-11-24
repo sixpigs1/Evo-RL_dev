@@ -6,6 +6,8 @@ from xml.etree import ElementTree as ET
 
 import numpy as np
 
+from . import advanced_tasks as advanced
+
 
 def box(parent, name, position, size, *, free=False, color="0.7 0.25 0.15 1"):
     body = ET.SubElement(parent, "body", name=name, pos=position)
@@ -109,6 +111,19 @@ class TabletopTask:
     stages: tuple[Callable, ...]
     arms: int = 1
     scene_version: int = 1
+    embodiments: tuple[str, ...] = ()
+    stage_names: tuple[str, ...] = ()
+    hold_frames: int = 1
+    max_physics_dt: float | None = None
+    reset: Callable | None = None
+    recover: Callable | None = None
+
+    def supports(self, embodiment):
+        return (
+            embodiment in self.embodiments
+            if self.embodiments
+            else (self.arms == 1 or embodiment.startswith("bi_"))
+        )
 
 
 TASKS = {
@@ -125,5 +140,44 @@ TASKS = {
     ),
     "lift_then_place": TabletopTask(
         "Lift the block and place it on the green target.", _pick, (_handover_left, _placed)
+    ),
+    "keyed_plug_insert": TabletopTask(
+        "Pick up the plug, insert both pins into the socket and let go.",
+        advanced.build_plug,
+        (lambda sim: sim.grasping(0), advanced.plug_aligned, advanced.plug_released),
+        arms=2,
+        embodiments=("bi_so101",),
+        stage_names=("grasp", "align", "insert_release"),
+        hold_frames=10,
+        max_physics_dt=0.001,
+        reset=advanced.reset_plug,
+    ),
+    "drawer_stow_close": TabletopTask(
+        "Open the drawer, put the red block inside, and close the drawer.",
+        advanced.build_drawer,
+        (advanced.drawer_open, advanced.open_item_stowed, advanced.drawer_closed),
+        arms=2,
+        embodiments=("bi_piper",),
+        stage_names=("open", "stow", "close"),
+        hold_frames=10,
+        max_physics_dt=0.002,
+        recover=advanced.drawer_recovery,
+    ),
+    "bimanual_stabilized_insert": TabletopTask(
+        "Hold the socket steady with your left arm and insert the plug with your right arm.",
+        advanced.build_mobile_plug,
+        (
+            advanced.fixture_held,
+            lambda sim: sim.grasping(1),
+            advanced.plug_aligned,
+            advanced.mobile_plug_released,
+        ),
+        arms=2,
+        embodiments=("bi_piper",),
+        stage_names=("stabilize", "grasp", "align", "insert_release"),
+        hold_frames=10,
+        max_physics_dt=0.001,
+        reset=advanced.reset_plug,
+        recover=advanced.fixture_recovery,
     ),
 }
