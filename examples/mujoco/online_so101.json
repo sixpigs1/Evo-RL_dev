@@ -1,0 +1,67 @@
+{
+  "job_name": "mujoco_so101_reach",
+  "batch_size": 8,
+  "save_freq": 100,
+  "env": {
+    "type": "gym_manipulator",
+    "name": "joint_targets",
+    "fps": 30,
+    "robot": {
+      "type": "mujoco",
+      "embodiment": "so101",
+      "task": "reach",
+      "episode_steps": 30
+    },
+    "joint_target_ranges": {
+      "shoulder_pan.pos": [
+        -100,
+        100
+      ],
+      "shoulder_lift.pos": [
+        -100,
+        100
+      ],
+      "elbow_flex.pos": [
+        -100,
+        100
+      ],
+      "wrist_flex.pos": [
+        -100,
+        100
+      ],
+      "wrist_roll.pos": [
+        -100,
+        100
+      ],
+      "gripper.pos": [
+        0,
+        100
+      ]
+    }
+  },
+  "policy": {
+    "type": "sac",
+    "device": "cpu",
+    "online_steps": 600,
+    "online_step_before_learning": 64,
+    "online_buffer_capacity": 5000,
+    "input_features": {
+      "observation.state": {
+        "type": "STATE",
+        "shape": [
+          6
+        ]
+      }
+    },
+    "output_features": {
+      "action": {
+        "type": "ACTION",
+        "shape": [
+          6
+        ]
+      }
+    },
+    "dataset_stats": null,
+    "push_to_hub": false
+  }
+}

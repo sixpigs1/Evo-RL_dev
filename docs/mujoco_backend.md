@@ -40,6 +40,16 @@ Keep the checkpoint, task text, FPS, and feature keys fixed when switching to ha
 
 HIL-SERL accepts `env.name: joint_targets` with either the MuJoCo robot or a real follower. Configure the SAC action feature to have one element per joint target and use the same state and camera features as the selected follower. With SAC’s default tanh actions, set `env.joint_target_ranges` to the same named lower and upper follower targets in both configurations. The adapter maps policy actions from `[-1, 1]` to follower units and encodes the executed targets back into the same range for replay. For real success rewards use the existing reward classifier or teleoperator events. An event-capable joint teleoperator can supply takeover events, or a local keyboard can toggle takeover on a joint leader. Preserve the joint-target configuration when moving the checkpoint between backends.
 
+Start the learner and actor in separate terminals with distinct output directories.
+
+```sh
+pip install -e '.[mujoco,grpcio-dep]'
+python -m lerobot.rl.learner --config_path=examples/mujoco/online_so101.json --output_dir=outputs/mujoco/learner
+python -m lerobot.rl.actor --config_path=examples/mujoco/online_so101.json --output_dir=outputs/mujoco/actor
+```
+
+For PI05, use the repository's `pi` extra in a compatible environment and point `--policy.tokenizer_name` at the original tokenizer if the checkpoint has moved between hosts. The transfer check in `examples/mujoco/check_transfer.py` compares both observation paths and runs the same checkpoint on each.
+
 ## Task coverage
 
 | Task | SO-101 | Dual SO-101 | PiPER | Dual PiPER |

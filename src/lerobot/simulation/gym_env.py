@@ -163,7 +163,7 @@ class JointTargetEnv(gym.Env):
             failure_reason = self.robot.sim.failure_reason
         info["failure_reason"] = failure_reason
         terminated = success or bool(failure_reason and failure_reason != "timeout")
-        return self._observe(), float(success), terminated, truncated, info
+        return self._observe(), float(success), terminated, truncated and not terminated, info
 
     def render(self):
         if self.simulated:
