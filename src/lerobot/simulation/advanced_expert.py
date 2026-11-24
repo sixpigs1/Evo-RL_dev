@@ -27,8 +27,9 @@ class AdvancedExpert:
         self.stage = self.age = self.retries = 0
         self.grasp_transform = None
         self.insertion_goal = -0.025
-        self.fixture_target = False
+        self.fixture_stable = False
         self.drawer_handle = None
+        self.right_home = None
         self.ik = sim.mj.MjData(sim.model)
 
     def _goto(self, stage):
@@ -105,17 +106,19 @@ class AdvancedExpert:
         sim = self.sim
         grasp = sim.data.site("plug_grasp").xpos.copy()
         # PiPER's pads extend in front of the configured TCP.
+        pickup_orientation = {"forward": -UP}
         if sim.robot == "piper":
             grasp += PIPER_PAD_REACH * UP
+            pickup_orientation = {"rotation": PIPER_DOWN}
         if self.stage == 0:
             hover = grasp + 0.045 * UP
             if self._near(arm, hover) or self.age > 65:
                 self._goto(1)
-            return self._track(arm, hover, True, forward=-UP)
+            return self._track(arm, hover, True, **pickup_orientation)
         if self.stage == 1:
             if self._near(arm, grasp, 0.008) or self.age > 50:
                 self._goto(2)
-            return self._track(arm, grasp, True, forward=-UP)
+            return self._track(arm, grasp, True, **pickup_orientation)
         if self.stage == 2:
             if sim.grasping(arm) and self.age >= 4:
                 self._capture_plug(arm)
@@ -124,15 +127,15 @@ class AdvancedExpert:
             elif self.age > 28:
                 self.retries += 1
                 self._goto(0)
-            return self._track(arm, grasp, False, forward=-UP)
+            return self._track(arm, grasp, False, **pickup_orientation)
         if self.stage < 6 and not sim.gripper_touches(arm, "object") and self.age > 5:
             self.retries += 1
             self._goto(0)
-            return self._track(arm, grasp + 0.04 * UP, True, forward=-UP)
+            return self._track(arm, grasp + 0.04 * UP, True, **pickup_orientation)
         if self.stage == 3:
             if self.age > 23:
                 self._goto(4)
-            return self._track(arm, self.lift_goal, False, forward=-UP)
+            return self._track(arm, self.lift_goal, False, **pickup_orientation)
         if self.stage == 4:
             seat = socket_local(sim, "plug_seat")
             if (self.age >= 20 and np.linalg.norm(seat - [-0.025, 0, 0]) < 0.012) or self.age > 65:
@@ -160,10 +163,11 @@ class AdvancedExpert:
         held = sim.grasping(0, "socket", "fixture_handle")
         if held:
             slide = sim.data.joint("fixture_slide").qpos[0]
-            goal = target + np.array([-0.007, -np.clip(slide, -0.025, 0.025), 0.0])
-            self.fixture_target = fixture_held(sim)
+            yaw = sim.data.joint("fixture_yaw").qpos[0]
+            goal = target + np.array([0.09 * np.sin(yaw), -np.clip(slide, -0.025, 0.025), 0.0])
+            self.fixture_stable = fixture_held(sim)
             return self._track(0, goal, False, rotation=PIPER_DOWN)
-        self.fixture_target = False
+        self.fixture_stable = False
         near = self._near(0, target, 0.013)
         descend = self.age > 36 or np.linalg.norm(sim.tcp(0)[:2] - target[:2]) < 0.028
         goal = target if near or descend else target + 0.045 * UP
@@ -176,6 +180,8 @@ class AdvancedExpert:
             self.drawer_handle = handle.copy()
         original = self.drawer_handle
         arm = 0
+        if self.right_home is None:
+            self.right_home = {key: value for key, value in sim.read_joints().items() if key.startswith("right_")}
         if self.stage < 4:
             grip = handle + PIPER_PAD_REACH * UP
             goals = [
@@ -212,7 +218,12 @@ class AdvancedExpert:
             if self._near(arm, park, 0.028) or self.age > 45:
                 self._goto(5)
             return self._track(arm, park, True)
-        if self.stage < 12:
+        if self.stage == 11:
+            right_tcp = sim.tcp(1)
+            if self.age >= 25 and right_tcp[1] < -0.16 and right_tcp[2] > 0.24:
+                self._goto(12)
+            return self.right_home
+        if self.stage < 11:
             arm = 1
             grip = sim.position("object").copy() + PIPER_PAD_REACH * UP
             drop = sim.position("drawer").copy() + [-0.018, 0, ITEM_HALF[2] + PIPER_PAD_REACH + 0.010]
@@ -223,9 +234,15 @@ class AdvancedExpert:
                 self.lift_goal,
                 drop + 0.065 * UP,
                 drop,
-                drop + 0.085 * UP,
-                np.array([0.19, -0.24, 0.245]),
             ]
+            if self.stage == 10:
+                retreat = drop + 0.13 * UP
+                if self._near(arm, retreat, 0.035) and item_stowed(sim):
+                    self._goto(11)
+                elif self.age > 100:
+                    self.retries += 1
+                    self._goto(5 if drawer_open(sim) else 0)
+                return self._track(arm, retreat, True)
             goal = goals[self.stage - 5]
             if self.stage == 7:
                 if sim.grasping(arm) and self.age >= 5:
@@ -235,15 +252,8 @@ class AdvancedExpert:
                     self.retries += 1
                     self._goto(5)
                 return self._track(arm, goal, False, rotation=PIPER_DOWN)
-            if self.stage == 10 and self.age >= 15 and item_stowed(sim):
-                self._goto(11)
-            elif self.stage == 11 and self._near(arm, goal, 0.030):
-                self._goto(12)
-            elif self.stage < 10 and (self._near(arm, goal) and self.age >= 14 or self.age > 48):
+            if (self._near(arm, goal) and self.age >= 14) or self.age > 48:
                 self._goto(self.stage + 1)
-            elif self.stage == 10 and self.age > 65:
-                self.retries += 1
-                self._goto(5 if drawer_open(sim) else 0)
             return self._track(arm, goal, self.stage < 7 or self.stage >= 10, rotation=PIPER_DOWN)
         grip = handle + PIPER_PAD_REACH * UP
         if not item_inside(sim):
@@ -288,6 +298,6 @@ class AdvancedExpert:
         if task == "keyed_plug_insert":
             return self._plug(0)
         fixture = self._fixture()
-        if not self.fixture_target and self.stage == 0:
+        if not self.fixture_stable and self.stage == 0:
             return fixture
         return {**fixture, **self._plug(1)}

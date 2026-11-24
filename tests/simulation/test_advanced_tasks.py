@@ -165,6 +165,20 @@ def test_drawer_requires_correct_item_full_containment_and_close_order(assets):
         sim.close()
 
 
+def test_drawer_reference_completes_all_stages(assets):
+    sim = _simulation(assets, *CASES[1], episode_steps=900)
+    try:
+        sim.reset(seed=0)
+        expert = ScriptedExpert(sim)
+        while not sim.done:
+            sim.step(expert.action())
+        assert sim.success and drawer_closed(sim)
+        assert all(sim.stage_frames)
+        assert sim.stage_restarts == 0
+    finally:
+        sim.close()
+
+
 def test_mobile_fixture_cannot_pass_without_physical_support(assets):
     sim = _simulation(assets, *CASES[2], randomization=0)
     try:
