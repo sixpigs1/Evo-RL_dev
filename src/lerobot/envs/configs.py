@@ -13,13 +13,14 @@
 # limitations under the License.
 
 import abc
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, field, replace, fields
 from typing import Any
 
 import draccus
 
 from lerobot.configs.types import FeatureType, PolicyFeature
 from lerobot.robots import RobotConfig
+from lerobot.simulation.config import MujocoRobotConfig
 from lerobot.teleoperators.config import TeleoperatorConfig
 from lerobot.utils.constants import (
     ACTION,
@@ -66,6 +67,32 @@ class EnvConfig(draccus.ChoiceRegistry, abc.ABC):
     @abc.abstractmethod
     def gym_kwargs(self) -> dict:
         raise NotImplementedError()
+
+
+@EnvConfig.register_subclass("mujoco")
+@dataclass
+class MujocoEnvConfig(EnvConfig):
+    robot: MujocoRobotConfig = field(default_factory=MujocoRobotConfig)
+
+    def __post_init__(self):
+        from lerobot.simulation.backend import control_names
+        from lerobot.utils.constants import OBS_IMAGES
+
+        self.robot = replace(self.robot, task=self.task or self.robot.task)
+        self.task = self.robot.task
+        self.fps = self.robot.fps
+        shape = (len(control_names(self.robot)),)
+        self.features = {
+            ACTION: PolicyFeature(type=FeatureType.ACTION, shape=shape),
+            OBS_STATE: PolicyFeature(type=FeatureType.STATE, shape=shape),
+            **{f"{OBS_IMAGES}.{name}": PolicyFeature(type=FeatureType.VISUAL, shape=(3, c.height, c.width))
+               for name, c in self.robot.camera_views.items()},
+        }
+        self.features_map = {key: key for key in self.features}
+
+    @property
+    def gym_kwargs(self):
+        return {"config": self.robot}
 
 
 @dataclass

@@ -156,7 +156,8 @@ def record_loop(
         else:
             action_feature_names = list(robot.action_features)
     zero_policy_action = dict.fromkeys(action_feature_names, 0.0)
-    has_teleop = isinstance(teleop, (Teleoperator, list))
+    expert = getattr(robot, "expert", None)
+    has_teleop = isinstance(teleop, (Teleoperator, list)) or expert is not None
     intervention_enabled = intervention_state_machine_enabled and policy is not None and has_teleop
     intervention_state = INTERVENTION_STATE_POLICY
     last_teleop_action: RobotAction | None = None
@@ -314,6 +315,9 @@ def record_loop(
             act = {**arm_action, **base_action} if len(base_action) > 0 else arm_action
             act_processed_teleop = teleop_action_processor((act, obs))
 
+        if expert is not None and teleop is None:
+            act_processed_teleop = expert.action()
+
         if act_processed_policy is None and act_processed_teleop is None:
             logging.info(
                 "No policy or teleoperator provided, skipping action generation."
@@ -382,7 +386,8 @@ def record_loop(
 
         # Write to dataset
         if dataset is not None:
-            action_frame = build_dataset_frame(dataset.features, action_values, prefix=ACTION)
+            recorded_action = _sent_action if getattr(robot, "sim", None) is not None else action_values
+            action_frame = build_dataset_frame(dataset.features, recorded_action, prefix=ACTION)
             policy_action_frame = build_dataset_frame(
                 dataset.features, policy_action_for_storage, prefix="complementary_info.policy_action"
             )
@@ -401,6 +406,9 @@ def record_loop(
                     human_id=collector_policy_id_human,
                 )
             dataset.add_frame(frame)
+
+        if getattr(robot, "sim", None) is not None and robot.sim.done:
+            break
 
         if display_data:
             log_rerun_data(

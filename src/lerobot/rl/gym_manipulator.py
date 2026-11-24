@@ -308,6 +308,36 @@ def make_robot_env(cfg: HILSerlRobotEnvConfig) -> tuple[gym.Env, Any]:
     Returns:
         Tuple of (gym environment, teleoperator device).
     """
+    if cfg.name in {"mujoco", "joint_targets"}:
+        from lerobot.simulation.config import MujocoRobotConfig
+        from lerobot.simulation.gym_env import JointTargetEnv
+
+        if cfg.robot is None:
+            raise ValueError("A robot configuration is required for joint-target training")
+        simulated = isinstance(cfg.robot, MujocoRobotConfig)
+        if cfg.name == "mujoco" and not simulated:
+            raise ValueError("env.name=mujoco requires env.robot.type=mujoco")
+        if simulated and cfg.fps != cfg.robot.fps:
+            raise ValueError("env.fps must match env.robot.fps")
+        teleop = make_teleoperator_from_config(cfg.teleop) if cfg.teleop is not None else None
+        if simulated:
+            env = JointTargetEnv.for_simulation(cfg.robot, teleop)
+        else:
+            reset = cfg.processor.reset
+            steps = int(reset.control_time_s * cfg.fps) if reset else 300
+            env = JointTargetEnv(
+                make_robot_from_config(cfg.robot), cfg.task or "", steps, simulated=False,
+                teleop=teleop, reset_pose=reset.fixed_reset_joint_positions if reset else None,
+            )
+        if teleop is not None:
+            try:
+                teleop.connect()
+                env.configure_intervention()
+            except Exception:
+                env.close()
+                raise
+        return env, teleop
+
     # Check if this is a GymHIL simulation environment
     if cfg.name == "gym_hil":
         assert cfg.robot is None and cfg.teleop is None, "GymHIL environment does not support robot or teleop"
@@ -371,6 +401,35 @@ def make_processors(
     terminate_on_success = (
         cfg.processor.reset.terminate_on_success if cfg.processor.reset is not None else True
     )
+
+    if cfg.name in {"mujoco", "joint_targets"}:
+        from lerobot.simulation.gym_env import JointTargetIntervention
+
+        action_steps = [JointTargetIntervention(env, terminate_on_success), Torch2NumpyActionProcessorStep()]
+        observation_steps = [VanillaObservationProcessorStep()]
+        if cfg.processor.image_preprocessing is not None:
+            observation_steps.append(ImageCropResizeProcessorStep(
+                crop_params_dict=cfg.processor.image_preprocessing.crop_params_dict,
+                resize_size=cfg.processor.image_preprocessing.resize_size,
+            ))
+        classifier = cfg.processor.reward_classifier
+        if classifier is not None and classifier.pretrained_path is not None:
+            observation_steps.append(RewardClassifierProcessorStep(
+                pretrained_path=classifier.pretrained_path, device=device,
+                success_threshold=classifier.success_threshold, success_reward=classifier.success_reward,
+                terminate_on_success=terminate_on_success,
+            ))
+        if cfg.processor.observation is not None and cfg.processor.observation.add_joint_velocity_to_observation:
+            observation_steps.append(JointVelocityProcessorStep(dt=1.0 / cfg.fps))
+        if cfg.processor.inverse_kinematics is not None:
+            raise ValueError("Joint-target HIL-SERL uses absolute targets and does not apply the delta-EE IK pipeline")
+        observation_steps.extend([AddBatchDimensionProcessorStep(), DeviceProcessorStep(device=device)])
+        return (
+            DataProcessorPipeline(steps=observation_steps, to_transition=identity_transition,
+                                  to_output=identity_transition),
+            DataProcessorPipeline(steps=action_steps, to_transition=identity_transition,
+                                  to_output=identity_transition),
+        )
 
     if cfg.name == "gym_hil":
         action_pipeline_steps = [
@@ -550,6 +609,8 @@ def step_env_and_process_transition(
     truncated = truncated or processed_action_transition[TransitionKey.TRUNCATED]
     complementary_data = processed_action_transition[TransitionKey.COMPLEMENTARY_DATA].copy()
     new_info = processed_action_transition[TransitionKey.INFO].copy()
+    if (executed_action := info.get("executed_action")) is not None:
+        complementary_data["teleop_action"] = torch.as_tensor(executed_action, device=action.device, dtype=action.dtype)
     new_info.update(info)
 
     new_transition = create_transition(

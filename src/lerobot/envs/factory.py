@@ -20,7 +20,7 @@ import gymnasium as gym
 from gymnasium.envs.registration import registry as gym_registry
 
 from lerobot.configs.policies import PreTrainedConfig
-from lerobot.envs.configs import AlohaEnv, EnvConfig, HubEnvConfig, IsaaclabArenaEnv, LiberoEnv, PushtEnv
+from lerobot.envs.configs import AlohaEnv, EnvConfig, HubEnvConfig, IsaaclabArenaEnv, LiberoEnv, MujocoEnvConfig, PushtEnv
 from lerobot.envs.utils import _call_make_env, _download_hub_file, _import_hub_module, _normalize_hub_result
 from lerobot.policies.xvla.configuration_xvla import XVLAConfig
 from lerobot.processor import ProcessorStep
@@ -29,6 +29,8 @@ from lerobot.processor.pipeline import PolicyProcessorPipeline
 
 
 def make_env_config(env_type: str, **kwargs) -> EnvConfig:
+    if env_type == "mujoco":
+        return MujocoEnvConfig(**kwargs)
     if env_type == "aloha":
         return AlohaEnv(**kwargs)
     elif env_type == "pusht":
@@ -164,6 +166,16 @@ def make_env(
         raise ValueError("`n_envs` must be at least 1")
 
     env_cls = gym.vector.AsyncVectorEnv if use_async_envs else gym.vector.SyncVectorEnv
+
+    if isinstance(cfg, MujocoEnvConfig):
+        from functools import partial
+
+        from lerobot.simulation.gym_env import JointTargetEnv
+
+        factory = partial(JointTargetEnv.for_simulation, cfg.robot)
+        kwargs = {"context": "spawn"} if use_async_envs else {}
+        vector = env_cls([factory] * n_envs, autoreset_mode=gym.vector.AutoresetMode.SAME_STEP, **kwargs)
+        return {cfg.type: {0: vector}}
 
     if "libero" in cfg.type:
         from lerobot.envs.libero import create_libero_envs

@@ -136,6 +136,8 @@ def are_all_envs_same_type(env: gym.vector.VectorEnv) -> bool:
 
 
 def check_env_attributes_and_types(env: gym.vector.VectorEnv) -> None:
+    if isinstance(env, gym.vector.AsyncVectorEnv):
+        return
     with warnings.catch_warnings():
         warnings.simplefilter("once", UserWarning)  # Apply filter only in this function
 
@@ -155,6 +157,10 @@ def check_env_attributes_and_types(env: gym.vector.VectorEnv) -> None:
 
 def add_envs_task(env: gym.vector.VectorEnv, observation: RobotObservation) -> RobotObservation:
     """Adds task feature to the observation dict with respect to the first environment attribute."""
+    if isinstance(env, gym.vector.AsyncVectorEnv):
+        descriptions = env.get_attr("task")
+        observation["task"] = [str(task or "") for task in descriptions]
+        return observation
     if hasattr(env.envs[0], "task_description"):
         task_result = env.call("task_description")
 

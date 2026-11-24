@@ -136,14 +136,15 @@ def human_inloop_record(cfg: RecordConfig):
     if cfg.teleop is None:
         raise ValueError("`lerobot-human-inloop-record` requires `teleop` config.")
 
-    cfg.policy_sync_to_teleop = cfg.policy is not None
+    simulated = cfg.robot.type == "mujoco"
+    cfg.policy_sync_to_teleop = cfg.policy is not None and not simulated
     cfg.intervention_state_machine_enabled = cfg.policy is not None
     cfg.enable_episode_outcome_labeling = True
     cfg.default_episode_success = "failure"
     cfg.enable_collector_policy_id = True
     if cfg.collector_policy_id_policy is None:
         cfg.collector_policy_id_policy = infer_collector_policy_version(cfg.policy)
-    if cfg.policy is not None:
+    if cfg.policy is not None and not simulated:
         failure_reset_controller = _HumanInloopFailureResetController(cfg)
         cfg._on_record_connected = failure_reset_controller.on_record_connected
         cfg._on_record_episode_outcome = failure_reset_controller.on_episode_outcome

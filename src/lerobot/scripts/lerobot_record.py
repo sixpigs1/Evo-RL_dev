@@ -106,6 +106,7 @@ from lerobot.scripts.recording_hil import (
     _predict_policy_action_with_acp_inference,  # noqa: F401
 )
 from lerobot.scripts.recording_loop import record_loop
+from lerobot.simulation.config import MujocoRobotConfig
 from lerobot.teleoperators import (  # noqa: F401
     TeleoperatorConfig,
     bi_openarm_leader,
@@ -250,9 +251,12 @@ class RecordConfig:
             self.policy = PreTrainedConfig.from_pretrained(policy_path, cli_overrides=cli_overrides)
             self.policy.pretrained_path = policy_path
 
-        if self.teleop is None and self.policy is None:
+        if self.teleop is None and self.policy is None and not (
+            isinstance(self.robot, MujocoRobotConfig) and self.robot.scripted_expert
+        ):
             raise ValueError("Choose a policy, a teleoperator or both to control the robot")
-        sanity_check_bimanual_piper_pair(self.robot, self.teleop)
+        if not isinstance(self.robot, MujocoRobotConfig):
+            sanity_check_bimanual_piper_pair(self.robot, self.teleop)
         if not self.intervention_toggle_key or len(self.intervention_toggle_key) != 1:
             raise ValueError("`intervention_toggle_key` must be a single character.")
 
@@ -335,6 +339,14 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
     )
 
     robot = make_robot_from_config(cfg.robot)
+    simulated = isinstance(cfg.robot, MujocoRobotConfig)
+    if simulated:
+        if cfg.dataset.fps != cfg.robot.fps:
+            raise ValueError("dataset.fps must match robot.fps for MuJoCo recording")
+        cfg.enable_episode_outcome_labeling = True
+        cfg.enable_collector_policy_id = True
+        if cfg.robot.scripted_expert and cfg.teleop is None:
+            cfg.collector_policy_id_human = "scripted_expert"
     teleop = make_teleoperator_from_config(cfg.teleop) if cfg.teleop is not None else None
 
     teleop_action_processor, robot_action_processor, robot_observation_processor = make_default_processors()
@@ -353,7 +365,7 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
             use_videos=cfg.dataset.video,
         ),
     )
-    if cfg.teleop is not None:
+    if cfg.teleop is not None or simulated:
         action_names = dataset_features[ACTION]["names"]
         action_names = list(robot.action_features) if action_names is None else list(action_names)
         _ensure_human_inloop_compatible_features(dataset_features, action_feature_names=action_names)
@@ -453,6 +465,8 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
             recorded_episodes = 0
             while recorded_episodes < cfg.dataset.num_episodes and not events["stop_recording"]:
                 events["episode_outcome"] = None
+                if simulated:
+                    robot.reset()
                 log_say(f"Recording episode {dataset.num_episodes}", cfg.play_sounds)
                 record_loop(
                     robot=robot,
@@ -479,6 +493,8 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
                     communication_retry_interval_s=cfg.communication_retry_interval_s,
                 )
 
+                if simulated and events.get("episode_outcome") is None:
+                    events["episode_outcome"] = "success" if robot.sim.success else "failure"
                 episode_success = None
                 if cfg.enable_episode_outcome_labeling:
                     episode_success = resolve_episode_success_label(
@@ -499,7 +515,7 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
 
                 # Execute a few seconds without recording to give time to manually reset the environment
                 # Skip reset for the last episode to be recorded
-                if not events["stop_recording"] and (
+                if not simulated and not events["stop_recording"] and (
                     (recorded_episodes < cfg.dataset.num_episodes - 1) or events["rerecord_episode"]
                 ):
                     log_say("Reset the environment", cfg.play_sounds)
@@ -539,7 +555,10 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
                 extra_episode_metadata = (
                     {"episode_success": episode_success} if cfg.enable_episode_outcome_labeling else None
                 )
+                episode_index = dataset.num_episodes
                 dataset.save_episode(extra_episode_metadata=extra_episode_metadata)
+                if simulated:
+                    robot.save_trace(cfg.dataset.repo_id, episode_index)
                 recorded_episodes += 1
     finally:
         log_say("Stop recording", cfg.play_sounds, blocking=True)
