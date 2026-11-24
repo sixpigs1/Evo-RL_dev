@@ -8,6 +8,7 @@ class ScriptedExpert:
         self.sim = sim
         self.stage = 0
         self.stage_steps = 0
+        self.drawer_plan = None
 
     def _move(self, arm, goal, opening):
         sim = self.sim
@@ -49,14 +50,16 @@ class ScriptedExpert:
         if task == "reach":
             return self._move(0, sim.data.site("goal").xpos, True)
         if task == "open_drawer":
-            origin = sim.position("drawer").copy()
-            plan = [
-                (origin + [-0.08, 0, 0.025], True),
-                (origin + [-0.054, 0, 0], True),
-                (origin + [-0.054, 0, 0], False),
-                (np.array([0.11, 0, 0.045]), False),
-            ]
-            return self._run(plan)
+            if self.drawer_plan is None:
+                origin = sim.position("drawer").copy()
+                grip = origin + [-0.078, 0, 0.007]
+                self.drawer_plan = [
+                    (origin + [-0.09, 0, 0.06], True),
+                    (grip, True),
+                    (grip, False),
+                    (origin + [-0.17, 0, 0.007], False),
+                ]
+            return self._run(self.drawer_plan)
         obj = sim.position("object").copy()
         if task == "handover":
             transfer = np.array([0.19, 0, 0.13])

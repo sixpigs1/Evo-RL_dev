@@ -14,7 +14,6 @@ from .assets import MODEL_FILES, REVISION, asset_root, verify_assets
 from .config import JointMapping, MujocoRobotConfig
 from .tasks import TASKS, TabletopTask
 
-SCENE_VERSION = "tabletop-v1"
 SO_JOINTS = ("shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper")
 
 
@@ -267,7 +266,7 @@ class MujocoSimulation:
             "failure_reason": self.failure_reason,
             "mujoco": self.mj.__version__,
             "menagerie": REVISION,
-            "scene_version": SCENE_VERSION,
+            "scene_version": f"tabletop-v{self.task.scene_version}",
             "config": self.scene_signature(),
         }
 
@@ -275,7 +274,7 @@ class MujocoSimulation:
         state = np.asarray(snapshot["integration"], dtype=np.float64)
         if snapshot["menagerie"] != REVISION or snapshot["mujoco"] != self.mj.__version__:
             raise ValueError("Snapshot simulator or asset version differs")
-        if snapshot.get("scene_version", SCENE_VERSION) != SCENE_VERSION:
+        if snapshot.get("scene_version", "tabletop-v1") != f"tabletop-v{self.task.scene_version}":
             raise ValueError("Snapshot scene version differs")
         if snapshot["config"] != self.scene_signature():
             raise ValueError("Snapshot scene or calibration configuration differs")

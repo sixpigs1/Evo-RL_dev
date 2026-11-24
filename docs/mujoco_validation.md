@@ -18,7 +18,7 @@ Each cell reports successful episodes out of three generated with seeds 0–2 an
 | Pick and place | 3/3 | 1/3 | 0/3 | 0/3 |
 | Stack | 3/3 | 1/3 | 0/3 | 0/3 |
 | Insert | 0/3 | 0/3 | 0/3 | 0/3 |
-| Open drawer | 0/3 | 0/3 | 0/3 | 0/3 |
+| Open drawer | 0/3 | 0/3 | 0/3 | 3/3 |
 | Handover | — | 0/3 | — | 0/3 |
 | Cooperative carry | — | 0/3 | — | 0/3 |
 | Lift then place | 3/3 | 1/3 | 0/3 | 0/3 |
@@ -26,7 +26,8 @@ Each cell reports successful episodes out of three generated with seeds 0–2 an
 ## Transfer and learning
 
 - The supplied dual SO-101 real recording matches all 12 names and their order in both state and action metadata at 30 Hz. A replay of its first episode compared 1,026 action/next-state pairs. With the default Menagerie mapping, arm joint RMSE ranged from 0.92 to 4.65 in the recorded normalized units. Left and right gripper RMSE were 1.54 and 2.11. Camera reprojection and physical command latency need calibrated correspondences or timing logs.
+- The existing PI05 checkpoint received identical state and RGB tensors through the robot and Gymnasium paths on the same real frame. Its 12 predicted action values matched exactly with fixed RNG and policy state. The two calls took 333 ms and 110 ms, with 7,313 MiB peak allocated CUDA memory. This run used OpenPI Transformers `dcddb970176382c0fcf4521b0c0e6fc15894dfe0`, Tokenizers 0.21.4 and SentencePiece 0.2.0.
 - HIL-SERL sent 120 transitions from a MuJoCo actor to the learner, transferred policy parameters, wrote optimizer and replay-buffer state, and resumed optimization. A saved SAC checkpoint also ran through `lerobot-eval` with two spawned workers. A separate processor test injected a joint-leader takeover and verified named action ordering. Physical leader takeover requires a station session.
-- PiStar06 completed a GPU optimizer step from the RGB simulation dataset and saved a checkpoint. Value inference wrote 80 rows of value, advantage and binary ACP labels, with 24 positives. The visual and text backbones were reconstructed from the supplied value checkpoint tensors using their archived architecture configurations.
+- PiStar06 completed a GPU optimizer step from the RGB simulation dataset and saved a checkpoint. Value inference wrote 80 rows of value, advantage and binary ACP labels, with 24 positives. PI05 consumed those labels, completed one ACP optimizer update and saved the new policy. The visual and text backbones were reconstructed from the supplied value checkpoint tensors using their archived architecture configurations.
 
 See [setup and commands](mujoco_backend.md) for recording, evaluation, replay and the backend switch. The task sweep is reproducible with `examples/mujoco/benchmark.py --episodes 3`. The available real-data coverage is dual SO-101.

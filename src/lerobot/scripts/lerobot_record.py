@@ -418,7 +418,9 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
             features = dataset_to_policy_features(dataset.features)
             features = {cfg.dataset.rename_map.get(key, key): feature for key, feature in features.items()}
             check_policy_features(cfg.policy, features)
-        policy = None if cfg.policy is None else make_policy(cfg.policy, ds_meta=dataset.meta)
+        policy = (
+            None if cfg.policy is None else make_policy(cfg.policy, ds_meta=dataset.meta, rename_map=cfg.dataset.rename_map)
+        )
         preprocessor = None
         postprocessor = None
         if cfg.acp_inference.enable and cfg.policy is None:

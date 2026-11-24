@@ -50,8 +50,11 @@ def _drawer(world):
         drawer, "joint", name="drawer_slide", type="slide", axis="-1 0 0", range="0 .11", damping="1"
     )
     ET.SubElement(
-        drawer, "geom", name="drawer_handle", type="capsule", size=".008", fromto="-.054 -.025 0 -.054 .025 0"
+        drawer, "geom", name="drawer_handle", type="capsule", size=".008", fromto="-.078 -.025 0 -.078 .025 0"
     )
+
+    for side in ("-.025", ".025"):
+        ET.SubElement(drawer, "geom", type="capsule", size=".006", fromto=f"-.074 {side} 0 -.038 {side} 0")
 
 
 def _handover(world):
@@ -105,6 +108,7 @@ class TabletopTask:
     build: Callable
     stages: tuple[Callable, ...]
     arms: int = 1
+    scene_version: int = 1
 
 
 TASKS = {
@@ -112,7 +116,7 @@ TASKS = {
     "pick_place": TabletopTask("Place the red block on the green target.", _pick, (_placed,)),
     "stack": TabletopTask("Stack the red block on the other block.", _stack, (_stacked,)),
     "insert": TabletopTask("Insert the peg into the socket.", _insert, (_inserted,)),
-    "open_drawer": TabletopTask("Pull the drawer open.", _drawer, (_opened,)),
+    "open_drawer": TabletopTask("Pull the drawer open.", _drawer, (_opened,), scene_version=2),
     "handover": TabletopTask(
         "Pass the block from the left arm to the right arm.", _handover, (_handover_left, _handover_right), 2
     ),
