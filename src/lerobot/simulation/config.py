@@ -11,6 +11,7 @@ class SimCamera:
     width: int = 320
     height: int = 240
     mount: str = "world"
+    native: str | None = None
     position: tuple[float, float, float] = (0.85, -0.85, 0.65)
     xyaxes: tuple[float, float, float, float, float, float] = (0.8, 0.6, 0, -0.25, 0.33, 0.91)
     fovy: float = 50

@@ -26,6 +26,7 @@ def main():
     parser.add_argument("--rename-map", type=json.loads, default={})
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--frame", type=int, default=0)
+    parser.add_argument("--tokenizer", type=Path)
     args = parser.parse_args()
     dataset = LeRobotDataset(args.dataset, root=args.dataset_root)
     expected_names = control_names(MujocoRobotConfig(embodiment=args.embodiment))
@@ -59,13 +60,16 @@ def main():
         torch.testing.assert_close(robot[key].cpu(), gym[key], rtol=0, atol=0)
 
     policy = make_policy(config, ds_meta=dataset.meta, rename_map=args.rename_map).eval()
+    overrides = {
+        "device_processor": {"device": args.device},
+        "rename_observations_processor": {"rename_map": args.rename_map},
+    }
+    if args.tokenizer:
+        overrides["tokenizer_processor"] = {"tokenizer_name": str(args.tokenizer.resolve())}
     preprocessor, postprocessor = make_pre_post_processors(
         config,
         pretrained_path=args.checkpoint,
-        preprocessor_overrides={
-            "device_processor": {"device": args.device},
-            "rename_observations_processor": {"rename_map": args.rename_map},
-        },
+        preprocessor_overrides=overrides,
     )
 
     def predict(observation):

@@ -125,7 +125,6 @@ from lerobot.teleoperators import (  # noqa: F401
 from lerobot.utils.constants import ACTION
 from lerobot.utils.control_utils import (
     init_keyboard_listener,
-    is_headless,
     sanity_check_bimanual_piper_pair,
     sanity_check_dataset_name,
     sanity_check_dataset_robot_compatibility,

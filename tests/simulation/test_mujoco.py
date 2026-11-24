@@ -138,3 +138,22 @@ def test_joint_target_takeover_preserves_named_order(assets):
     torch.testing.assert_close(
         result[TransitionKey.ACTION], torch.arange(len(env.names), dtype=torch.float32)
     )
+
+
+def test_eval_async_task_and_reset(assets):
+    from lerobot.envs.configs import MujocoEnvConfig
+    from lerobot.envs.factory import make_env
+    from lerobot.envs.utils import add_envs_task, check_env_attributes_and_types
+
+    cfg = MujocoEnvConfig(robot=MujocoRobotConfig(assets=assets, task="reach", episode_steps=2))
+    env = make_env(cfg, n_envs=2, use_async_envs=True)["mujoco"][0]
+    try:
+        check_env_attributes_and_types(env)
+        obs, _ = env.reset(seed=[1, 2])
+        assert len(add_envs_task(env, {})["task"]) == 2
+        env.step(obs["agent_pos"])
+        _, _, _, truncated, info = env.step(obs["agent_pos"])
+        assert truncated.all()
+        assert not info["final_info"]["is_success"].any()
+    finally:
+        env.close()

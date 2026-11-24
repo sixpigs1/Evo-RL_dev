@@ -91,13 +91,19 @@ class MujocoSimulation:
             frame = spec.worldbody.add_frame(pos=position, quat=[np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
             spec.attach(arm, prefix=prefix, frame=frame)
         for name, camera in cfg.camera_views.items():
+            if camera.native is not None:
+                continue
             body = spec.worldbody if camera.mount == "world" else spec.body(camera.mount)
             if body is None:
                 raise ValueError(f"Camera {name!r} has unknown mount {camera.mount!r}")
             body.add_camera(
                 name=f"observation_{name}", pos=camera.position, xyaxes=camera.xyaxes, fovy=camera.fovy
             )
-        return spec.compile()
+        model = spec.compile()
+        for camera in cfg.camera_views.values():
+            if camera.native is not None:
+                model.camera(camera.native)
+        return model
 
     def _control_layout(self):
         actuator_names = (
@@ -225,7 +231,7 @@ class MujocoSimulation:
         return {
             **self.read_joints(),
             **{
-                name: self.image(f"observation_{name}", camera.width, camera.height)
+                name: self.image(camera.native or f"observation_{name}", camera.width, camera.height)
                 for name, camera in self.cfg.camera_views.items()
             },
         }

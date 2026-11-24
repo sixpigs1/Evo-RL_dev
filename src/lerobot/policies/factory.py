@@ -27,7 +27,7 @@ from lerobot.configs.policies import PreTrainedConfig
 from lerobot.configs.types import FeatureType
 from lerobot.datasets.lerobot_dataset import LeRobotDatasetMetadata
 from lerobot.datasets.utils import dataset_to_policy_features
-from lerobot.envs.configs import EnvConfig
+from lerobot.envs.configs import EnvConfig, HILSerlRobotEnvConfig, MujocoEnvConfig
 from lerobot.envs.utils import env_to_policy_features
 from lerobot.policies.act.configuration_act import ACTConfig
 from lerobot.policies.diffusion.configuration_diffusion import DiffusionConfig
@@ -482,7 +482,8 @@ def make_policy(
             raise ValueError("env_cfg cannot be None when ds_meta is not provided")
         features = env_to_policy_features(env_cfg)
 
-    from lerobot.envs.configs import MujocoEnvConfig
+    if not features and isinstance(env_cfg, HILSerlRobotEnvConfig) and env_cfg.name in {"mujoco", "joint_targets"}:
+        features = {**cfg.input_features, **cfg.output_features}
 
     if cfg.pretrained_path and isinstance(env_cfg, MujocoEnvConfig):
         from lerobot.simulation.compatibility import check_policy_features

@@ -19,11 +19,22 @@ class ScriptedExpert:
         positions = sim.model.jnt_qposadr[joint_ids]
         dofs = sim.model.jnt_dofadr[joint_ids]
         jacobian = np.zeros((3, sim.model.nv))
+        angular = np.zeros_like(jacobian)
         site = sim.model.site(prefix + "gripperframe").id
-        sim.mj.mj_jacSite(sim.model, sim.data, jacobian, None, site)
+        sim.mj.mj_jacSite(sim.model, sim.data, jacobian, angular, site)
         jacobian = jacobian[:, dofs]
         error = goal - sim.tcp(arm)
-        delta = jacobian.T @ np.linalg.solve(jacobian @ jacobian.T + np.eye(3) * 0.0025, error)
+        if sim.cfg.task not in {"reach", "handover", "cooperative_carry"}:
+            rotation = sim.data.site_xmat[site].reshape(3, 3)
+            axis = rotation[:, 0 if sim.robot == "so101" else 2]
+            if sim.cfg.task == "open_drawer":
+                direction = np.array([1, 0, 0])
+            else:
+                direction = np.array([0, 0, -1])
+            derivative = np.cross(angular[:, dofs].T, axis).T
+            jacobian = np.vstack([jacobian, 0.09 * derivative])
+            error = np.concatenate([error, 0.09 * (direction - axis)])
+        delta = jacobian.T @ np.linalg.solve(jacobian @ jacobian.T + np.eye(len(error)) * 0.0025, error)
         q = sim.data.qpos[positions] + np.clip(delta, -0.12, 0.12)
         result = {}
         for name, value, mapping in zip(
