@@ -130,6 +130,17 @@ def _socket(world, *, mobile, clearance):
     else:
         _box(socket, "socket_stand", (0.012, 0, -0.055), (0.022, 0.033, 0.036), ".28 .30 .33 1")
 
+    # A lower shroud lip bears the housing weight after the jaws release.
+    _box(
+        socket,
+        "socket_lower_lip",
+        (-0.007, 0, -0.0164),
+        (0.007, 0.018, 0.003),
+        ".78 .80 .77 1",
+        density="700",
+        friction=".45 .004 .0001",
+    )
+
     # Tile the actual passage cross-section around three apertures.
     radius = PIN_HALF + clearance
     holes = [(y - radius, y + radius, -radius, radius) for y in PIN_Y]
@@ -260,7 +271,7 @@ def mobile_plug_released(sim):
 
 
 def build_drawer(world, difficulty):
-    drawer = ET.SubElement(world, "body", name="drawer", pos=".300 0 .025")
+    drawer = ET.SubElement(world, "body", name="drawer", pos=".365 0 .045")
     ET.SubElement(
         drawer,
         "joint",
@@ -297,7 +308,7 @@ def build_drawer(world, difficulty):
             name=f"handle_post_{side}",
             type="capsule",
             size=".005",
-            fromto=_vec((-0.097, y, 0.022, -0.063, y, 0.022)),
+            fromto=_vec((-0.097, y, 0.046, -0.063, y, 0.023)),
             density="600",
         )
     ET.SubElement(
@@ -306,20 +317,20 @@ def build_drawer(world, difficulty):
         name="drawer_handle",
         type="capsule",
         size=".008",
-        fromto="-.101 -.026 .022 -.101 .026 .022",
+        fromto="-.101 -.026 .046 -.101 .026 .046",
         density="600",
     )
-    _site(drawer, "drawer_handle_center", (-0.101, 0, 0.022))
-    _box(world, "cabinet_top", (0.315, 0, 0.083), (0.078, 0.065, 0.009), ".28 .30 .34 1")
+    _site(drawer, "drawer_handle_center", (-0.101, 0, 0.046))
+    _box(world, "cabinet_top", (0.380, 0, 0.103), (0.078, 0.065, 0.009), ".28 .30 .34 1")
     for sign, side in ((-1, "near"), (1, "far")):
         _box(
             world,
             f"cabinet_{side}",
-            (0.315, sign * 0.06, 0.037),
-            (0.078, 0.006, 0.037),
+            (0.380, sign * 0.06, 0.047),
+            (0.078, 0.006, 0.047),
             ".28 .30 .34 1",
         )
-    _box(world, "cabinet_back", (0.391, 0, 0.037), (0.006, 0.052, 0.037), ".28 .30 .34 1")
+    _box(world, "cabinet_back", (0.456, 0, 0.047), (0.006, 0.052, 0.047), ".28 .30 .34 1")
     _box(world, "pickup_riser", (0.216, -0.16, 0.011), (0.011, 0.009, 0.011), ".32 .34 .35 1")
     for name, pos, size, color in (
         ("object", (0.216, -0.16, 0.022 + ITEM_HALF[2]), ITEM_HALF, ".79 .16 .12 1"),
@@ -339,7 +350,7 @@ def _corners(sim, name, half):
     return (CORNERS * half) @ body.xmat.reshape(3, 3).T + body.xpos
 
 
-def _item_inside(sim):
+def item_inside(sim):
     drawer = sim.data.body("drawer")
     corners = (_corners(sim, "object", ITEM_HALF) - drawer.xpos) @ drawer.xmat.reshape(3, 3)
     return bool(
@@ -352,7 +363,7 @@ def _item_inside(sim):
 
 def item_stowed(sim):
     return (
-        _item_inside(sim)
+        item_inside(sim)
         and not any(sim.gripper_touches(arm, "object") for arm in range(2))
         and _quiet(sim, "object")
     )
@@ -378,7 +389,7 @@ def drawer_closed(sim):
 
 def drawer_recovery(sim):
     # Reopen before trying to stow again if the payload left the tray.
-    if sim.phase == 2 and not _item_inside(sim):
+    if sim.phase == 2 and not item_inside(sim):
         return int(drawer_open(sim))
     return sim.phase
 

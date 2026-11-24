@@ -80,6 +80,28 @@ def test_plug_rejects_half_insert_one_pin_and_reversed_key(assets, offset, rotat
         sim.close()
 
 
+@pytest.mark.parametrize("difficulty", ("nominal", "precision"))
+def test_released_connector_remains_seated_under_gravity(assets, difficulty):
+    sim = _simulation(assets, *CASES[0], randomization=0, task_difficulty=difficulty)
+    try:
+        mouth = sim.data.site("socket_mouth").xpos.copy()
+        _pose(sim, "object", mouth - [SEAT_X, 0, 0])
+        sim.phase = 2
+        action = sim.read_joints()
+        for _ in range(20):
+            sim.step(action)
+            if sim.done:
+                break
+        assert sim.success
+        assert plug_seated(sim)
+        assert any(
+            "socket_lower_lip" in (sim.model.geom(c.geom1).name, sim.model.geom(c.geom2).name)
+            for c in sim.data.contact
+        )
+    finally:
+        sim.close()
+
+
 def test_insert_hold_is_consecutive_and_replays(assets):
     sim = _simulation(assets, *CASES[0], randomization=0)
     try:

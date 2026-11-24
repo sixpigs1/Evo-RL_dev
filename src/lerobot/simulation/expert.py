@@ -11,7 +11,7 @@ class ScriptedExpert:
         self.stage = 0
         self.stage_steps = 0
         self.drawer_plan = None
-        self.advanced = AdvancedExpert(sim, self._move) if sim.task.stage_names else None
+        self.advanced = AdvancedExpert(sim) if sim.task.stage_names else None
 
     def _move(self, arm, goal, opening):
         sim = self.sim
@@ -33,7 +33,7 @@ class ScriptedExpert:
             axis = rotation[:, 0 if sim.robot == "so101" else 2]
             direction = (
                 np.array([1, 0, 0])
-                if sim.cfg.task in {"open_drawer", "drawer_stow_close"}
+                if sim.cfg.task == "open_drawer"
                 else np.array([0, 0, -1])
             )
             derivative = np.cross(angular[:, dofs].T, axis).T

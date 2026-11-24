@@ -52,6 +52,8 @@ For PI05, use the repository's `pi` extra in a compatible environment and point 
 
 ## Task coverage
 
+The [precision and long-horizon tasks](mujoco_advanced_tasks.md) add keyed plug insertion, drawer stow and close, and bimanual fixture stabilization.
+
 | Task | SO-101 | Dual SO-101 | PiPER | Dual PiPER |
 | --- | --- | --- | --- | --- |
 | Reach, pick and place, stack, insert, open drawer, lift then place | Declared | Declared | Declared | Declared |
