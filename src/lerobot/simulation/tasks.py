@@ -144,7 +144,8 @@ TASKS = {
     "keyed_plug_insert": TabletopTask(
         "Pick up the plug, insert both pins into the socket and let go.",
         advanced.build_plug,
-        (lambda sim: sim.grasping(0), advanced.plug_aligned, advanced.plug_released),
+        (advanced.plug_grasped, advanced.plug_aligned, advanced.plug_released),
+        scene_version=2,
         arms=2,
         embodiments=("bi_so101",),
         stage_names=("grasp", "align", "insert_release"),

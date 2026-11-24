@@ -181,7 +181,11 @@ def _socket(world, *, mobile, clearance):
 def build_plug(world, difficulty, *, mobile=False):
     y = -0.15 if mobile else 0.17
     # The narrow cradle supports the housing while leaving the gripping sides accessible.
-    _box(world, "plug_cradle", (0.188, y, 0.024), (0.015, 0.008, 0.024), ".27 .29 .32 1")
+    if mobile:
+        _box(world, "plug_cradle", (0.188, y, 0.024), (0.015, 0.008, 0.024), ".27 .29 .32 1")
+    else:
+        cradle = ET.SubElement(world, "body", name="cradle", mocap="true", pos=_vec((0.188, y, 0.024)))
+        _box(cradle, "plug_cradle", (0, 0, 0), (0.015, 0.008, 0.024), ".27 .29 .32 1")
     _plug(world, y)
     _socket(world, mobile=mobile, clearance=0.0012 if difficulty == "nominal" else 0.0006)
 
@@ -190,24 +194,98 @@ def build_mobile_plug(world, difficulty):
     build_plug(world, difficulty, mobile=True)
 
 
+def _reachable_plug_waypoints(sim, arm, pickup, socket):
+    model, mj = sim.model, sim.mj
+    site = model.site(sim.prefixes[arm] + "gripperframe").id
+    joints = sim.joints[6 * arm : 6 * arm + 5]
+    qa, va = model.jnt_qposadr[joints], model.jnt_dofadr[joints]
+    limits = model.jnt_range[joints].T
+    scratch = mj.MjData(model)
+    scratch.qpos[:] = sim.data.qpos
+    jacobian = np.zeros((3, model.nv))
+    angular = np.zeros_like(jacobian)
+    down = np.array([0.0, 0.0, -1.0])
+
+    def reachable(goal, grasp=False):
+        for _ in range(65):
+            mj.mj_fwdPosition(model, scratch)
+            error = goal - scratch.site_xpos[site]
+            axis = scratch.site_xmat[site].reshape(3, 3)[:, 0]
+            if np.linalg.norm(error) < 0.005 and (not grasp or np.dot(axis, down) > 0.70):
+                return True
+            mj.mj_jacSite(model, scratch, jacobian, angular, site)
+            jac = jacobian[:, va]
+            residual = error
+            if grasp:
+                direction = np.cross(angular[:, va].T, axis).T
+                jac = np.vstack((jac, 0.030 * direction))
+                residual = np.r_[error, 0.030 * (down - axis)]
+            update = np.linalg.solve(jac.T @ jac + 0.00025 * np.eye(len(qa)), jac.T @ residual)
+            scratch.qpos[qa] = np.clip(scratch.qpos[qa] + np.clip(update, -0.16, 0.16), *limits)
+        return False
+
+    return (
+        reachable(pickup + [-0.006, 0, 0.045], grasp=True)
+        and reachable(pickup + [-0.006, 0, 0], grasp=True)
+        and reachable(socket + [-0.048, 0, 0])
+        and reachable(socket + [-0.023, 0, 0])
+    )
+
+
 def reset_plug(sim):
     qpos = sim.data.joint("object_free").qpos
     precise = sim.cfg.task_difficulty == "precision"
-    shift = min(sim.cfg.randomization, 0.004 if precise else 0.0025)
-    qpos[:2] += sim.rng.uniform(-shift, shift, 2)
-    if shift:
-        yaw = sim.rng.uniform(-0.12 if precise else -0.045, 0.12 if precise else 0.045)
-        qpos[3:] = (np.cos(yaw / 2), 0, 0, np.sin(yaw / 2))
     if sim.cfg.task == "bimanual_stabilized_insert":
+        shift = min(sim.cfg.randomization, 0.004 if precise else 0.0025)
+        qpos[:2] += sim.rng.uniform(-shift, shift, 2)
+        if shift:
+            yaw = sim.rng.uniform(-0.12 if precise else -0.045, 0.12 if precise else 0.045)
+            qpos[3:] = (np.cos(yaw / 2), 0, 0, np.sin(yaw / 2))
         sim.data.joint("fixture_slide").qpos[0] = sim.rng.uniform(-shift, shift)
         sim.data.joint("fixture_yaw").qpos[0] = (
             sim.rng.uniform(-6, 6) * np.pi / 180 if precise and shift else 0
         )
-    elif shift:
-        mocap = sim.model.body("socket").mocapid[0]
-        sim.data.mocap_pos[mocap, 1] += sim.rng.uniform(-2 * shift, 2 * shift)
-        yaw = sim.rng.uniform(-0.12 if precise else -0.035, 0.12 if precise else 0.035)
-        sim.data.mocap_quat[mocap] = (np.cos(yaw / 2), 0, 0, np.sin(yaw / 2))
+        return
+
+    shift = sim.cfg.randomization
+    if not shift:
+        return
+    socket_id = sim.model.body("socket").mocapid[0]
+    cradle_id = sim.model.body("cradle").mocapid[0]
+    for _ in range(100):
+        arm = int(sim.rng.integers(2))
+        side = 1 if arm == 0 else -1
+        pickup = np.array([0.251, side * 0.17, 0.061])
+        socket = np.array([0.292, side * 0.15, 0.092])
+        pickup[:2] += sim.rng.uniform(-shift, shift, 2)
+        socket[:2] += sim.rng.uniform(-shift, shift, 2)
+        # Keep the pickup and the fixed receptacle from intersecting at reset.
+        if np.linalg.norm(pickup[:2] - socket[:2]) < 0.075:
+            continue
+        if min(side * pickup[1], side * socket[1]) < 0.04:
+            continue
+        if not _reachable_plug_waypoints(sim, arm, pickup, socket):
+            continue
+        qpos[:3] = pickup
+        sim.data.mocap_pos[cradle_id] = (pickup[0], pickup[1], 0.024)
+        sim.data.mocap_pos[socket_id] = socket
+        for quaternion, limit in (
+            (qpos[3:], 0.12 if precise else 0.045),
+            (sim.data.mocap_quat[socket_id], 0.12 if precise else 0.035),
+        ):
+            yaw = sim.rng.uniform(-limit, limit)
+            quaternion[:] = (np.cos(yaw / 2), 0, 0, np.sin(yaw / 2))
+        return
+    raise ValueError("Could not sample a reachable plug setup; check base placement and randomization")
+
+
+def plug_arm(sim):
+    """The pickup and receptacle are sampled in the same arm's workspace."""
+    return int(sim.data.body("socket").xpos[1] < 0)
+
+
+def plug_grasped(sim):
+    return any(sim.grasping(arm) for arm in range(2))
 
 
 def socket_local(sim, site):
@@ -242,7 +320,11 @@ def _quiet(sim, name):
 
 
 def plug_released(sim):
-    return plug_seated(sim) and not sim.gripper_touches(0, "object") and _quiet(sim, "object")
+    return (
+        plug_seated(sim)
+        and not any(sim.gripper_touches(arm, "object") for arm in range(2))
+        and _quiet(sim, "object")
+    )
 
 
 def plug_aligned(sim):

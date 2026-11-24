@@ -44,9 +44,11 @@ class MujocoRobotConfig(RobotConfig):
     calibration_version: str = "menagerie-default"
     state_dir: Path | None = None
     scripted_expert: bool = False
-    randomization: float = 0.015
+    randomization: float | None = None
 
     def __post_init__(self):
+        if self.randomization is None:
+            self.randomization = 0.060 if self.task == "keyed_plug_insert" else 0.015
         if self.embodiment not in {"so101", "bi_so101", "piper", "bi_piper"}:
             raise ValueError(f"Unsupported MuJoCo embodiment: {self.embodiment}")
         if self.task_difficulty not in {"nominal", "precision"}:

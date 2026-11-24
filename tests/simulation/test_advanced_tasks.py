@@ -7,7 +7,7 @@ import pytest
 
 pytest.importorskip("mujoco")
 
-from lerobot.simulation.advanced_tasks import SEAT_X, drawer_closed, fixture_held, plug_seated
+from lerobot.simulation.advanced_tasks import SEAT_X, drawer_closed, fixture_held, plug_arm, plug_seated
 from lerobot.simulation.backend import MujocoSimulation
 from lerobot.simulation.config import MujocoRobotConfig
 from lerobot.simulation.expert import ScriptedExpert
@@ -222,5 +222,27 @@ def test_dataset_replay_uses_recorded_scene_reset(assets):
         result = compare_dataset(sim, dataset, 0, initial_snapshot=initial)
         assert result["compared_transitions"] == 1
         np.testing.assert_allclose(sim.snapshot()["integration"], after["integration"], atol=1e-12)
+    finally:
+        sim.close()
+
+
+def test_keyed_plug_randomizes_and_routes_both_arms(assets):
+    sim = _simulation(assets, *CASES[0])
+    try:
+        arms = set()
+        for seed in range(32):
+            sim.reset(seed)
+            arm = plug_arm(sim)
+            arms.add(arm)
+            pickup = sim.position("object")
+            cradle = sim.position("cradle")
+            np.testing.assert_allclose(pickup[:2], cradle[:2], atol=1e-12)
+            expected_prefix = ("left_", "right_")[arm]
+            assert all(key.startswith(expected_prefix) for key in ScriptedExpert(sim).action())
+        assert arms == {0, 1}
+        sim.reset(7)
+        snapshot = sim.snapshot()["integration"]
+        sim.reset(7)
+        assert sim.snapshot()["integration"] == snapshot
     finally:
         sim.close()

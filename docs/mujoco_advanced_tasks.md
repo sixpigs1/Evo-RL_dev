@@ -57,3 +57,19 @@ To record a successful drawer demonstration with a success label and replay stat
   --dataset.vcodec=h264 --enable_episode_outcome_labeling=true \
   --require_episode_success_label=true --display_data=false --play_sounds=false
 ```
+
+## Wide initialization for the fixed socket
+
+The fixed socket scene now defaults to a 60 mm sampling half-range on the
+tabletop X and Y axes for both the connector and the receptacle. It samples
+one of two mirrored work areas at reset. The connector cradle follows the
+connector's sampled position. The sampler rejects fixtures that are too close
+or outside the selected arm's inverse-kinematics range for the approach, grasp,
+pre-insertion and insertion waypoints. Each episode uses the arm on the side
+of the sampled station. Both arms use the same task success predicates.
+
+Set `--robot.randomization=0` to reproduce the fixed default left-side layout.
+Set an explicit value in metres to change the sampling half-range. The
+workspace filter makes the accepted distribution nonuniform. The old fixed
+socket benchmarks above used a smaller distribution and a different scene
+version.
