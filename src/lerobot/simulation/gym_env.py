@@ -157,10 +157,13 @@ class JointTargetEnv(gym.Env):
             "executed_action": np.array([executed[k] for k in self.names], np.float32),
         }
         info["executed_action"] = self.encode_targets(info["executed_action"])
+        failure_reason = "timeout" if truncated else ""
         if self.simulated:
             info["phase"] = self.robot.sim.phase
-        info["failure_reason"] = "timeout" if truncated else ""
-        return self._observe(), float(success), success, truncated, info
+            failure_reason = self.robot.sim.failure_reason
+        info["failure_reason"] = failure_reason
+        terminated = success or bool(failure_reason and failure_reason != "timeout")
+        return self._observe(), float(success), terminated, truncated, info
 
     def render(self):
         if self.simulated:

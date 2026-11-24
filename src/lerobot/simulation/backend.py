@@ -45,6 +45,7 @@ class MujocoSimulation:
         self.renderers = {}
         self.model = self._make_model()
         self.data = mujoco.MjData(self.model)
+        self.object_body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "object")
         self.state_spec = mujoco.mjtState.mjSTATE_INTEGRATION
         self.actuators, self.joints, self.mappings = self._control_layout()
         self.reset()
@@ -142,6 +143,7 @@ class MujocoSimulation:
         self.mj.mj_resetData(self.model, self.data)
         self.phase = self.steps = 0
         self.success = False
+        self.failure_reason = ""
         for prefix in self.prefixes:
             if self.robot == "piper":
                 self.data.joint(prefix + "joint2").qpos[0] = 1.57
@@ -188,16 +190,25 @@ class MujocoSimulation:
         self.mj.mj_step(self.model, self.data, nstep=8)
         self.mj.mj_forward(self.model, self.data)
         self.steps += 1
-        if evaluate_task and self.task.stages[self.phase](self):
-            self.phase += 1
-            self.success = self.phase == len(self.task.stages)
+        if evaluate_task:
+            if self.task.stages[self.phase](self):
+                self.phase += 1
+                self.success = self.phase == len(self.task.stages)
+            if (
+                not self.success
+                and self.object_body_id >= 0
+                and self.data.xpos[self.object_body_id, 2] < -0.04
+            ):
+                self.failure_reason = "object_dropped"
+            elif not self.success and self.steps >= self.cfg.episode_steps:
+                self.failure_reason = "timeout"
         if not np.isfinite(self.data.qpos).all():
             raise RuntimeError("MuJoCo produced nonfinite joint state")
         return self._to_policy(self.data.ctrl[self.actuators])
 
     @property
     def done(self):
-        return self.success or self.steps >= self.cfg.episode_steps
+        return self.success or bool(self.failure_reason) or self.steps >= self.cfg.episode_steps
 
     def position(self, name):
         return self.data.body(name).xpos
@@ -252,6 +263,7 @@ class MujocoSimulation:
             "phase": self.phase,
             "steps": self.steps,
             "success": self.success,
+            "failure_reason": self.failure_reason,
             "mujoco": self.mj.__version__,
             "menagerie": REVISION,
             "config": self.scene_signature(),
@@ -268,6 +280,7 @@ class MujocoSimulation:
         self.phase = snapshot["phase"]
         self.steps = snapshot["steps"]
         self.success = snapshot["success"]
+        self.failure_reason = snapshot.get("failure_reason", "")
         self.mj.mj_forward(self.model, self.data)
 
     def close(self):

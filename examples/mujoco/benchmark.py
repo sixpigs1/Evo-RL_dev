@@ -3,6 +3,7 @@
 import argparse
 import json
 import time
+from collections import Counter
 
 from lerobot.simulation.backend import MujocoSimulation
 from lerobot.simulation.config import MujocoRobotConfig, SimCamera
@@ -28,6 +29,7 @@ def main():
             sim = MujocoSimulation(config)
             try:
                 successes = 0
+                failures = Counter()
                 frames = 0
                 resets = []
                 start = time.perf_counter()
@@ -42,6 +44,8 @@ def main():
                             sim.observation()
                     frames += sim.steps
                     successes += sim.success
+                    if sim.failure_reason:
+                        failures[sim.failure_reason] += 1
                 print(
                     json.dumps(
                         {
@@ -49,7 +53,7 @@ def main():
                             "task": name,
                             "episodes": args.episodes,
                             "successes": successes,
-                            "timeouts": args.episodes - successes,
+                            "failures": dict(failures),
                             "control_frames_per_s": frames / (time.perf_counter() - start),
                             "max_reset_ms": max(resets) * 1000,
                         }

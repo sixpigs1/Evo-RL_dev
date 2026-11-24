@@ -170,3 +170,16 @@ def test_partial_bimanual_target_reports_full_command(assets):
             assert updated[name] == pytest.approx(prior[name])
     finally:
         sim.close()
+
+
+def test_dropped_object_terminates_as_failure(assets):
+    env = JointTargetEnv.for_simulation(MujocoRobotConfig(assets=assets, task="pick_place"))
+    try:
+        obs, _ = env.reset()
+        env.robot.sim.data.joint("object_free").qpos[2] = -0.07
+        _, reward, terminated, truncated, info = env.step(obs["agent_pos"])
+        assert terminated and not truncated and reward == 0
+        assert info["failure_reason"] == "object_dropped"
+        assert not info["is_success"]
+    finally:
+        env.close()
