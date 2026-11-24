@@ -64,7 +64,7 @@ from lerobot.configs import parser
 from lerobot.configs.train import TrainRLServerPipelineConfig
 from lerobot.datasets.factory import make_dataset
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
-from lerobot.policies.factory import make_policy
+from lerobot.policies.factory import make_policy, make_pre_post_processors
 from lerobot.policies.sac.modeling_sac import SACPolicy
 from lerobot.rl.buffer import ReplayBuffer, concatenate_batch_transitions
 from lerobot.rl.process import ProcessSignalHandler
@@ -711,6 +711,10 @@ def save_training_checkpoint(
     # Create checkpoint directory
     checkpoint_dir = get_step_checkpoint_dir(cfg.output_dir, online_steps, optimization_step)
 
+    preprocessor, postprocessor = None, None
+    if cfg.env.name in {"mujoco", "joint_targets"}:
+        preprocessor, postprocessor = make_pre_post_processors(policy.config)
+
     # Save checkpoint
     save_checkpoint(
         checkpoint_dir=checkpoint_dir,
@@ -719,6 +723,8 @@ def save_training_checkpoint(
         policy=policy,
         optimizer=optimizers,
         scheduler=None,
+        preprocessor=preprocessor,
+        postprocessor=postprocessor,
     )
 
     # Save interaction step manually

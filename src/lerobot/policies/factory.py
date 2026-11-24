@@ -249,6 +249,9 @@ def make_pre_post_processors(
             policy configuration type.
     """
     if pretrained_path:
+        if isinstance(policy_cfg, PI05Config) and policy_cfg.tokenizer_name != "google/paligemma-3b-pt-224":
+            overrides = kwargs.setdefault("preprocessor_overrides", {})
+            overrides.setdefault("tokenizer_processor", {}).setdefault("tokenizer_name", policy_cfg.tokenizer_name)
         # TODO(Steven): Temporary patch, implement correctly the processors for Gr00t
         if isinstance(policy_cfg, GrootConfig):
             # GROOT handles normalization in groot_pack_inputs_v3 step
