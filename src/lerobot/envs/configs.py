@@ -278,6 +278,7 @@ class HILSerlRobotEnvConfig(EnvConfig):
     processor: HILSerlProcessorConfig = field(default_factory=HILSerlProcessorConfig)
 
     name: str = "real_robot"
+    joint_target_ranges: dict[str, tuple[float, float]] = field(default_factory=dict)
 
     @property
     def gym_kwargs(self) -> dict:

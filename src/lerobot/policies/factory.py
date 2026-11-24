@@ -487,7 +487,7 @@ def make_policy(
     if cfg.pretrained_path and isinstance(env_cfg, MujocoEnvConfig):
         from lerobot.simulation.compatibility import check_policy_features
 
-        check_policy_features(cfg, features)
+        check_policy_features(cfg, {(rename_map or {}).get(key, key): value for key, value in features.items()})
     cfg.output_features = {key: ft for key, ft in features.items() if ft.type is FeatureType.ACTION}
     if not cfg.input_features:
         cfg.input_features = {key: ft for key, ft in features.items() if key not in cfg.output_features}

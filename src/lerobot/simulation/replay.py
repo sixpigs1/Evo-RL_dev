@@ -14,8 +14,10 @@ def config_from_metadata(data):
     return MujocoRobotConfig(
         **{
             **data,
-            "camera_views": {key: SimCamera(**value) for key, value in data["camera_views"].items()},
-            "joint_mappings": {key: JointMapping(**value) for key, value in data["joint_mappings"].items()},
+            "camera_views": {key: SimCamera(**value) for key, value in data.get("camera_views", {}).items()},
+            "joint_mappings": {
+                key: JointMapping(**value) for key, value in data.get("joint_mappings", {}).items()
+            },
         }
     )
 
@@ -39,9 +41,7 @@ def compare_dataset(sim, dataset, episode):
     sim.mj.mj_forward(sim.model, sim.data)
     errors = []
     for action, reference in zip(frames["action"][:-1], frames["observation.state"][1:], strict=True):
-        if sim.done:
-            break
-        sim.step(dict(zip(sim.names, action, strict=True)))
+        sim.step(dict(zip(sim.names, action, strict=True)), evaluate_task=False)
         errors.append(np.array(list(sim.read_joints().values())) - reference)
     if not errors:
         raise ValueError("No valid replay transitions")
@@ -58,18 +58,26 @@ def compare_dataset(sim, dataset, episode):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("trace", type=Path)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--trace", type=Path)
+    source.add_argument("--config", type=Path, help="Robot JSON configuration for dataset replay")
     parser.add_argument("--frame", type=int, default=0)
     parser.add_argument("--image", type=Path)
     parser.add_argument("--dataset")
     parser.add_argument("--dataset-root", type=Path)
     parser.add_argument("--episode", type=int, default=0)
     args = parser.parse_args()
-    trace = json.loads(args.trace.read_text())
-    state = trace[0] if args.frame == 0 else trace[args.frame]["state"]
-    sim = MujocoSimulation(config_from_metadata(state["config"]))
+    state = None
+    if args.trace:
+        trace = json.loads(args.trace.read_text())
+        state = trace[0] if args.frame == 0 else trace[args.frame]["state"]
+        config = config_from_metadata(state["config"])
+    else:
+        config = config_from_metadata(json.loads(args.config.read_text()))
+    sim = MujocoSimulation(config)
     try:
-        sim.restore(state)
+        if state is not None:
+            sim.restore(state)
         if args.image:
             from PIL import Image
 

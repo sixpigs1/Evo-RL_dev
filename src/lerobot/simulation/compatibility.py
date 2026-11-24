@@ -3,11 +3,20 @@
 
 def check_policy_features(policy, available):
     failures = []
+    padded_policy = policy.type in {"pi0", "pi05"}
     for key, expected in {**policy.input_features, **policy.output_features}.items():
         actual = available.get(key)
         if actual is None:
+            if padded_policy and key.startswith("observation.images.empty_camera_"):
+                continue
             failures.append(f"{key}: missing")
-        elif actual.type != expected.type or tuple(actual.shape) != tuple(expected.shape):
+            continue
+        shape_ok = tuple(actual.shape) == tuple(expected.shape)
+        if padded_policy and key == "observation.state":
+            shape_ok = len(actual.shape) == 1 and 0 < actual.shape[0] <= policy.max_state_dim
+        if padded_policy and key.startswith("observation.images."):
+            shape_ok = len(actual.shape) == 3 and actual.shape[0] == expected.shape[0]
+        if actual.type != expected.type or not shape_ok:
             failures.append(
                 f"{key}: expected {expected.type} {expected.shape}, got {actual.type} {actual.shape}"
             )

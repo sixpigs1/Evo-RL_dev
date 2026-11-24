@@ -37,6 +37,28 @@ class JointTargetEnv(gym.Env):
         self.listener = None
         self.events = {}
         self.intervening = False
+        self.target_ranges = None
+
+    def set_target_ranges(self, ranges):
+        if not ranges:
+            return
+        missing = set(self.names) ^ ranges.keys()
+        if missing:
+            raise ValueError(f"Joint-target ranges differ from follower keys: {sorted(missing)}")
+        endpoints = np.array([ranges[name] for name in self.names], dtype=np.float32)
+        if endpoints.shape != (len(self.names), 2) or not np.isfinite(endpoints).all():
+            raise ValueError("Joint-target ranges require two finite endpoints per joint")
+        lower, upper = endpoints.T
+        if (upper <= lower).any():
+            raise ValueError("Joint-target range upper endpoints must exceed lower endpoints")
+        self.target_ranges = lower, upper
+        self.action_space = gym.spaces.Box(-1, 1, (len(self.names),), dtype=np.float32)
+
+    def encode_targets(self, targets):
+        if self.target_ranges is None:
+            return targets
+        lower, upper = self.target_ranges
+        return np.clip(2 * (targets - lower) / (upper - lower) - 1, -1, 1)
 
     @classmethod
     def for_simulation(cls, config, teleop=None):
@@ -120,6 +142,9 @@ class JointTargetEnv(gym.Env):
         action = np.asarray(action)
         if action.shape != self.action_space.shape or not np.isfinite(action).all():
             raise ValueError(f"Expected finite joint targets with shape {self.action_space.shape}")
+        if self.target_ranges is not None:
+            lower, upper = self.target_ranges
+            action = lower + (np.clip(action, -1, 1) + 1) * (upper - lower) / 2
         executed = self.robot.send_action(dict(zip(self.names, action, strict=True)))
         self.steps += 1
         success = bool(self.simulated and self.robot.sim.success)
@@ -128,6 +153,7 @@ class JointTargetEnv(gym.Env):
             "is_success": success,
             "executed_action": np.array([executed[k] for k in self.names], np.float32),
         }
+        info["executed_action"] = self.encode_targets(info["executed_action"])
         if self.simulated:
             info["phase"] = self.robot.sim.phase
         info["failure_reason"] = "timeout" if truncated else ""
@@ -175,7 +201,8 @@ class JointTargetIntervention(InterventionActionProcessorStep):
             if missing:
                 raise ValueError(f"Teleoperator is missing joint targets: {sorted(missing)}")
             complementary = dict(transition[TransitionKey.COMPLEMENTARY_DATA])
-            complementary["teleop_action"] = np.asarray([action[key] for key in self.env.names], np.float32)
+            targets = np.asarray([action[key] for key in self.env.names], np.float32)
+            complementary["teleop_action"] = self.env.encode_targets(targets)
             transition[TransitionKey.COMPLEMENTARY_DATA] = complementary
         result = super().__call__(transition)
         action = result[TransitionKey.ACTION].reshape(-1)

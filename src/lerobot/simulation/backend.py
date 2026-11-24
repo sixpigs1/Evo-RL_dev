@@ -87,7 +87,7 @@ class MujocoSimulation:
         for prefix, position, yaw in zip(self.prefixes, positions, yaws, strict=True):
             arm = self.mj.MjSpec.from_file(str(path))
             if self.robot == "piper":
-                arm.body("link6").add_site(name="gripperframe", pos=[0, 0, 0.18], size=[0.004, 0, 0])
+                arm.body("link6").add_site(name="gripperframe", pos=[0, 0, 0.09], size=[0.004, 0, 0])
             frame = spec.worldbody.add_frame(pos=position, quat=[np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
             spec.attach(arm, prefix=prefix, frame=frame)
         for name, camera in cfg.camera_views.items():
@@ -161,8 +161,8 @@ class MujocoSimulation:
             for direction in [1 if mapping.simulation[0] < mapping.simulation[1] else -1]
         }
 
-    def step(self, action):
-        if self.done:
+    def step(self, action, *, evaluate_task=True):
+        if evaluate_task and self.done:
             raise RuntimeError("Reset the simulation before starting another episode")
         if not action or action.keys() - set(self.names):
             raise ValueError("Action must contain known joint position keys")
@@ -181,7 +181,7 @@ class MujocoSimulation:
         self.mj.mj_step(self.model, self.data, nstep=8)
         self.mj.mj_forward(self.model, self.data)
         self.steps += 1
-        if self.task.stages[self.phase](self):
+        if evaluate_task and self.task.stages[self.phase](self):
             self.phase += 1
             self.success = self.phase == len(self.task.stages)
         if not np.isfinite(self.data.qpos).all():

@@ -329,6 +329,7 @@ def make_robot_env(cfg: HILSerlRobotEnvConfig) -> tuple[gym.Env, Any]:
                 make_robot_from_config(cfg.robot), cfg.task or "", steps, simulated=False,
                 teleop=teleop, reset_pose=reset.fixed_reset_joint_positions if reset else None,
             )
+        env.set_target_ranges(cfg.joint_target_ranges)
         if teleop is not None:
             try:
                 teleop.connect()
@@ -406,7 +407,7 @@ def make_processors(
         from lerobot.simulation.gym_env import JointTargetIntervention
 
         action_steps = [JointTargetIntervention(env, terminate_on_success), Torch2NumpyActionProcessorStep()]
-        observation_steps = [VanillaObservationProcessorStep()]
+        observation_steps = [Numpy2TorchActionProcessorStep(), VanillaObservationProcessorStep()]
         if cfg.processor.image_preprocessing is not None:
             observation_steps.append(ImageCropResizeProcessorStep(
                 crop_params_dict=cfg.processor.image_preprocessing.crop_params_dict,

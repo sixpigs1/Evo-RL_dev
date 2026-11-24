@@ -28,7 +28,7 @@ lerobot-record \
 
 Use the repository's `lerobot-dataset-report`, `lerobot-value-train`, `lerobot-value-infer` and `lerobot-train` commands with this dataset root and ID. Use `--policy.path` with the same robot, cameras and task text to collect the next round. With a compatible teleoperator, `lerobot-human-inloop-record` uses the regular keyboard takeover state machine. Scripted collection is identified as `scripted_expert`. For visual training, camera feature keys, dimensions and frame rate should match the real recording configuration.
 
-Run `python -m lerobot.simulation.replay TRACE.json --frame 20 --image frame.png` to inspect a snapshot. Add `--dataset REPO_ID --dataset-root PATH --episode INDEX` to compare an existing recording's one-step-aligned joint tracking against a rollout from its initial state.
+Run `python -m lerobot.simulation.replay --trace TRACE.json --frame 20 --image frame.png` to inspect a snapshot. Add `--dataset REPO_ID --dataset-root PATH --episode INDEX` to compare an existing recording's one-step-aligned joint tracking against a rollout from its initial state.
 
 ## Evaluate and switch backends
 
@@ -36,7 +36,7 @@ For visual simulation evaluation, use `lerobot-eval --env.type=mujoco --env.robo
 
 Keep the checkpoint, task text, FPS, and feature keys fixed when switching to hardware. For recording, switch from `--robot.type=mujoco` to the matching follower type, then provide its port and hardware camera configuration. For example, use `--robot.type=so101_follower --robot.port=/dev/serial/by-id/DEVICE --robot.cameras='{front: {type: opencv, index_or_path: 0, width: 320, height: 240, fps: 30}}'` with the same dataset task and checkpoint. Use `robot.joint_mappings` to map real endpoint values onto calibrated simulator endpoints and provide the measured `camera_views`, `base_positions`, `base_yaws` and `calibration_version`. Menagerie defaults are approximate. The PiPER model controls one finger through an equality constraint, with total opening represented in millimetres at the policy interface. PiPER-X requires a separate asset and calibration.
 
-HIL-SERL accepts `env.name: joint_targets` with either the MuJoCo robot or a real follower. Configure the SAC action feature to have one element per joint target and use the same state and camera features as the selected follower. Configure the policy's action scaling for the joint units or absolute outputs. For real success rewards use the existing reward classifier or teleoperator events. An event-capable joint teleoperator can supply takeover events, or a local keyboard can toggle takeover on a joint leader. Preserve the joint-target configuration when moving the checkpoint between backends.
+HIL-SERL accepts `env.name: joint_targets` with either the MuJoCo robot or a real follower. Configure the SAC action feature to have one element per joint target and use the same state and camera features as the selected follower. With SAC’s default tanh actions, set `env.joint_target_ranges` to the same named lower and upper follower targets in both configurations. The adapter maps policy actions from `[-1, 1]` to follower units and encodes the executed targets back into the same range for replay. For real success rewards use the existing reward classifier or teleoperator events. An event-capable joint teleoperator can supply takeover events, or a local keyboard can toggle takeover on a joint leader. Preserve the joint-target configuration when moving the checkpoint between backends.
 
 ## Task coverage
 
