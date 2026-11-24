@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -10,6 +11,7 @@ from lerobot.simulation.advanced_tasks import SEAT_X, drawer_closed, fixture_hel
 from lerobot.simulation.backend import MujocoSimulation
 from lerobot.simulation.config import MujocoRobotConfig
 from lerobot.simulation.expert import ScriptedExpert
+from lerobot.simulation.replay import compare_dataset
 
 CASES = (
     ("keyed_plug_insert", "bi_so101"),
@@ -189,5 +191,36 @@ def test_mobile_fixture_cannot_pass_without_physical_support(assets):
         sim.stage_hold = 9
         sim.advance_task()
         assert sim.phase == 0 and sim.stage_hold == 0 and not sim.success
+    finally:
+        sim.close()
+
+
+def test_dataset_replay_uses_recorded_scene_reset(assets):
+    from datasets import Dataset
+
+    sim = _simulation(assets, *CASES[0])
+    try:
+        sim.reset(seed=7)
+        initial = sim.snapshot()
+        action = sim.read_joints()
+        observation = list(action.values())
+        sim.step(action)
+        dataset = SimpleNamespace(
+            features={key: {"names": sim.names} for key in ("action", "observation.state")},
+            fps=sim.cfg.fps,
+            repo_id="local/contact_replay_test",
+            hf_dataset=Dataset.from_dict(
+                {
+                    "episode_index": [0, 0],
+                    "action": [list(action.values())] * 2,
+                    "observation.state": [observation, list(sim.read_joints().values())],
+                }
+            ),
+        )
+        after = sim.snapshot()
+        sim.reset(seed=1000)
+        result = compare_dataset(sim, dataset, 0, initial_snapshot=initial)
+        assert result["compared_transitions"] == 1
+        np.testing.assert_allclose(sim.snapshot()["integration"], after["integration"], atol=1e-12)
     finally:
         sim.close()

@@ -22,7 +22,7 @@ def config_from_metadata(data):
     )
 
 
-def compare_dataset(sim, dataset, episode):
+def compare_dataset(sim, dataset, episode, *, initial_snapshot=None):
     action_names = tuple(dataset.features["action"]["names"])
     state_names = tuple(dataset.features["observation.state"]["names"])
     if action_names != sim.names or state_names != sim.names or dataset.fps != sim.cfg.fps:
@@ -31,14 +31,20 @@ def compare_dataset(sim, dataset, episode):
     frames = table.filter(lambda row: row["episode_index"] == episode)
     if len(frames) < 2:
         raise ValueError("The selected episode needs at least two frames")
-    sim.reset()
     initial = np.array(frames[0]["observation.state"])
-    for joint, mapping, value in zip(sim.joints, sim.mappings, initial, strict=True):
-        sim.data.qpos[sim.model.jnt_qposadr[joint]] = np.interp(value, mapping.policy, mapping.simulation)
-    if sim.robot == "piper":
-        for prefix in sim.prefixes:
-            sim.data.joint(prefix + "joint8").qpos[:] = -sim.data.joint(prefix + "joint7").qpos
-    sim.mj.mj_forward(sim.model, sim.data)
+    if initial_snapshot is not None:
+        sim.restore(initial_snapshot)
+        if not np.allclose(list(sim.read_joints().values()), initial, rtol=0, atol=1e-4):
+            raise ValueError("Trace frame 0 and the dataset's first joint observation differ")
+    else:
+        sim.reset()
+        initial = frames[0]["observation.state"]
+        for joint, mapping, value in zip(sim.joints, sim.mappings, initial, strict=True):
+            sim.data.qpos[sim.model.jnt_qposadr[joint]] = np.interp(value, mapping.policy, mapping.simulation)
+        if sim.robot == "piper":
+            for prefix in sim.prefixes:
+                sim.data.joint(prefix + "joint8").qpos[:] = -sim.data.joint(prefix + "joint7").qpos
+        sim.mj.mj_forward(sim.model, sim.data)
     errors = []
     for action, reference in zip(frames["action"][:-1], frames["observation.state"][1:], strict=True):
         sim.step(dict(zip(sim.names, action, strict=True)), evaluate_task=False)
@@ -67,10 +73,11 @@ def main():
     parser.add_argument("--dataset-root", type=Path)
     parser.add_argument("--episode", type=int, default=0)
     args = parser.parse_args()
-    state = None
+    state = initial_snapshot = None
     if args.trace:
         trace = json.loads(args.trace.read_text())
-        state = trace[0] if args.frame == 0 else trace[args.frame]["state"]
+        initial_snapshot = trace[0]
+        state = initial_snapshot if args.frame == 0 else trace[args.frame]["state"]
         config = config_from_metadata(state["config"])
     else:
         config = config_from_metadata(json.loads(args.config.read_text()))
@@ -86,7 +93,8 @@ def main():
             from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
             dataset = LeRobotDataset(args.dataset, root=args.dataset_root)
-            print(json.dumps(compare_dataset(sim, dataset, args.episode), indent=2))
+            result = compare_dataset(sim, dataset, args.episode, initial_snapshot=initial_snapshot)
+            print(json.dumps(result, indent=2))
         else:
             print(json.dumps({"step": sim.steps, "phase": sim.phase, "joints": sim.read_joints()}, indent=2))
     finally:

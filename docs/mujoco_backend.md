@@ -30,7 +30,7 @@ lerobot-record \
 
 Use the repository's `lerobot-dataset-report`, `lerobot-value-train`, `lerobot-value-infer` and `lerobot-train` commands with this dataset root and ID. Use `--policy.path` with the same robot, cameras and task text to collect the next round. With a compatible teleoperator, `lerobot-human-inloop-record` uses the regular keyboard takeover state machine. Scripted collection is identified as `scripted_expert`. For visual training, camera feature keys, dimensions and frame rate should match the real recording configuration.
 
-Run `python -m lerobot.simulation.replay --trace TRACE.json --frame 20 --image frame.png` to inspect a snapshot. Add `--dataset REPO_ID --dataset-root PATH --episode INDEX` to compare an existing recording's one-step-aligned joint tracking against a rollout from its initial state.
+Run `python -m lerobot.simulation.replay --trace TRACE.json --frame 20 --image frame.png` to inspect a snapshot. Add `--dataset REPO_ID --dataset-root PATH --episode INDEX` to compare the paired recording's one-step-aligned joint tracking from trace frame 0. Use `--config ROBOT.json` with an unpaired or hardware dataset to initialize the robot joints from its first observation.
 
 ## Evaluate and switch backends
 
