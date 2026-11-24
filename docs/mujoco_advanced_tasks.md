@@ -39,9 +39,9 @@ MuJoCo 3.4.0, locked Menagerie assets, 30 Hz, nominal difficulty and seeds 0–9
 | `keyed_plug_insert` | 1/10 | Seed 7 completed in 312 control steps. The other nine runs timed out. |
 | `bimanual_stabilized_insert` | 0/10 | Reached the insertion stage in some runs. Loss of support and plug grip interrupted reference rollouts. |
 
-The drawer meets the 8/10 reference-controller gate. The two connector tasks can be run for evaluation and teleoperation, and their scripted collection remains experimental. The nominal and precision fixed socket both kept an already seated, released connector in place under gravity. The three precision scenes ran and rendered in headless EGL. All 63 simulator and recorder regression tests passed on the 4090. Geometry, friction and camera alignment still need measurements at the intended physical station.
+The drawer meets the 8/10 reference-controller gate. The two connector tasks can be run for evaluation and teleoperation, and their scripted collection remains experimental. The nominal and precision fixed socket both kept an already seated, released connector in place under gravity. The three precision scenes ran and rendered in headless EGL. All 64 simulator and recorder regression tests passed on the 4090. Geometry, friction and camera alignment still need measurements at the intended physical station.
 
-The 4090 worktree stores two decoded, success-labelled demonstrations and their physics traces under `outputs/mujoco_advanced_acceptance/`. The drawer demonstration used one 320×240 RGB stream. The keyed plug demonstration used three 320×240 streams (`left_wrist`, `right_wrist`, `right_top`).
+The 4090 worktree stores two decoded, success-labelled demonstrations and their physics traces under `outputs/mujoco_advanced_acceptance/`. The drawer demonstration used one 320×240 RGB stream. The keyed plug demonstration used three 320×240 streams (`left_wrist`, `right_wrist`, `right_top`). From trace frame 0, replay with the saved actuator controls reproduced every saved MuJoCo position exactly in the two demonstrations. Replay of the LeRobotDataset actions from that same initial state had maximum per-joint RMSE of 2.79×10⁻⁶ for the drawer and 3.20×10⁻⁶ for the plug, in each joint’s policy units.
 
 To record a successful drawer demonstration with a success label and replay states:
 
