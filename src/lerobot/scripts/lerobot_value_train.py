@@ -142,7 +142,6 @@ def value_train(
     accelerator.wait_for_everyone()
 
     processor_kwargs = {}
-    postprocessor_kwargs = {}
     if (cfg.value.pretrained_path and not cfg.resume) or not cfg.value.pretrained_path:
         processor_kwargs["dataset_stats"] = dataset.meta.stats
 
@@ -158,22 +157,17 @@ def value_train(
         processor_kwargs["preprocessor_overrides"]["rename_observations_processor"] = {
             "rename_map": cfg.rename_map
         }
-        postprocessor_kwargs["postprocessor_overrides"] = {
-            "unnormalizer_processor": {
-                "stats": dataset.meta.stats,
-                "features": cfg.value.output_features or {},
-                "norm_map": cfg.value.normalization_mapping,
-            },
-        }
         if cfg.value.mode == "vision_only":
             processor_kwargs["preprocessor_overrides"].pop("normalizer_processor", None)
-            postprocessor_kwargs["postprocessor_overrides"].pop("unnormalizer_processor", None)
+        else:
+            processor_kwargs["preprocessor_overrides"]["tokenizer_processor"] = {
+                "tokenizer_name": cfg.value.language_repo_id
+            }
 
     preprocessor, postprocessor = make_pre_post_processors(
         policy_cfg=cfg.value,
         pretrained_path=cfg.value.pretrained_path,
         **processor_kwargs,
-        **postprocessor_kwargs,
     )
 
     if is_main_process:

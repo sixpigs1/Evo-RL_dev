@@ -472,7 +472,7 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
             while recorded_episodes < cfg.dataset.num_episodes and not events["stop_recording"]:
                 events["episode_outcome"] = None
                 if simulated:
-                    robot.reset()
+                    robot.reset(seed=cfg.robot.seed + dataset.num_episodes)
                 log_say(f"Recording episode {dataset.num_episodes}", cfg.play_sounds)
                 record_loop(
                     robot=robot,
