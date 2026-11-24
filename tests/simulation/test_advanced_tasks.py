@@ -246,3 +246,26 @@ def test_keyed_plug_randomizes_and_routes_both_arms(assets):
         assert sim.snapshot()["integration"] == snapshot
     finally:
         sim.close()
+
+
+@pytest.mark.parametrize("seed,arm", [(1, 1), (5, 0)])
+def test_keyed_expert_completes_with_smooth_joint_commands(assets, seed, arm):
+    sim = _simulation(assets, *CASES[0], episode_steps=600)
+    try:
+        sim.reset(seed)
+        assert plug_arm(sim) == arm
+        expert = ScriptedExpert(sim)
+        targets = [sim.data.ctrl.copy()]
+        while not sim.done:
+            start = sim.snapshot()["integration"]
+            action = expert.action()
+            assert sim.snapshot()["integration"] == start
+            sim.step(action)
+            targets.append(sim.data.ctrl.copy())
+        assert sim.success and plug_seated(sim)
+        velocity = np.diff(targets, axis=0) * sim.cfg.fps
+        acceleration = np.diff(velocity, axis=0) * sim.cfg.fps
+        assert np.max(np.abs(velocity)) <= 1.76
+        assert np.max(np.abs(acceleration)) <= 12.0
+    finally:
+        sim.close()

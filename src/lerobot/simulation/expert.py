@@ -3,6 +3,7 @@
 import numpy as np
 
 from .advanced_expert import AdvancedExpert
+from .keyed_expert import KeyedPlugExpert
 
 
 class ScriptedExpert:
@@ -11,7 +12,10 @@ class ScriptedExpert:
         self.stage = 0
         self.stage_steps = 0
         self.drawer_plan = None
-        self.advanced = AdvancedExpert(sim) if sim.task.stage_names else None
+        if sim.cfg.task == "keyed_plug_insert":
+            self.advanced = KeyedPlugExpert(sim)
+        else:
+            self.advanced = AdvancedExpert(sim) if sim.task.stage_names else None
 
     def _move(self, arm, goal, opening):
         sim = self.sim

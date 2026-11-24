@@ -10,7 +10,6 @@ from .advanced_tasks import (
     fixture_held,
     item_inside,
     item_stowed,
-    plug_arm,
     plug_seated,
     socket_local,
 )
@@ -296,17 +295,6 @@ class AdvancedExpert:
         task = self.sim.cfg.task
         if task == "drawer_stow_close":
             return self._drawer()
-        if task == "keyed_plug_insert":
-            action = self._plug(plug_arm(self.sim))
-            # Ease from the reset pose into the approach over one second.
-            if self.sim.steps + 1 < self.sim.cfg.fps:
-                t = (self.sim.steps + 1) / self.sim.cfg.fps
-                weight = t * t * (3.0 - 2.0 * t)
-                current = self.sim.read_joints()
-                action = {
-                    name: current[name] + weight * (target - current[name]) for name, target in action.items()
-                }
-            return action
         fixture = self._fixture()
         if not self.fixture_stable and self.stage == 0:
             return fixture

@@ -73,3 +73,35 @@ Set an explicit value in metres to change the sampling half-range. The
 workspace filter makes the accepted distribution nonuniform. The old fixed
 socket benchmarks above used a smaller distribution and a different scene
 version.
+
+## Smoothed fixed-plug expert
+
+The fixed-plug expert plans joint waypoints for approach, pinch, lift and
+transport. Quintic interpolation starts and ends each segment with zero
+command velocity and acceleration. The commanded speed is limited to about
+1.76 rad/s and acceleration to 12 rad/s². During insertion, the controller
+reads the plug pose again after each short segment. It corrects lateral and
+vertical error before allowing additional depth. It previews two feedback
+profiles on independent MuJoCo state and runs the chosen profile on the live
+simulation through the standard joint-target interface. Previewing pauses the
+expert's computation without advancing the live simulation.
+
+4090 results at 30 Hz with the new ±60 mm reset distribution, 600 steps per
+episode and seeds 150–249 reserved for evaluation:
+
+| Difficulty | All | Left | Right |
+| --- | ---: | ---: | ---: |
+| Nominal | 76/100 | 38/46 | 38/54 |
+| Precision | 62/100 | 29/46 | 33/54 |
+
+For seeds 0–19, results were 17/20 nominal and 12/20 precision. Across the
+200 held-out episodes, measured peak actuator command speed and acceleration
+were 1.757 rad/s and 11.707 rad/s². These bounds apply to the commands. Physical
+gripper acceleration can spike at contact or release. In the successful
+sampled trajectories, the active TCP moved 0.54–0.76 mm in the first 0.1 s.
+On the parallel validation run, median peak planner latency per episode was
+0.29 s nominal and 0.63 s precision.
+
+The evaluation uses the same scene, contact parameters, outcome checks and
+seed distribution as the wide-initialization task. The 4090 worktree keeps
+raw per-seed results under `outputs/mujoco_keyed_expert_validation/`.
