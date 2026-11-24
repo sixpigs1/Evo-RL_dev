@@ -28,3 +28,32 @@ export MUJOCO_GL=egl
 ```
 
 Add `--difficulty precision` to run the tighter variant, or `--rgb` for RGB rendering. For recording, choose the corresponding `--robot.embodiment`, `--robot.task`, `--robot.episode_steps` and language instruction. Use `--robot.scripted_expert=true` for reference rollouts and `--robot.state_dir` for snapshots. Evaluation uses the same fields under `--env.robot`. See [backend commands](mujoco_backend.md).
+
+## 4090 acceptance
+
+MuJoCo 3.4.0, locked Menagerie assets, 30 Hz, nominal difficulty and seeds 0–9. Success counts are from the scripted reference controller.
+
+| Task | Successful rollouts | Observed outcome |
+| --- | ---: | --- |
+| `drawer_stow_close` | 10/10 | Completed in 485 control steps per seed. |
+| `keyed_plug_insert` | 1/10 | Seed 7 completed in 312 control steps. The other nine runs timed out. |
+| `bimanual_stabilized_insert` | 0/10 | Reached the insertion stage in some runs. Loss of support and plug grip interrupted reference rollouts. |
+
+The drawer meets the 8/10 reference-controller gate. The two connector tasks can be run for evaluation and teleoperation, and their scripted collection remains experimental. The nominal and precision fixed socket both kept an already seated, released connector in place under gravity. The three precision scenes ran and rendered in headless EGL. All 63 simulator and recorder regression tests passed on the 4090. Geometry, friction and camera alignment still need measurements at the intended physical station.
+
+The 4090 worktree stores two decoded, success-labelled demonstrations and their physics traces under `outputs/mujoco_advanced_acceptance/`. The drawer demonstration used one 320×240 RGB stream. The keyed plug demonstration used three 320×240 streams (`left_wrist`, `right_wrist`, `right_top`).
+
+To record a successful drawer demonstration with a success label and replay states:
+
+```sh
+.venv/bin/python -m lerobot.scripts.lerobot_record \
+  --robot.type=mujoco --robot.embodiment=bi_piper --robot.task=drawer_stow_close \
+  --robot.seed=0 --robot.episode_steps=900 --robot.scripted_expert=true \
+  --robot.camera_views='{front: {width: 320, height: 240}}' \
+  --robot.state_dir=outputs/mujoco_drawer/states \
+  --dataset.repo_id=local/mujoco_drawer_advanced --dataset.root=outputs/mujoco_drawer/dataset \
+  --dataset.single_task='Open the drawer, put the red block inside, and close the drawer.' \
+  --dataset.num_episodes=1 --dataset.episode_time_s=32 --dataset.fps=30 --dataset.push_to_hub=false \
+  --dataset.vcodec=h264 --enable_episode_outcome_labeling=true \
+  --require_episode_success_label=true --display_data=false --play_sounds=false
+```
