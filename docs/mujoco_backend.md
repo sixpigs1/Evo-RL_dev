@@ -1,5 +1,7 @@
 # MuJoCo backend
 
+See the [4090 validation report](mujoco_validation.md) for measured coverage.
+
 The MuJoCo backend uses the same joint-target and camera feature names as the Evo-RL robot drivers. Select one of `so101`, `bi_so101`, `piper`, or `bi_piper` with `embodiment`. Each robot uses the same simulation implementation in recording, evaluation, and joint-target HIL-SERL.
 
 ## Install and verify assets
@@ -11,7 +13,7 @@ python -m lerobot.simulation.assets --verify
 export MUJOCO_GL=egl
 ```
 
-Menagerie revision `eea4c7431b63da8278b0ff31638e0b0e941cec0e` is locked by per-file SHA-256. The manifest includes each model's license. For an offline host, copy the verified cache directory and point `LEROBOT_MENAGERIE_ROOT` or the robot's `assets` field to it. Startup checks the files against the manifest. For CI with no GL, leave `camera_views` empty and disable evaluation video output.
+Menagerie revision `eea4c7431b63da8278b0ff31638e0b0e941cec0e` is locked by per-file SHA-256. The manifest includes each model's license. For an offline host, copy the verified cache directory and point `LEROBOT_MENAGERIE_ROOT` or the robot's `assets` field to it. Startup checks the files against the manifest. For CI with no GL, leave `camera_views` empty and set `--eval.max_episodes_rendered=0`. Camera examples for the four embodiments are in `examples/mujoco/profiles`. A `native` camera name selects an existing MJCF camera. Set `mount`, `position`, `xyaxes` and `fovy` to use calibrated camera geometry.
 
 ## Collect and train
 

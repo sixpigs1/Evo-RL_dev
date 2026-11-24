@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 import torch
@@ -27,13 +28,17 @@ def main():
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--frame", type=int, default=0)
     parser.add_argument("--tokenizer", type=Path)
+    parser.add_argument("--eager", action="store_true", help="Disable optional PI model compilation")
     args = parser.parse_args()
     dataset = LeRobotDataset(args.dataset, root=args.dataset_root)
     expected_names = control_names(MujocoRobotConfig(embodiment=args.embodiment))
     for key in ("action", "observation.state"):
         if tuple(dataset.features[key]["names"]) != expected_names:
             raise ValueError(f"Recorded joint order differs for {key}")
-    config = PreTrainedConfig.from_pretrained(args.checkpoint, cli_overrides=[f"--device={args.device}"])
+    overrides = [f"--device={args.device}"]
+    if args.eager:
+        overrides.append("--compile_model=false")
+    config = PreTrainedConfig.from_pretrained(args.checkpoint, cli_overrides=overrides)
     config.pretrained_path = args.checkpoint
     config.device = args.device
     features = dataset_to_policy_features(dataset.features)
@@ -78,7 +83,14 @@ def main():
         with torch.inference_mode():
             return postprocessor(policy.select_action(preprocessor(observation))).cpu()
 
-    first, second = predict(robot), predict(gym)
+    if torch.device(args.device).type == "cuda":
+        torch.cuda.reset_peak_memory_stats(args.device)
+    started = time.perf_counter()
+    first = predict(robot)
+    warmup_s = time.perf_counter() - started
+    started = time.perf_counter()
+    second = predict(gym)
+    policy_step_s = time.perf_counter() - started
     torch.testing.assert_close(first, second, rtol=1e-5, atol=1e-6)
     print(
         json.dumps(
@@ -86,6 +98,13 @@ def main():
                 "raw_input_keys": sorted(raw),
                 "action_shape": list(first.shape),
                 "max_abs_action_difference": (first - second).abs().max().item(),
+                "first_action_s": warmup_s,
+                "second_action_s": policy_step_s,
+                "peak_cuda_mib": (
+                    torch.cuda.max_memory_allocated(args.device) / 1024**2
+                    if torch.device(args.device).type == "cuda"
+                    else None
+                ),
             }
         )
     )
