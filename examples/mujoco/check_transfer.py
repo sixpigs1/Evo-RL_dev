@@ -33,7 +33,7 @@ def main():
     for key in ("action", "observation.state"):
         if tuple(dataset.features[key]["names"]) != expected_names:
             raise ValueError(f"Recorded joint order differs for {key}")
-    config = PreTrainedConfig.from_pretrained(args.checkpoint)
+    config = PreTrainedConfig.from_pretrained(args.checkpoint, cli_overrides=[f"--device={args.device}"])
     config.pretrained_path = args.checkpoint
     config.device = args.device
     features = dataset_to_policy_features(dataset.features)

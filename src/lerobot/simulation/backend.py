@@ -158,14 +158,15 @@ class MujocoSimulation:
         self.data.ctrl[self.actuators] = self.data.qpos[self.model.jnt_qposadr[self.joints]]
         self.mj.mj_forward(self.model, self.data)
 
+    def _to_policy(self, values):
+        result = {}
+        for key, value, mapping in zip(self.names, values, self.mappings, strict=True):
+            direction = 1 if mapping.simulation[0] < mapping.simulation[1] else -1
+            result[key] = float(np.interp(value, mapping.simulation[::direction], mapping.policy[::direction]))
+        return result
+
     def read_joints(self):
-        return {
-            key: float(np.interp(value, mapping.simulation[::direction], mapping.policy[::direction]))
-            for key, value, mapping in zip(
-                self.names, self.data.qpos[self.model.jnt_qposadr[self.joints]], self.mappings, strict=True
-            )
-            for direction in [1 if mapping.simulation[0] < mapping.simulation[1] else -1]
-        }
+        return self._to_policy(self.data.qpos[self.model.jnt_qposadr[self.joints]])
 
     def step(self, action, *, evaluate_task=True):
         if evaluate_task and self.done:
@@ -173,15 +174,13 @@ class MujocoSimulation:
         if not action or action.keys() - set(self.names):
             raise ValueError("Action must contain known joint position keys")
         targets = []
-        executed = {}
         for key, actuator, mapping in zip(self.names, self.actuators, self.mappings, strict=True):
             if key not in action:
                 continue
             value = float(action[key])
             if not np.isfinite(value):
                 raise ValueError(f"Nonfinite action for {key}")
-            executed[key] = float(np.clip(value, *mapping.policy))
-            targets.append((actuator, np.interp(executed[key], mapping.policy, mapping.simulation)))
+            targets.append((actuator, np.interp(value, mapping.policy, mapping.simulation)))
         for actuator, value in targets:
             self.data.ctrl[actuator] = value
         self.mj.mj_step(self.model, self.data, nstep=8)
@@ -192,7 +191,7 @@ class MujocoSimulation:
             self.success = self.phase == len(self.task.stages)
         if not np.isfinite(self.data.qpos).all():
             raise RuntimeError("MuJoCo produced nonfinite joint state")
-        return executed
+        return self._to_policy(self.data.ctrl[self.actuators])
 
     @property
     def done(self):

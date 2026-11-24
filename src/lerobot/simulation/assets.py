@@ -38,7 +38,7 @@ def prefetch(root: Path) -> None:
     with tempfile.TemporaryDirectory(dir=root.parent) as temporary:
         clone = Path(temporary) / "repo"
         subprocess.run(["git", "init", "--quiet", str(clone)], check=True)
-        git = ["git", "-C", str(clone)]
+        git = ["git", "-c", "http.version=HTTP/1.1", "-C", str(clone)]
         subprocess.run([*git, "remote", "add", "origin", REPOSITORY], check=True)
         subprocess.run([*git, "config", "remote.origin.promisor", "true"], check=True)
         subprocess.run([*git, "config", "remote.origin.partialclonefilter", "blob:none"], check=True)

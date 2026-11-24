@@ -27,10 +27,7 @@ class ScriptedExpert:
         if sim.cfg.task not in {"reach", "handover", "cooperative_carry"}:
             rotation = sim.data.site_xmat[site].reshape(3, 3)
             axis = rotation[:, 0 if sim.robot == "so101" else 2]
-            if sim.cfg.task == "open_drawer":
-                direction = np.array([1, 0, 0])
-            else:
-                direction = np.array([0, 0, -1])
+            direction = np.array([1, 0, 0]) if sim.cfg.task == "open_drawer" else np.array([0, 0, -1])
             derivative = np.cross(angular[:, dofs].T, axis).T
             jacobian = np.vstack([jacobian, 0.09 * derivative])
             error = np.concatenate([error, 0.09 * (direction - axis)])

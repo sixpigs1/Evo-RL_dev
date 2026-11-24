@@ -157,3 +157,16 @@ def test_eval_async_task_and_reset(assets):
         assert not info["final_info"]["is_success"].any()
     finally:
         env.close()
+
+
+def test_partial_bimanual_target_reports_full_command(assets):
+    sim = MujocoSimulation(MujocoRobotConfig(embodiment="bi_so101", assets=assets))
+    try:
+        prior = sim.read_joints()
+        updated = sim.step({"left_shoulder_pan.pos": 12.5})
+        assert tuple(updated) == sim.names
+        assert updated["left_shoulder_pan.pos"] == pytest.approx(12.5)
+        for name in sim.names[1:]:
+            assert updated[name] == pytest.approx(prior[name])
+    finally:
+        sim.close()

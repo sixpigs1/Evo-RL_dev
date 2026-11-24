@@ -203,24 +203,15 @@ class PreTrainedConfig(draccus.ChoiceRegistry, HubMixin, abc.ABC):  # type: igno
                     f"{CONFIG_NAME} not found on the HuggingFace Hub in {model_id}"
                 ) from e
 
-        # HACK: Parse the original config to get the config subclass, so that we can
-        # apply cli overrides.
-        # This is very ugly, ideally we'd like to be able to do that natively with draccus
-        # something like --policy.path (in addition to --policy.type)
-        with draccus.config_type("json"):
-            orig_config = draccus.parse(cls, config_file, args=[])
-
         if config_file is None:
             raise FileNotFoundError(f"{CONFIG_NAME} not found in {model_id}")
 
         with open(config_file) as f:
             config = json.load(f)
 
-        config.pop("type")
-        with tempfile.NamedTemporaryFile("w+", delete=False, suffix=".json") as f:
-            json.dump(config, f)
-            config_file = f.name
-
+        config_class = cls.get_choice_class(config.pop("type"))
         cli_overrides = policy_kwargs.pop("cli_overrides", [])
-        with draccus.config_type("json"):
-            return draccus.parse(orig_config.__class__, config_file, args=cli_overrides)
+        with tempfile.NamedTemporaryFile("w", suffix=".json") as f, draccus.config_type("json"):
+            json.dump(config, f)
+            f.flush()
+            return draccus.parse(config_class, f.name, args=cli_overrides)

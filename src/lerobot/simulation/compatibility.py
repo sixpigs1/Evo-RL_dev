@@ -4,7 +4,7 @@
 def check_policy_features(policy, available):
     failures = []
     padded_policy = policy.type in {"pi0", "pi05"}
-    for key, expected in {**policy.input_features, **policy.output_features}.items():
+    for key, expected in {**(policy.input_features or {}), **(policy.output_features or {})}.items():
         actual = available.get(key)
         if actual is None:
             if padded_policy and key.startswith("observation.images.empty_camera_"):
