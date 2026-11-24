@@ -1,4 +1,5 @@
 """Replay saved simulation states or compare joint tracking against a LeRobot episode."""
+
 import argparse
 import json
 from pathlib import Path
@@ -10,11 +11,13 @@ from .config import JointMapping, MujocoRobotConfig, SimCamera
 
 
 def config_from_metadata(data):
-    return MujocoRobotConfig(**{
-        **data,
-        "camera_views": {key: SimCamera(**value) for key, value in data["camera_views"].items()},
-        "joint_mappings": {key: JointMapping(**value) for key, value in data["joint_mappings"].items()},
-    })
+    return MujocoRobotConfig(
+        **{
+            **data,
+            "camera_views": {key: SimCamera(**value) for key, value in data["camera_views"].items()},
+            "joint_mappings": {key: JointMapping(**value) for key, value in data["joint_mappings"].items()},
+        }
+    )
 
 
 def compare_dataset(sim, dataset, episode):
@@ -43,9 +46,13 @@ def compare_dataset(sim, dataset, episode):
     if not errors:
         raise ValueError("No valid replay transitions")
     return {
-        "dataset": dataset.repo_id, "episode": episode, "compared_transitions": len(errors),
+        "dataset": dataset.repo_id,
+        "episode": episode,
+        "compared_transitions": len(errors),
         "reference_transitions": len(frames) - 1,
-        "rmse_in_policy_units": dict(zip(sim.names, np.sqrt(np.mean(np.square(errors), axis=0)), strict=True)),
+        "rmse_in_policy_units": dict(
+            zip(sim.names, np.sqrt(np.mean(np.square(errors), axis=0)), strict=True)
+        ),
     }
 
 

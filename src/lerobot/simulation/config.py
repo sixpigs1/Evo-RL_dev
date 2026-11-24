@@ -1,4 +1,5 @@
 """Configuration shared by recording, evaluation and online RL."""
+
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -18,6 +19,7 @@ class SimCamera:
 @dataclass
 class JointMapping:
     """Two corresponding endpoints in policy units and simulator units, in that order."""
+
     policy: tuple[float, float]
     simulation: tuple[float, float]
 

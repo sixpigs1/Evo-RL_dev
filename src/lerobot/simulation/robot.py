@@ -1,4 +1,5 @@
 """LeRobot recording adapter for MuJoCo."""
+
 import json
 
 from lerobot.robots.robot import Robot
@@ -20,6 +21,7 @@ class MujocoRobot(Robot):
 
     def __init__(self, config):
         self.config = config
+        self.cameras = config.camera_views
         self.robot_type = ROBOT_TYPES[config.embodiment]
         self.id = config.id
         self.sim = None
@@ -32,8 +34,10 @@ class MujocoRobot(Robot):
 
     @property
     def observation_features(self):
-        return {**self.action_features,
-                **{name: (cam.height, cam.width, 3) for name, cam in self.config.camera_views.items()}}
+        return {
+            **self.action_features,
+            **{name: (cam.height, cam.width, 3) for name, cam in self.config.camera_views.items()},
+        }
 
     @property
     def is_connected(self):

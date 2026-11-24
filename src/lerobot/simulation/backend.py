@@ -1,6 +1,7 @@
 """Shared MuJoCo physics, control, camera and episode state."""
-from dataclasses import asdict
+
 import json
+from dataclasses import asdict
 from functools import lru_cache
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -51,39 +52,57 @@ class MujocoSimulation:
     def _make_model(self):
         cfg = self.cfg
         root = ET.Element("mujoco", model=cfg.task)
-        ET.SubElement(root, "option", timestep=str(1 / (cfg.fps * 8)), integrator="implicitfast", cone="elliptic")
+        ET.SubElement(
+            root, "option", timestep=str(1 / (cfg.fps * 8)), integrator="implicitfast", cone="elliptic"
+        )
         visual = ET.SubElement(root, "visual")
-        ET.SubElement(visual, "global",
-                      offwidth=str(max([640, *(c.width for c in cfg.camera_views.values())])),
-                      offheight=str(max([480, *(c.height for c in cfg.camera_views.values())])))
+        ET.SubElement(
+            visual,
+            "global",
+            offwidth=str(max([640, *(c.width for c in cfg.camera_views.values())])),
+            offheight=str(max([480, *(c.height for c in cfg.camera_views.values())])),
+        )
         world = ET.SubElement(root, "worldbody")
         ET.SubElement(world, "light", pos=".25 -.2 1", dir="0 0 -1", directional="true")
-        ET.SubElement(world, "geom", name="table", type="box", pos=".16 0 -.025",
-                      size=".65 .5 .025", rgba=".48 .49 .52 1")
+        ET.SubElement(
+            world,
+            "geom",
+            name="table",
+            type="box",
+            pos=".16 0 -.025",
+            size=".65 .5 .025",
+            rgba=".48 .49 .52 1",
+        )
         ET.SubElement(world, "camera", name="overview", pos=".8 -.78 .65", xyaxes=".8 .6 0 -.25 .33 .91")
         self.task.build(world)
         spec = self.mj.MjSpec.from_string(ET.tostring(root, encoding="unicode"))
         path = _verified_model((cfg.assets or asset_root()).resolve(), self.robot)
-        positions = cfg.base_positions or ([(0, .19, 0), (0, -.19, 0)] if len(self.prefixes) == 2 else [(0, 0, 0)])
-        yaws = cfg.base_yaws or ([-.45, .45] if len(self.prefixes) == 2 else [0])
+        positions = cfg.base_positions or (
+            [(0, 0.19, 0), (0, -0.19, 0)] if len(self.prefixes) == 2 else [(0, 0, 0)]
+        )
+        yaws = cfg.base_yaws or ([-0.45, 0.45] if len(self.prefixes) == 2 else [0])
         if len(positions) != len(self.prefixes) or len(yaws) != len(self.prefixes):
             raise ValueError("Provide one base position and yaw per arm")
         spec.copy_during_attach = True
         for prefix, position, yaw in zip(self.prefixes, positions, yaws, strict=True):
             arm = self.mj.MjSpec.from_file(str(path))
             if self.robot == "piper":
-                arm.body("link6").add_site(name="gripperframe", pos=[0, 0, .18], size=[.004])
+                arm.body("link6").add_site(name="gripperframe", pos=[0, 0, 0.18], size=[0.004, 0, 0])
             frame = spec.worldbody.add_frame(pos=position, quat=[np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)])
             spec.attach(arm, prefix=prefix, frame=frame)
         for name, camera in cfg.camera_views.items():
             body = spec.worldbody if camera.mount == "world" else spec.body(camera.mount)
             if body is None:
                 raise ValueError(f"Camera {name!r} has unknown mount {camera.mount!r}")
-            body.add_camera(name=f"observation_{name}", pos=camera.position, xyaxes=camera.xyaxes, fovy=camera.fovy)
+            body.add_camera(
+                name=f"observation_{name}", pos=camera.position, xyaxes=camera.xyaxes, fovy=camera.fovy
+            )
         return spec.compile()
 
     def _control_layout(self):
-        actuator_names = SO_JOINTS if self.robot == "so101" else (*[f"joint{i}" for i in range(1, 7)], "gripper")
+        actuator_names = (
+            SO_JOINTS if self.robot == "so101" else (*[f"joint{i}" for i in range(1, 7)], "gripper")
+        )
         ids = [self.model.actuator(prefix + name).id for prefix in self.prefixes for name in actuator_names]
         joints = [int(self.model.actuator_trnid[i, 0]) for i in ids]
         mappings = []
@@ -100,7 +119,13 @@ class MujocoSimulation:
                 policy = tuple(np.rad2deg([lo, hi]))
             mapping = self.cfg.joint_mappings.get(key, JointMapping(policy, (lo, hi)))
             p, q = np.asarray(mapping.policy), np.asarray(mapping.simulation)
-            if not np.isfinite([p, q]).all() or p[1] <= p[0] or q[1] == q[0] or min(q) < lo - 1e-8 or max(q) > hi + 1e-8:
+            if (
+                not np.isfinite([p, q]).all()
+                or p[1] <= p[0]
+                or q[1] == q[0]
+                or min(q) < lo - 1e-8
+                or max(q) > hi + 1e-8
+            ):
                 raise ValueError(f"Invalid policy/simulation endpoints for {key}: {mapping}")
             mappings.append(mapping)
         return ids, joints, mappings
@@ -117,11 +142,13 @@ class MujocoSimulation:
                 self.data.joint(prefix + "joint3").qpos[0] = -1.3485
         if self.robot == "so101":
             for prefix in self.prefixes:
-                self.data.joint(prefix + "gripper").qpos[0] = .65
+                self.data.joint(prefix + "gripper").qpos[0] = 0.65
         for index in range(self.model.njnt):
             if self.model.jnt_type[index] == self.mj.mjtJoint.mjJNT_FREE:
                 address = self.model.jnt_qposadr[index]
-                self.data.qpos[address:address + 2] += self.rng.uniform(-self.cfg.randomization, self.cfg.randomization, 2)
+                self.data.qpos[address : address + 2] += self.rng.uniform(
+                    -self.cfg.randomization, self.cfg.randomization, 2
+                )
         self.data.ctrl[self.actuators] = self.data.qpos[self.model.jnt_qposadr[self.joints]]
         self.mj.mj_forward(self.model, self.data)
 
@@ -172,7 +199,7 @@ class MujocoSimulation:
         return self.data.site(self.prefixes[arm] + "gripperframe").xpos
 
     def settled(self, obj):
-        return np.linalg.norm(self.data.joint(f"{obj}_free").qvel) < .18
+        return np.linalg.norm(self.data.joint(f"{obj}_free").qvel) < 0.18
 
     def grasping(self, arm):
         prefix = self.prefixes[arm]
@@ -197,8 +224,10 @@ class MujocoSimulation:
     def observation(self):
         return {
             **self.read_joints(),
-            **{name: self.image(f"observation_{name}", camera.width, camera.height)
-               for name, camera in self.cfg.camera_views.items()},
+            **{
+                name: self.image(f"observation_{name}", camera.width, camera.height)
+                for name, camera in self.cfg.camera_views.items()
+            },
         }
 
     def scene_signature(self):
@@ -210,9 +239,16 @@ class MujocoSimulation:
     def snapshot(self):
         state = np.empty(self.mj.mj_stateSize(self.model, self.state_spec))
         self.mj.mj_getState(self.model, self.data, state, self.state_spec)
-        return {"integration": state.tolist(), "rng": self.rng.bit_generator.state,
-                "phase": self.phase, "steps": self.steps, "success": self.success,
-                "mujoco": self.mj.__version__, "menagerie": REVISION, "config": self.scene_signature()}
+        return {
+            "integration": state.tolist(),
+            "rng": self.rng.bit_generator.state,
+            "phase": self.phase,
+            "steps": self.steps,
+            "success": self.success,
+            "mujoco": self.mj.__version__,
+            "menagerie": REVISION,
+            "config": self.scene_signature(),
+        }
 
     def restore(self, snapshot):
         state = np.asarray(snapshot["integration"], dtype=np.float64)

@@ -1,4 +1,5 @@
 """Fetch and verify the pinned SO-101 and PiPER asset trees."""
+
 import argparse
 import hashlib
 import os
@@ -24,7 +25,9 @@ def verify_assets(root: Path, model: str | None = None) -> None:
             continue
         path = root / name
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
-            raise ValueError(f"Invalid or missing Menagerie asset {path}. Run python -m lerobot.simulation.assets.")
+            raise ValueError(
+                f"Invalid or missing Menagerie asset {path}. Run python -m lerobot.simulation.assets."
+            )
 
 
 def prefetch(root: Path) -> None:

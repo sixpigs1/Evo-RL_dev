@@ -1,4 +1,5 @@
 """Gymnasium adapters for evaluation and absolute joint-target HIL-SERL."""
+
 import gymnasium as gym
 import numpy as np
 
@@ -21,13 +22,15 @@ class JointTargetEnv(gym.Env):
         self._max_episode_steps = episode_steps
         self.render_mode = "rgb_array" if simulated else None
         self.names = tuple(robot.action_features)
-        self.images = {key: shape for key, shape in robot.observation_features.items() if isinstance(shape, tuple)}
+        self.images = {
+            key: shape for key, shape in robot.observation_features.items() if isinstance(shape, tuple)
+        }
         self.action_space = gym.spaces.Box(-np.inf, np.inf, (len(self.names),), dtype=np.float32)
         observation = {"agent_pos": gym.spaces.Box(-np.inf, np.inf, (len(self.names),), dtype=np.float32)}
         if self.images:
-            observation["pixels"] = gym.spaces.Dict({
-                key: gym.spaces.Box(0, 255, shape, dtype=np.uint8) for key, shape in self.images.items()
-            })
+            observation["pixels"] = gym.spaces.Dict(
+                {key: gym.spaces.Box(0, 255, shape, dtype=np.uint8) for key, shape in self.images.items()}
+            )
         self.observation_space = gym.spaces.Dict(observation)
         self.steps = 0
         self._joint_positions = {}
@@ -39,16 +42,25 @@ class JointTargetEnv(gym.Env):
     def for_simulation(cls, config, teleop=None):
         from .tasks import TASKS
 
-        return cls(MujocoRobot(config), config.instruction or TASKS[config.task].instruction,
-                   config.episode_steps, simulated=True, teleop=teleop)
+        return cls(
+            MujocoRobot(config),
+            config.instruction or TASKS[config.task].instruction,
+            config.episode_steps,
+            simulated=True,
+            teleop=teleop,
+        )
 
     def configure_intervention(self):
         if not callable(getattr(self.teleop, "get_teleop_events", None)):
             from lerobot.utils.control_utils import init_keyboard_listener
 
-            self.listener, self.events = init_keyboard_listener(episode_success_key="s", episode_failure_key="f")
+            self.listener, self.events = init_keyboard_listener(
+                episode_success_key="s", episode_failure_key="f"
+            )
             if self.listener is None:
-                raise RuntimeError("Joint teleop requires an event-capable device or an available keyboard listener")
+                raise RuntimeError(
+                    "Joint teleop requires an event-capable device or an available keyboard listener"
+                )
 
     def intervention_events(self):
         if self.teleop is None:
@@ -101,7 +113,7 @@ class JointTargetEnv(gym.Env):
             start = [observation[name] for name in self.names]
             for targets in np.linspace(start, self.reset_pose, 51)[1:]:
                 self.robot.send_action(dict(zip(self.names, targets, strict=True)))
-                precise_sleep(.02)
+                precise_sleep(0.02)
         return self._observe(), {}
 
     def step(self, action):
@@ -112,7 +124,10 @@ class JointTargetEnv(gym.Env):
         self.steps += 1
         success = bool(self.simulated and self.robot.sim.success)
         truncated = not success and self.steps >= self._max_episode_steps
-        info = {"is_success": success, "executed_action": np.array([executed[k] for k in self.names], np.float32)}
+        info = {
+            "is_success": success,
+            "executed_action": np.array([executed[k] for k in self.names], np.float32),
+        }
         if self.simulated:
             info["phase"] = self.robot.sim.phase
         info["failure_reason"] = "timeout" if truncated else ""
@@ -135,6 +150,7 @@ class JointTargetEnv(gym.Env):
             if self.teleop is not None and self.teleop.is_connected:
                 self.teleop.disconnect()
 
+
 class JointTargetIntervention(InterventionActionProcessorStep):
     """Apply the existing HIL event semantics to named absolute joint targets."""
 
@@ -144,8 +160,12 @@ class JointTargetIntervention(InterventionActionProcessorStep):
 
     def __call__(self, transition):
         info = {**transition[TransitionKey.INFO]}
-        for key in (TeleopEvents.IS_INTERVENTION, TeleopEvents.SUCCESS, TeleopEvents.TERMINATE_EPISODE,
-                    TeleopEvents.RERECORD_EPISODE):
+        for key in (
+            TeleopEvents.IS_INTERVENTION,
+            TeleopEvents.SUCCESS,
+            TeleopEvents.TERMINATE_EPISODE,
+            TeleopEvents.RERECORD_EPISODE,
+        ):
             info.pop(key, None)
         info.update(self.env.intervention_events())
         transition = {**transition, TransitionKey.INFO: info}

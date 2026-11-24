@@ -402,7 +402,7 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
                 cfg.dataset.repo_id,
                 cfg.dataset.fps,
                 root=cfg.dataset.root,
-                robot_type=robot.name,
+                robot_type=robot.robot_type if simulated else robot.name,
                 features=dataset_features,
                 use_videos=cfg.dataset.video,
                 image_writer_processes=cfg.dataset.num_image_writer_processes,
@@ -412,6 +412,13 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
             )
 
         # Load pretrained policy
+        if simulated and cfg.policy is not None:
+            from lerobot.datasets.utils import dataset_to_policy_features
+            from lerobot.simulation.compatibility import check_policy_features
+
+            features = dataset_to_policy_features(dataset.features)
+            features = {cfg.dataset.rename_map.get(key, key): feature for key, feature in features.items()}
+            check_policy_features(cfg.policy, features)
         policy = None if cfg.policy is None else make_policy(cfg.policy, ds_meta=dataset.meta)
         preprocessor = None
         postprocessor = None
