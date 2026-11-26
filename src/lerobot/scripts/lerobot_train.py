@@ -15,8 +15,10 @@
 # limitations under the License.
 import dataclasses
 import logging
+import os
 import time
 from contextlib import nullcontext
+from pathlib import Path
 from pprint import pformat
 from typing import Any
 
@@ -42,8 +44,8 @@ from lerobot.scripts.lerobot_eval import eval_policy_all
 from lerobot.utils.devices import report_musa_memory, report_musa_parameter_sync, validate_runtime_device
 from lerobot.utils.import_utils import register_third_party_plugins
 from lerobot.utils.logging_utils import AverageMeter, MetricsTracker
-from lerobot.utils.numerical_safety import require_finite
-from lerobot.utils.random_utils import save_distributed_rng_state, serialize_rng_state, set_seed
+from lerobot.utils.numerical_safety import inspect_gradient_bucket, require_finite
+from lerobot.utils.random_utils import deserialize_rng_state, save_distributed_rng_state, serialize_rng_state, set_seed
 from lerobot.utils.train_utils import (
     get_step_checkpoint_dir,
     get_step_identifier,
@@ -70,6 +72,7 @@ def update_policy(
     rabc_weights_provider=None,
     failure_dir=None,
     update_step=None,
+    bucket_checks=None,
 ) -> tuple[MetricsTracker, dict]:
     """
     Performs a single training step to update the policy's weights.
@@ -134,6 +137,7 @@ def update_policy(
         failure_dir=failure_dir,
         rng=rng_before_forward,
         optimizer=optimizer,
+        scheduler=lr_scheduler,
     )
     require_finite(loss, phase="loss", **safety)
 
@@ -141,7 +145,18 @@ def update_policy(
     accelerator.backward(loss)
 
     # Clip gradients if specified
-    if grad_clip_norm > 0:
+    if bucket_checks is not None:
+        local_checks = torch.stack(bucket_checks)
+        bucket_checks.clear()
+        require_finite(torch.where(local_checks, 0.0, float("nan")), phase="before gradient reduction", **safety)
+        gradients = [parameter.grad for parameter in policy.parameters() if parameter.grad is not None]
+        reduced_finite = torch.stack([torch.isfinite(grad).all() for grad in gradients])
+        require_finite(torch.where(reduced_finite, 0.0, float("nan")), phase="after gradient reduction", **safety)
+        grad_norm = torch.nn.utils.get_total_norm(gradients)
+        require_finite(grad_norm, phase="before gradient clipping", **safety)
+        if grad_clip_norm > 0:
+            torch.nn.utils.clip_grads_with_norm_(policy.parameters(), grad_clip_norm, grad_norm)
+    elif grad_clip_norm > 0:
         grad_norm = accelerator.clip_grad_norm_(policy.parameters(), grad_clip_norm)
     else:
         grad_norm = torch.nn.utils.clip_grad_norm_(
@@ -428,6 +443,32 @@ def train(
     policy, optimizer, dataloader, lr_scheduler = accelerator.prepare(
         policy, optimizer, dataloader, lr_scheduler
     )
+    bucket_checks = None
+    replay = None
+    if os.environ.get("EVORL_PI05_GRAD_DIAGNOSTICS") == "1":
+        if cfg.policy.type != "pi05" or device.type != "musa" or not isinstance(
+            policy, torch.nn.parallel.DistributedDataParallel
+        ) or accelerator.scaler is not None:
+            raise RuntimeError("Pi0.5 diagnostics require MUSA BF16 DDP without a gradient scaler")
+        bucket_checks = []
+        policy.register_comm_hook(bucket_checks, inspect_gradient_bucket)
+        replay_directory = os.environ.get("EVORL_PI05_REPLAY")
+        if replay_directory:
+            directory = Path(replay_directory)
+            if not (directory / "complete.json").is_file():
+                raise RuntimeError("Cannot restore an incomplete numerical snapshot")
+            snapshot = torch.load(directory / "pre-update-state.pt", map_location="cpu", weights_only=True)
+            accelerator.unwrap_model(policy).load_state_dict(snapshot["model"], strict=True)
+            optimizer.load_state_dict(snapshot["optimizer"])
+            lr_scheduler.load_state_dict(snapshot["scheduler"])
+            step = snapshot["step"] - 1
+            del snapshot
+            replay = torch.load(
+                directory / f"rank-{accelerator.process_index}.pt", map_location=device, weights_only=True
+            )
+            logging.info("Restored pre-update snapshot at step %s; replaying update %s", step, step + 1)
+        else:
+            logging.info("Enabled Pi0.5 gradient checks before/after reduction and before clipping")
     dl_iter = cycle(dataloader)
 
     policy.train()
@@ -467,10 +508,15 @@ def train(
 
     for _ in range(step, cfg.steps):
         start_time = time.perf_counter()
-        batch = next(dl_iter)
-        if acp_raw_batch_hook is not None:
-            batch = acp_raw_batch_hook(batch, step)
-        batch = preprocessor(batch)
+        if replay is not None:
+            batch = replay["batch"]
+            deserialize_rng_state({key: value.cpu() for key, value in replay["rng_before_forward"].items()})
+            replay = None
+        else:
+            batch = next(dl_iter)
+            if acp_raw_batch_hook is not None:
+                batch = acp_raw_batch_hook(batch, step)
+            batch = preprocessor(batch)
 
         if is_main_process and not logged_first_prompt:
             for key in prompt_keys:
@@ -501,6 +547,7 @@ def train(
             rabc_weights_provider=rabc_weights,
             failure_dir=cfg.output_dir / "numerical_failures",
             update_step=step + 1,
+            bucket_checks=bucket_checks,
         )
 
         # Note: eval and checkpoint happens *after* the `step`th training update has completed, so we

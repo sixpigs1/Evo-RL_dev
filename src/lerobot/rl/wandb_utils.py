@@ -230,7 +230,7 @@ class SwanLabLogger:
             tags=cfg_to_group(cfg, return_list=True, truncate_tags=True),
             config=cfg.to_dict(),
             id=cfg.wandb.run_id,
-            resume="must" if cfg.resume else None,
+            resume="must" if cfg.resume and cfg.wandb.run_id else None,
         )
         # SwanLab 0.10 uses online/name/log_dir; retain compatibility with older SDKs.
         if "on_online_error" in inspect.signature(swanlab.init).parameters:

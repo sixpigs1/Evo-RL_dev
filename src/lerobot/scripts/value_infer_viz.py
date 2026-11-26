@@ -5,7 +5,6 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-from scipy.signal import savgol_filter
 from tqdm.auto import tqdm
 
 from lerobot.datasets.lerobot_dataset import LeRobotDataset
@@ -22,6 +21,8 @@ def _smooth_1d(arr: np.ndarray, window: int = 1) -> np.ndarray:
         w -= 1
     if w < 5:
         return arr.copy()
+
+    from scipy.signal import savgol_filter
 
     return savgol_filter(arr, window_length=w, polyorder=3).astype(arr.dtype)
 

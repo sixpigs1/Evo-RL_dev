@@ -4,6 +4,7 @@ Run with: torchrun --standalone --nproc_per_node=2 tools/musa/check_numerical_sa
 """
 import json
 import os
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -35,21 +36,40 @@ if 'RANK' in os.environ:
 a = Collective()
 model = torch.nn.Linear(2, 1)
 batch = {'action': torch.ones(2, 2)}
-with tempfile.TemporaryDirectory() as directory:
-    common = dict(accelerator=a, policy=model, batch=batch, step=17, failure_dir=directory,
-                  rng={'torch_rng_state': torch.get_rng_state()})
-    require_finite(torch.tensor(1.0), phase='loss', **common)
-    for phase, bad_value in [('loss', float('nan')), ('gradient norm', float('inf'))]:
-        value = torch.tensor(bad_value if a.process_index == a.num_processes - 1 else 1.0)
-        try:
-            require_finite(value, phase=phase, **common)
-        except FloatingPointError:
-            artifact = torch.load(Path(directory)/'step-17'/f'rank-{a.process_index}.pt', weights_only=True)
-            assert artifact['phase'] == phase
-            assert torch.equal(artifact['batch']['action'], batch['action'])
-            assert 'torch_rng_state' in artifact['rng_before_forward']
-        else:
-            raise AssertionError('A non-finite rank did not stop every rank')
+directory = [tempfile.mkdtemp() if a.process_index == 0 else None]
+if dist.is_initialized():
+    dist.broadcast_object_list(directory, src=0)
+root = Path(directory[0])
+optimizer = torch.optim.AdamW(model.parameters())
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1)
+common = dict(accelerator=a, policy=model, batch=batch, failure_dir=root,
+              optimizer=optimizer, scheduler=scheduler,
+              rng={"torch_rng_state": torch.get_rng_state()})
+require_finite(torch.tensor(1.0), phase="loss", **common)
+for step, (phase, bad_value) in enumerate([("loss", float("nan")), ("gradient norm", float("inf"))], 17):
+    value = torch.tensor(bad_value if a.process_index == a.num_processes - 1 else 1.0)
+    try:
+        require_finite(value, phase=phase, step=step, **common)
+    except FloatingPointError:
+        failure = root / f"step-{step}"
+        manifest = json.loads((failure / "complete.json").read_text())
+        assert manifest["step"] == step
+        assert len(manifest["sizes"]) == a.num_processes + 1
+        assert all((failure / name).stat().st_size == size for name, size in manifest["sizes"].items())
+        artifact = torch.load(failure / f"rank-{a.process_index}.pt", weights_only=True)
+        assert artifact["phase"] == phase
+        assert torch.equal(artifact["batch"]["action"], batch["action"])
+        assert "torch_rng_state" in artifact["rng_before_forward"]
+        snapshot = torch.load(failure / "pre-update-state.pt", weights_only=True)
+        model.load_state_dict(snapshot["model"])
+        optimizer.load_state_dict(snapshot["optimizer"])
+        scheduler.load_state_dict(snapshot["scheduler"])
+    else:
+        raise AssertionError("A non-finite rank did not stop every rank")
+if dist.is_initialized():
+    dist.barrier()
+if a.process_index == 0:
+    shutil.rmtree(root)
 print(json.dumps({'rank':a.process_index, 'world_size':a.num_processes, 'passed':True}), flush=True)
 if dist.is_initialized():
     dist.destroy_process_group()
