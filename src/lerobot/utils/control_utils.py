@@ -187,6 +187,8 @@ def predict_action(
     use_amp: bool,
     task: str | None = None,
     robot_type: str | None = None,
+    *,
+    autocast_dtype: torch.dtype | None = None,
 ):
     """
     Performs a single-step inference to predict a robot action from an observation.
@@ -207,6 +209,7 @@ def predict_action(
         use_amp: A boolean to enable/disable Automatic Mixed Precision for CUDA inference.
         task: An optional string identifier for the task.
         robot_type: An optional string identifier for the robot type.
+        autocast_dtype: Optional mixed-precision dtype for model inference.
 
     Returns:
         A `torch.Tensor` containing the predicted action, ready for the robot.
@@ -214,7 +217,9 @@ def predict_action(
     observation = copy(observation)
     with (
         torch.inference_mode(),
-        torch.autocast(device_type=device.type) if device.type in ("cuda", "musa") and use_amp else nullcontext(),
+        torch.autocast(device_type=device.type, dtype=autocast_dtype)
+        if device.type in ("cuda", "musa") and use_amp
+        else nullcontext(),
     ):
         # Convert to pytorch format: channel first and float32 in [0,1] with batch dimension
         observation = prepare_observation_for_inference(observation, device, task, robot_type)
