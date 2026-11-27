@@ -994,6 +994,8 @@ class PI05Policy(PreTrainedPolicy):
                 print("✓ Loaded state dict from model.safetensors")
             except Exception as e:
                 print(f"Could not load state dict from remote files: {e}")
+                if strict:
+                    raise RuntimeError(f"Failed to load Pi0.5 weights from {pretrained_name_or_path}") from e
                 print("Returning model without loading pretrained weights")
                 return model
 
@@ -1043,6 +1045,8 @@ class PI05Policy(PreTrainedPolicy):
                 print("All keys loaded successfully!")
 
         except Exception as e:
+            if strict:
+                raise
             print(f"Warning: Could not remap state dict keys: {e}")
 
         return model
